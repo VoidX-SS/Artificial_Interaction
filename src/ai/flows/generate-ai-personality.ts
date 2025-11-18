@@ -14,6 +14,7 @@ import {z} from 'genkit';
 
 const GenerateAIPersonalityInputSchema = z.object({
   description: z.string().describe('A description of the desired AI personality.'),
+  language: z.enum(['en', 'vi']).optional().default('en').describe('The language for the generated personality.'),
 });
 export type GenerateAIPersonalityInput = z.infer<typeof GenerateAIPersonalityInputSchema>;
 
@@ -30,7 +31,10 @@ const prompt = ai.definePrompt({
   name: 'generateAIPersonalityPrompt',
   input: {schema: GenerateAIPersonalityInputSchema},
   output: {schema: GenerateAIPersonalityOutputSchema},
-  prompt: `You are an AI personality generator. Generate a personality based on the following description: {{{description}}}`,
+  prompt: `You are an AI personality generator.
+Generate a personality based on the following description: {{{description}}}
+The generated personality MUST be in {{#if (eq language 'vi')}}Vietnamese{{else}}English{{/if}}.
+`,
 });
 
 const generateAIPersonalityFlow = ai.defineFlow(

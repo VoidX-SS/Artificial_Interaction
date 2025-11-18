@@ -106,7 +106,7 @@ export default function Home() {
       return;
     }
     const setter = agentNum === 1 ? setPersonality1 : setPersonality2;
-    const generatedPersonality = await generatePersonalityAction(description);
+    const generatedPersonality = await generatePersonalityAction(description, language);
     if(generatedPersonality.startsWith('Error:')) {
       toast({
         variant: 'destructive',
@@ -366,5 +366,3 @@ export default function Home() {
     </main>
   );
 }
-
-    

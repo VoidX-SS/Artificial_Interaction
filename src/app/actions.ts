@@ -1,12 +1,13 @@
 // src/app/actions.ts
 'use server';
 
-import { generateAIPersonality } from '@/ai/flows/generate-ai-personality';
+import { generateAIPersonality, type GenerateAIPersonalityInput } from '@/ai/flows/generate-ai-personality';
 import { generateConversationStarter } from '@/ai/flows/generate-conversation-starter';
+import type { Language } from '@/lib/i18n';
 
-export async function generatePersonalityAction(description: string): Promise<string> {
+export async function generatePersonalityAction(description: string, language: Language): Promise<string> {
   try {
-    const result = await generateAIPersonality({ description });
+    const result = await generateAIPersonality({ description, language });
     return result.personality;
   } catch (error) {
     console.error('Error generating personality:', error);
