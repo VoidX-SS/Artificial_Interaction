@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -43,6 +42,7 @@ export default function Home() {
 
   const [theme, setTheme] = useState<Theme>('light');
   const [leisurelyChat, setLeisurelyChat] = useState(true);
+  const [apiKey, setApiKey] = useState('');
 
 
   const isRunningRef = useRef(false);
@@ -98,7 +98,7 @@ export default function Home() {
     }
 
     const setter = agentNum === 1 ? setAgent1Profile : setAgent2Profile;
-    const generatedPersonality = await generatePersonalityAction(description, language);
+    const generatedPersonality = await generatePersonalityAction(description, language, apiKey);
     
     if(generatedPersonality.startsWith('Error:')) {
       toast({
@@ -221,7 +221,7 @@ export default function Home() {
       const otherProfile = currentAgent === 'agent1' ? agent2Profile : agent1Profile;
 
       const prompt = constructPrompt(currentProfile, otherProfile, currentHistory);
-      const rawResponse = await generateChatResponseAction(prompt);
+      const rawResponse = await generateChatResponseAction(prompt, apiKey);
 
       if (rawResponse.startsWith('Error:')) {
         toast({
@@ -441,6 +441,8 @@ export default function Home() {
             chatLog={chatLog}
             leisurelyChat={leisurelyChat}
             setLeisurelyChat={setLeisurelyChat}
+            apiKey={apiKey}
+            setApiKey={setApiKey}
             t={t}
           />
         )}

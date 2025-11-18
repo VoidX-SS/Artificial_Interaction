@@ -8,11 +8,12 @@
  * - GenerateConversationStarterOutput - The return type for the generateConversationStarter function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, getAiWithApiKey} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateConversationStarterInputSchema = z.object({
   topic: z.string().describe('The topic or starting prompt for the conversation.'),
+  apiKey: z.string().optional().describe('Optional API key for Google AI.'),
 });
 
 export type GenerateConversationStarterInput = z.infer<
@@ -30,30 +31,32 @@ export type GenerateConversationStarterOutput = z.infer<
 export async function generateConversationStarter(
   input: GenerateConversationStarterInput
 ): Promise<GenerateConversationStarterOutput> {
-  return generateConversationStarterFlow(input);
-}
+  const customAi = input.apiKey ? getAiWithApiKey(input.apiKey) : ai;
 
-const prompt = ai.definePrompt({
-  name: 'generateConversationStarterPrompt',
-  input: {schema: GenerateConversationStarterInputSchema},
-  output: {schema: GenerateConversationStarterOutputSchema},
-  prompt: `You are an AI assistant helping to start a conversation between two AI agents.
+  const prompt = customAi.definePrompt({
+    name: 'generateConversationStarterPrompt',
+    input: {schema: GenerateConversationStarterInputSchema},
+    output: {schema: GenerateConversationStarterOutputSchema},
+    prompt: `You are an AI assistant helping to start a conversation between two AI agents.
 
   Based on the given topic or starting prompt, generate a suitable conversation starter.
 
   Topic/Starting Prompt: {{{topic}}}
 
   Conversation Starter: `,
-});
+  });
 
-const generateConversationStarterFlow = ai.defineFlow(
-  {
-    name: 'generateConversationStarterFlow',
-    inputSchema: GenerateConversationStarterInputSchema,
-    outputSchema: GenerateConversationStarterOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
+  const generateConversationStarterFlow = customAi.defineFlow(
+    {
+      name: 'generateConversationStarterFlow',
+      inputSchema: GenerateConversationStarterInputSchema,
+      outputSchema: GenerateConversationStarterOutputSchema,
+    },
+    async flowInput => {
+      const {output} = await prompt(flowInput);
+      return output!;
+    }
+  );
+  
+  return generateConversationStarterFlow(input);
+}

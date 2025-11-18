@@ -113,8 +113,11 @@ export interface I18n {
   coreBeliefs: string;
   lifePhilosophy: string;
   pastTrauma: string;
-  liveDashboard: string,
-  liveDashboardDesc: string,
+  liveDashboard: string;
+  liveDashboardDesc: string;
+  apiKey: string;
+  apiKeyPlaceholder: string;
+  apiKeyDesc: string;
 }
 
 const en: I18n = {
@@ -228,6 +231,9 @@ const en: I18n = {
   pastTrauma: "Past Trauma (if any)",
   liveDashboard: 'Live Dashboard',
   liveDashboardDesc: 'Real-time monitoring of Agent Matrix values during the conversation.',
+  apiKey: 'Google AI API Key',
+  apiKeyPlaceholder: 'Enter your API Key',
+  apiKeyDesc: 'Your key is used only for this session and is not stored.',
 };
 
 const vi: I18n = {
@@ -341,6 +347,9 @@ const vi: I18n = {
   pastTrauma: "Vết thương tâm lý (nếu có)",
   liveDashboard: 'Bảng điều khiển trực tiếp',
   liveDashboardDesc: 'Theo dõi chỉ số Matrix của Agent theo thời gian thực.',
+  apiKey: 'Google AI API Key',
+  apiKeyPlaceholder: 'Nhập API Key của bạn',
+  apiKeyDesc: 'Key của bạn chỉ được dùng cho phiên này và không được lưu trữ.',
 };
 
 export const i18n = { en, vi };

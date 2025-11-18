@@ -16,7 +16,8 @@ import {
   Palette,
   Clock,
   Users,
-  Download
+  Download,
+  KeyRound
 } from 'lucide-react';
 
 import type { Theme, Message } from '@/app/page';
@@ -69,6 +70,8 @@ interface ControlPanelProps {
   t: I18n;
   leisurelyChat: boolean;
   setLeisurelyChat: Dispatch<SetStateAction<boolean>>;
+  apiKey: string;
+  setApiKey: Dispatch<SetStateAction<string>>;
 }
 
 export function ControlPanel({
@@ -102,6 +105,8 @@ export function ControlPanel({
   t,
   leisurelyChat,
   setLeisurelyChat,
+  apiKey,
+  setApiKey
 }: ControlPanelProps) {
   return (
     <div className="flex h-screen flex-col border-r bg-card">
@@ -114,6 +119,8 @@ export function ControlPanel({
             setTheme={setTheme}
             leisurelyChat={leisurelyChat}
             setLeisurelyChat={setLeisurelyChat}
+            apiKey={apiKey}
+            setApiKey={setApiKey}
             t={t}
         />
       </header>
@@ -323,13 +330,15 @@ function ParameterSlider({
     )
 }
 
-function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, t }: {
+function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, apiKey, setApiKey, t }: {
     language: Language;
     setLanguage: Dispatch<SetStateAction<Language>>;
     theme: Theme;
     setTheme: Dispatch<SetStateAction<Theme>>;
     leisurelyChat: boolean;
     setLeisurelyChat: Dispatch<SetStateAction<boolean>>;
+    apiKey: string;
+    setApiKey: Dispatch<SetStateAction<string>>;
     t: I18n;
 }) {
     return (
@@ -358,6 +367,16 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
                             <SelectItem value="en">English</SelectItem>
                         </SelectContent>
                        </Select>
+                    </div>
+                     <div className="space-y-3">
+                        <Label className="flex items-center gap-2"><KeyRound /> {t.apiKey}</Label>
+                        <Input 
+                            type="password"
+                            placeholder={t.apiKeyPlaceholder}
+                            value={apiKey}
+                            onChange={(e) => setApiKey(e.target.value)}
+                        />
+                        <p className="text-xs text-muted-foreground">{t.apiKeyDesc}</p>
                     </div>
                     <div className="space-y-3">
                         <Label className="flex items-center gap-2"><Palette/> {t.theme}</Label>
