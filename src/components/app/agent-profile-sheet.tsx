@@ -113,17 +113,17 @@ export function AgentProfileSheet({
           <Pencil className="h-4 w-4" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-2xl">
+      <SheetContent className="w-full sm:max-w-2xl flex flex-col">
         <SheetHeader>
           <SheetTitle>{t.editAgent} {agentNum}: {profile.soul.basic.persona.name}</SheetTitle>
           <SheetDescription>{t.editAgentDesc}</SheetDescription>
         </SheetHeader>
-        <Tabs defaultValue="soul" className="mt-4 h-[calc(100%-8rem)]">
+        <Tabs defaultValue="soul" className="mt-4 flex-1 flex flex-col overflow-hidden">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="soul">{t.agentSoul}</TabsTrigger>
             <TabsTrigger value="matrix">{t.agentMatrix}</TabsTrigger>
           </TabsList>
-          <ScrollArea className="h-full pr-4">
+          <ScrollArea className="flex-1 mt-4 pr-4">
             <TabsContent value="soul" className="py-4">
               <div className="space-y-6">
                 <Collapsible defaultOpen>
@@ -230,7 +230,7 @@ export function AgentProfileSheet({
           </ScrollArea>
         </Tabs>
 
-        <SheetFooter className="absolute bottom-0 right-0 w-full p-6 bg-background border-t">
+        <SheetFooter className="mt-auto border-t pt-6">
           <SheetClose asChild>
             <Button>{t.done}</Button>
           </SheetClose>
