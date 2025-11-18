@@ -16,6 +16,8 @@ export interface Message {
 
 export type Theme = 'light' | 'dark' | 'system';
 
+const AVG_READING_SPEED_SECONDS_PER_WORD = 0.4;
+
 export default function Home() {
   const [language, setLanguage] = useState<Language>('vi');
   const t = i18n[language];
@@ -38,6 +40,7 @@ export default function Home() {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   const [theme, setTheme] = useState<Theme>('light');
+  const [leisurelyChat, setLeisurelyChat] = useState(true);
 
 
   const isRunningRef = useRef(false);
@@ -178,6 +181,18 @@ export default function Home() {
         break;
       }
 
+      if (leisurelyChat && currentHistory.length > 0) {
+        const lastMessage = currentHistory[currentHistory.length - 1];
+        const wordCount = lastMessage.text.split(/\s+/).length;
+        const delay = wordCount * AVG_READING_SPEED_SECONDS_PER_WORD * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+
+      if (!isRunningRef.current) {
+        toast({ title: t.conversationStopped, description: t.conversationStoppedManually });
+        break;
+      }
+
       const prompt = constructPrompt(currentAgentName, currentHistory);
       const response = await generateChatResponseAction(prompt);
 
@@ -233,7 +248,9 @@ export default function Home() {
       exchanges,
       chatLog,
       language,
-      elapsedTime, // Save elapsed time
+      elapsedTime,
+      theme,
+      leisurelyChat,
     };
     const blob = new Blob([JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -274,7 +291,9 @@ export default function Home() {
         setExchanges(loadedData.exchanges || [5]);
         setChatLog(loadedData.chatLog || []);
         setLanguage(loadedData.language || 'vi');
-        setElapsedTime(loadedData.elapsedTime || 0); // Load elapsed time
+        setElapsedTime(loadedData.elapsedTime || 0);
+        setTheme(loadedData.theme || 'light');
+        setLeisurelyChat(loadedData.leisurelyChat === undefined ? true : loadedData.leisurelyChat);
 
         toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
       } catch (error) {
@@ -323,6 +342,8 @@ export default function Home() {
           theme={theme}
           setTheme={setTheme}
           chatLog={chatLog}
+          leisurelyChat={leisurelyChat}
+          setLeisurelyChat={setLeisurelyChat}
           t={t}
         />
         <ChatDisplay 
@@ -345,3 +366,5 @@ export default function Home() {
     </main>
   );
 }
+
+    

@@ -17,6 +17,7 @@ import {
   Pencil,
   Languages,
   Palette,
+  Clock,
 } from 'lucide-react';
 
 import type { Theme, Message } from '@/app/page';
@@ -32,6 +33,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { i18n, Language, type I18n } from '@/lib/i18n';
+import { Switch } from '@/components/ui/switch';
 
 interface ControlPanelProps {
   apiKey: string;
@@ -66,6 +68,8 @@ interface ControlPanelProps {
   setTheme: Dispatch<SetStateAction<Theme>>;
   chatLog: Message[];
   t: I18n;
+  leisurelyChat: boolean;
+  setLeisurelyChat: Dispatch<SetStateAction<boolean>>;
 }
 
 export function ControlPanel({
@@ -101,6 +105,8 @@ export function ControlPanel({
   setTheme,
   chatLog,
   t,
+  leisurelyChat,
+  setLeisurelyChat,
 }: ControlPanelProps) {
   return (
     <div className="flex h-screen flex-col border-r bg-card">
@@ -111,6 +117,8 @@ export function ControlPanel({
             setLanguage={setLanguage}
             theme={theme}
             setTheme={setTheme}
+            leisurelyChat={leisurelyChat}
+            setLeisurelyChat={setLeisurelyChat}
             t={t}
         />
       </header>
@@ -238,7 +246,7 @@ export function ControlPanel({
             ) : (
                 <Button className="w-full" onClick={onStart}>
                 <Play />
-                {t.startConversation}
+                {chatLog.length > 0 ? t.continueConversation : t.startConversation}
                 </Button>
             )}
             <Button variant="outline" onClick={onReset} disabled={isGenerating}>
@@ -378,11 +386,13 @@ function ParameterSlider({
     )
 }
 
-function SettingsDialog({ language, setLanguage, theme, setTheme, t }: {
+function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, t }: {
     language: Language;
     setLanguage: Dispatch<SetStateAction<Language>>;
     theme: Theme;
     setTheme: Dispatch<SetStateAction<Theme>>;
+    leisurelyChat: boolean;
+    setLeisurelyChat: Dispatch<SetStateAction<boolean>>;
     t: I18n;
 }) {
     return (
@@ -429,6 +439,19 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, t }: {
                             </div>
                         </RadioGroup>
                     </div>
+                    <div className="space-y-3">
+                        <Label className="flex items-center gap-2"><Clock /> {t.leisurelyChat}</Label>
+                         <div className="flex items-center space-x-2">
+                            <Switch
+                                id="leisurely-mode"
+                                checked={leisurelyChat}
+                                onCheckedChange={setLeisurelyChat}
+                            />
+                            <Label htmlFor="leisurely-mode" className="text-sm font-normal text-muted-foreground">
+                                {t.leisurelyChatDesc}
+                            </Label>
+                        </div>
+                    </div>
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
@@ -439,3 +462,5 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, t }: {
         </Dialog>
     );
 }
+
+    

@@ -1,3 +1,4 @@
+
 // src/lib/i18n.ts
 
 export type Language = 'en' | 'vi';
@@ -54,6 +55,7 @@ export interface I18n {
   apiKeyPlaceholder: string;
   stop: string;
   startConversation: string;
+  continueConversation: string;
   load: string;
   save: string;
   settings: string;
@@ -63,6 +65,8 @@ export interface I18n {
   light: string;
   dark: string;
   system: string;
+  leisurelyChat: string;
+  leisurelyChatDesc: string;
 }
 
 const en: I18n = {
@@ -117,6 +121,7 @@ const en: I18n = {
   apiKeyPlaceholder: 'Enter your API key',
   stop: 'Stop',
   startConversation: 'Start Conversation',
+  continueConversation: 'Continue Conversation',
   load: 'Load',
   save: 'Save',
   settings: 'Settings',
@@ -126,6 +131,8 @@ const en: I18n = {
   light: 'Light',
   dark: 'Dark',
   system: 'System',
+  leisurelyChat: 'Leisurely Chat',
+  leisurelyChatDesc: 'When enabled, adds a realistic reading-time delay between messages.',
 };
 
 const vi: I18n = {
@@ -179,7 +186,8 @@ const vi: I18n = {
   apiKeyDesc: 'Nhập Google AI API key của bạn để cung cấp năng lượng cho cuộc trò chuyện.',
   apiKeyPlaceholder: 'Nhập API key của bạn',
   stop: 'Dừng',
-  startConversation: 'Bắt đầu cuộc trò chuyện',
+  startConversation: 'Bắt đầu',
+  continueConversation: 'Tiếp tục',
   load: 'Tải',
   save: 'Lưu',
   settings: 'Cài đặt',
@@ -189,6 +197,10 @@ const vi: I18n = {
   light: 'Sáng',
   dark: 'Tối',
   system: 'Hệ thống',
+  leisurelyChat: 'Chat thong thả',
+  leisurelyChatDesc: 'Khi bật, thêm độ trễ mô phỏng thời gian đọc thực tế giữa các tin nhắn.',
 };
 
 export const i18n = { en, vi };
+
+    
