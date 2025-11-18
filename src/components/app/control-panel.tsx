@@ -76,109 +76,111 @@ export function ControlPanel({
       <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
         <h1 className="text-lg font-semibold">Dualogue Controls</h1>
       </header>
-      <ScrollArea className="flex-1">
-        <div className="flex flex-col gap-6 p-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" /> Conversation Setup
-              </CardTitle>
-              <CardDescription>Define the starting point for the AI agents.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="topic">Topic / Starting Prompt</Label>
-                <Textarea
-                  id="topic"
-                  placeholder="e.g., The ethics of artificial intelligence..."
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
-                  rows={4}
+      <div className="flex-1 overflow-y-auto">
+        <ScrollArea className="h-full">
+          <div className="flex flex-col gap-6 p-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" /> Conversation Setup
+                </CardTitle>
+                <CardDescription>Define the starting point for the AI agents.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label htmlFor="topic">Topic / Starting Prompt</Label>
+                  <Textarea
+                    id="topic"
+                    placeholder="e.g., The ethics of artificial intelligence..."
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                    rows={4}
+                    disabled={isGenerating}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid gap-6">
+              <AgentCard
+                agentNum={1}
+                personality={personality1}
+                setPersonality={setPersonality1}
+                onGeneratePersonality={onGeneratePersonality}
+                isGenerating={isGenerating}
+              />
+              <AgentCard
+                agentNum={2}
+                personality={personality2}
+                setPersonality={setPersonality2}
+                onGeneratePersonality={onGeneratePersonality}
+                isGenerating={isGenerating}
+              />
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5" /> Model Parameters
+                </CardTitle>
+                <CardDescription>Fine-tune the behavior of the AI models.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <ParameterSlider
+                  label="Temperature"
+                  value={temperature}
+                  onValueChange={setTemperature}
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  description="Controls randomness. Lower is more deterministic."
                   disabled={isGenerating}
                 />
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid gap-6">
-            <AgentCard
-              agentNum={1}
-              personality={personality1}
-              setPersonality={setPersonality1}
-              onGeneratePersonality={onGeneratePersonality}
-              isGenerating={isGenerating}
-            />
-            <AgentCard
-              agentNum={2}
-              personality={personality2}
-              setPersonality={setPersonality2}
-              onGeneratePersonality={onGeneratePersonality}
-              isGenerating={isGenerating}
-            />
+                <ParameterSlider
+                  label="Max Tokens"
+                  value={maxTokens}
+                  onValueChange={setMaxTokens}
+                  min={64}
+                  max={1024}
+                  step={8}
+                  description="Maximum length of each AI response."
+                  disabled={isGenerating}
+                />
+                <ParameterSlider
+                  label="Exchanges"
+                  value={exchanges}
+                  onValueChange={setExchanges}
+                  min={1}
+                  max={10}
+                  step={1}
+                  description="Number of back-and-forth turns in the conversation."
+                  disabled={isGenerating}
+                />
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <KeyRound className="h-5 w-5" /> API Key
+                </CardTitle>
+                <CardDescription>Enter your Google AI API key to power the conversation.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Input
+                  id="api-key"
+                  type="password"
+                  placeholder="Enter your API key"
+                  value={apiKey}
+                  onChange={setApiKey}
+                  disabled={isGenerating}
+                />
+              </CardContent>
+            </Card>
           </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" /> Model Parameters
-              </CardTitle>
-              <CardDescription>Fine-tune the behavior of the AI models.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <ParameterSlider
-                label="Temperature"
-                value={temperature}
-                onValueChange={setTemperature}
-                min={0}
-                max={1}
-                step={0.1}
-                description="Controls randomness. Lower is more deterministic."
-                disabled={isGenerating}
-              />
-              <ParameterSlider
-                label="Max Tokens"
-                value={maxTokens}
-                onValueChange={setMaxTokens}
-                min={64}
-                max={1024}
-                step={8}
-                description="Maximum length of each AI response."
-                disabled={isGenerating}
-              />
-              <ParameterSlider
-                label="Exchanges"
-                value={exchanges}
-                onValueChange={setExchanges}
-                min={1}
-                max={10}
-                step={1}
-                description="Number of back-and-forth turns in the conversation."
-                disabled={isGenerating}
-              />
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <KeyRound className="h-5 w-5" /> API Key
-              </CardTitle>
-              <CardDescription>Enter your Google AI API key to power the conversation.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Input
-                id="api-key"
-                type="password"
-                placeholder="Enter your API key"
-                value={apiKey}
-                onChange={setApiKey}
-                disabled={isGenerating}
-              />
-            </CardContent>
-          </Card>
-        </div>
-      </ScrollArea>
-      <footer className="flex flex-col gap-2 border-t p-4">
+        </ScrollArea>
+      </div>
+      <footer className="flex shrink-0 flex-col gap-2 border-t p-4">
         <div className="flex w-full gap-2">
           {isGenerating ? (
             <Button variant="destructive" className="w-full" onClick={onStop} disabled={isStopping}>
