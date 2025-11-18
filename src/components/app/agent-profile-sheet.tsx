@@ -46,26 +46,35 @@ export function AgentProfileSheet({
   t,
 }: AgentProfileSheetProps) {
 
-  const handleSoulChange = <T extends keyof AgentSoul, U extends keyof AgentSoul[T], V extends keyof AgentSoul[T][U]>(
+  const handleSoulChange = <T extends keyof AgentSoul, U extends keyof AgentSoul[T]>(
     category: T,
     subCategory: U,
-    field: V,
-    value: AgentSoul[T][U][V]
+    field: keyof AgentSoul[T][U],
+    value: any
   ) => {
-    setProfile(prev => ({
+    setProfile(prev => {
+      const newSoul = { ...prev.soul };
+      (newSoul[category][subCategory] as any)[field] = value;
+      return { ...prev, soul: newSoul };
+    });
+  };
+
+  const handleSimpleSoulChange = <T extends keyof AgentSoul, U extends keyof AgentSoul[T]>(
+    category: T,
+    field: U,
+    value: AgentSoul[T][U]
+  ) => {
+     setProfile(prev => ({
       ...prev,
       soul: {
         ...prev.soul,
         [category]: {
           ...prev.soul[category],
-          [subCategory]: {
-            ...prev.soul[category][subCategory],
-            [field]: value
-          }
+          [field]: value
         }
       }
     }));
-  };
+  }
 
   const handleSoulAdvancedChange = (field: keyof AgentSoul['advanced'], value: string | number) => {
      setProfile(prev => ({
@@ -130,10 +139,10 @@ export function AgentProfileSheet({
                       <InputWithLabel label={t.nationality} value={profile.soul.basic.persona.nationality} onChange={e => handleSoulChange('basic', 'persona', 'nationality', e.target.value)} disabled={isGenerating} />
                       <InputWithLabel label={t.location} value={profile.soul.basic.persona.location} onChange={e => handleSoulChange('basic', 'persona', 'location', e.target.value)} disabled={isGenerating} />
                     </div>
-                    <SliderWithLabel label={t.curiosityIndex} value={[profile.soul.basic.curiosityIndex]} onValueChange={v => handleSoulChange('basic', 'curiosityIndex', '' as any, v[0])} disabled={isGenerating} />
+                    <SliderWithLabel label={t.curiosityIndex} value={[profile.soul.basic.curiosityIndex]} onValueChange={v => handleSimpleSoulChange('basic', 'curiosityIndex', v[0])} disabled={isGenerating} />
                     <div className="space-y-2">
                         <Label>{t.summaryDiary}</Label>
-                        <Textarea placeholder={t.personalityPlaceholder} value={profile.soul.basic.summaryDiary} onChange={e => handleSoulChange('basic', 'summaryDiary', '' as any, e.target.value)} rows={8} disabled={isGenerating}/>
+                        <Textarea placeholder={t.personalityPlaceholder} value={profile.soul.basic.summaryDiary} onChange={e => handleSimpleSoulChange('basic', 'summaryDiary', e.target.value)} rows={8} disabled={isGenerating}/>
                     </div>
                     <Button variant="outline" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating}>
                         <Sparkles className="mr-2 h-4 w-4" />
@@ -174,8 +183,8 @@ export function AgentProfileSheet({
                   <CollapsibleContent className="p-4 space-y-4 border border-t-0 rounded-b-md">
                     <SliderWithLabel label={t.health} value={[profile.matrix.emotionIndex.health]} onValueChange={v => handleMatrixChange('emotionIndex', 'health', v[0])} disabled={isGenerating} />
                     <SliderWithLabel label={t.appearance} value={[profile.matrix.emotionIndex.appearance]} onValueChange={v => handleMatrixChange('emotionIndex', 'appearance', v[0])} disabled={isGenerating} />
-                    <SliderWithLabel label={t.iq} value={[profile.matrix.emotionIndex.iq]} max={200} onValueChange={v => handleMatrixChange('emotionIndex', 'iq', v[0])} disabled={isGenerating} />
-                    <SliderWithLabel label={t.eq} value={[profile.matrix.emotionIndex.eq]} max={200} onValueChange={v => handleMatrixChange('emotionIndex', 'eq', v[0])} disabled={isGenerating} />
+                    <SliderWithLabel label={t.iq} max={200} value={[profile.matrix.emotionIndex.iq]} onValueChange={v => handleMatrixChange('emotionIndex', 'iq', v[0])} disabled={isGenerating} />
+                    <SliderWithLabel label={t.eq} max={200} value={[profile.matrix.emotionIndex.eq]} onValueChange={v => handleMatrixChange('emotionIndex', 'eq', v[0])} disabled={isGenerating} />
                     <SliderWithLabel label={t.antipathy} value={[profile.matrix.emotionIndex.antipathy]} onValueChange={v => handleMatrixChange('emotionIndex', 'antipathy', v[0])} disabled={isGenerating} />
                     <InputWithLabel label={t.nextIntention} value={profile.matrix.emotionIndex.nextIntention} onChange={e => handleMatrixChange('emotionIndex', 'nextIntention', e.target.value)} disabled={isGenerating} />
                   </CollapsibleContent>
@@ -260,3 +269,5 @@ function SliderWithLabel(props: React.ComponentProps<typeof Slider> & { label: s
     </div>
   );
 }
+
+    
