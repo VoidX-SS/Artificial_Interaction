@@ -24,8 +24,10 @@ export default function Home() {
   const [chatLog, setChatLog] = useState<Message[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
 
   const isRunningRef = useRef(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const savedApiKey = localStorage.getItem('dualogue-api-key');
@@ -33,6 +35,26 @@ export default function Home() {
       setApiKey(savedApiKey);
     }
   }, []);
+
+  useEffect(() => {
+    if (isGenerating) {
+      timerRef.current = setInterval(() => {
+        setElapsedTime(prevTime => prevTime + 1);
+      }, 1000);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [isGenerating]);
+
 
   const handleApiKeyChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newApiKey = e.target.value;
@@ -93,6 +115,7 @@ export default function Home() {
       return;
     }
     setChatLog([]);
+    setElapsedTime(0);
     setIsGenerating(true);
     isRunningRef.current = true;
 
@@ -142,6 +165,7 @@ export default function Home() {
   const handleReset = () => {
     handleStop();
     setChatLog([]);
+    setElapsedTime(0);
     toast({ title: 'Conversation Reset', description: 'The chat has been cleared.' });
   };
   
@@ -170,7 +194,12 @@ export default function Home() {
           onReset={handleReset}
           onGeneratePersonality={handleGeneratePersonality}
         />
-        <ChatDisplay chatLog={chatLog} isGenerating={isGenerating} />
+        <ChatDisplay 
+          chatLog={chatLog} 
+          isGenerating={isGenerating} 
+          messageCount={chatLog.length} 
+          elapsedTime={elapsedTime}
+        />
       </div>
     </main>
   );

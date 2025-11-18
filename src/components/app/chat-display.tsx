@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Loader2 } from 'lucide-react';
+import { MessageSquare, Loader2, Clock, Bot } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/components/app/chat-message';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,13 +9,31 @@ import type { Message } from '@/app/page';
 interface ChatDisplayProps {
   chatLog: Message[];
   isGenerating: boolean;
+  messageCount: number;
+  elapsedTime: number;
 }
 
-export function ChatDisplay({ chatLog, isGenerating }: ChatDisplayProps) {
+const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const secs = (seconds % 60).toString().padStart(2, '0');
+    return `${mins}:${secs}`;
+}
+
+export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime }: ChatDisplayProps) {
   return (
     <div className="flex h-full flex-col">
-       <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-card px-4">
+       <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card px-4">
         <h1 className="text-lg font-semibold">Conversation</h1>
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+                <Bot className="h-4 w-4" />
+                <span>{messageCount} Messages</span>
+            </div>
+            <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                <span>{formatTime(elapsedTime)}</span>
+            </div>
+        </div>
       </header>
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">

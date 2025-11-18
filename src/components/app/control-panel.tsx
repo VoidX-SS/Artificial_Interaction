@@ -76,8 +76,7 @@ export function ControlPanel({
       <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
         <h1 className="text-lg font-semibold">Dualogue Controls</h1>
       </header>
-      <div className="flex-1 overflow-y-auto">
-        <ScrollArea className="h-full">
+      <ScrollArea className="flex-1">
           <div className="flex flex-col gap-6 p-4">
             <Card>
               <CardHeader>
@@ -178,8 +177,7 @@ export function ControlPanel({
               </CardContent>
             </Card>
           </div>
-        </ScrollArea>
-      </div>
+      </ScrollArea>
       <footer className="shrink-0 border-t p-4">
         <div className="flex w-full flex-col gap-2">
             <div className="flex w-full gap-2">
