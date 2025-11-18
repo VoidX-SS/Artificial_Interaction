@@ -35,7 +35,7 @@ export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, 
   
   return (
     <div className="flex h-screen flex-col bg-background">
-       <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
+       <header className="flex h-14 shrink-0 items-center justify-between border-b bg-background px-4">
         <h1 className="text-lg font-semibold">{t.conversation}</h1>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
