@@ -148,18 +148,21 @@ export default function Home() {
       return;
     }
     
-    // Don't reset chat log to allow continuation
-    // setChatLog([]);
     if (!isGenerating) {
-        setElapsedTime(0);
+        // Only reset time if starting fresh, not continuing
+        if (chatLog.length === 0) {
+            setElapsedTime(0);
+        }
     }
     setIsGenerating(true);
     isRunningRef.current = true;
 
     let currentHistory: Message[] = [...chatLog];
+    const initialChatLength = chatLog.length;
+
     let currentAgentName = agent1Name;
-    if (chatLog.length > 0) {
-      const lastSpeaker = chatLog[chatLog.length - 1].agent;
+    if (currentHistory.length > 0) {
+      const lastSpeaker = currentHistory[currentHistory.length - 1].agent;
       currentAgentName = lastSpeaker === agent1Name ? agent2Name : agent1Name;
     }
 
@@ -167,6 +170,11 @@ export default function Home() {
     for (let i = 0; i < exchanges[0] * 2; i++) {
       if (!isRunningRef.current) {
         toast({ title: t.conversationStopped, description: t.conversationStoppedManually });
+        break;
+      }
+      
+      // Check if we have already completed the required exchanges since starting
+      if (currentHistory.length >= initialChatLength + exchanges[0] * 2) {
         break;
       }
 
@@ -179,7 +187,9 @@ export default function Home() {
           title: t.errorFrom(currentAgentName),
           description: response,
         });
-        break; 
+        setIsGenerating(false);
+        isRunningRef.current = false;
+        return; 
       }
 
       const newMessage: Message = { agent: currentAgentName, text: response };
@@ -187,11 +197,6 @@ export default function Home() {
       setChatLog(prev => [...prev, newMessage]);
 
       currentAgentName = currentAgentName === agent1Name ? agent2Name : agent1Name;
-      
-      // Stop if we have generated the requested number of exchanges from the point of starting
-      if (currentHistory.length >= chatLog.length + exchanges[0] * 2) {
-        break;
-      }
     }
 
     setIsGenerating(false);
@@ -228,6 +233,7 @@ export default function Home() {
       exchanges,
       chatLog,
       language,
+      elapsedTime, // Save elapsed time
     };
     const blob = new Blob([JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -268,7 +274,8 @@ export default function Home() {
         setExchanges(loadedData.exchanges || [5]);
         setChatLog(loadedData.chatLog || []);
         setLanguage(loadedData.language || 'vi');
-        
+        setElapsedTime(loadedData.elapsedTime || 0); // Load elapsed time
+
         toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
       } catch (error) {
         toast({ variant: 'destructive', title: t.loadFailed, description: t.loadFailedDesc});
