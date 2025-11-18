@@ -25,7 +25,7 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 
 interface ControlPanelProps {
   apiKey: string;
@@ -73,7 +73,7 @@ export function ControlPanel({
   onGeneratePersonality,
 }: ControlPanelProps) {
   return (
-    <div className="flex h-full flex-col border-r bg-card">
+    <div className="flex h-screen flex-col border-r bg-card">
       <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
         <h1 className="text-lg font-semibold">Dualogue Controls</h1>
       </header>
@@ -239,37 +239,41 @@ function AgentCard({
                   <CardDescription>Define this agent's personality.</CardDescription>
               </div>
             </div>
-            <Popover>
-              <PopoverTrigger asChild>
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" disabled={isGenerating}>
                   <Pencil className="h-4 w-4" />
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none">Personality</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Describe the personality for Agent {agentNum}.
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <Textarea
-                      id={`personality-${agentNum}`}
-                      placeholder={`e.g., A skeptical philosopher...`}
-                      value={personality}
-                      onChange={(e) => setPersonality(e.target.value)}
-                      rows={5}
-                      disabled={isGenerating}
-                    />
-                    <Button variant="ghost" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating}>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Generate with AI
-                    </Button>
-                  </div>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Edit Agent {agentNum} Personality</DialogTitle>
+                  <DialogDescription>
+                    Describe the personality for Agent {agentNum}. You can write a detailed description or use the AI to generate one.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <Textarea
+                    id={`personality-${agentNum}`}
+                    placeholder={`e.g., A skeptical philosopher...`}
+                    value={personality}
+                    onChange={(e) => setPersonality(e.target.value)}
+                    rows={8}
+                    disabled={isGenerating}
+                    className="col-span-3"
+                  />
+                  <Button variant="ghost" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating} className="col-span-3">
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Generate with AI
+                  </Button>
                 </div>
-              </PopoverContent>
-            </Popover>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button>Done</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardHeader>
       </Card>
@@ -306,5 +310,7 @@ function ParameterSlider({
         </div>
     )
 }
+
+    
 
     
