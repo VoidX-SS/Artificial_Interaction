@@ -119,7 +119,7 @@ export const initialAgent1Profile: AgentProfile = {
             ...JSON.parse(JSON.stringify(emptyProfile.soul.basic)),
             persona: {
                 ...JSON.parse(JSON.stringify(emptyProfile.soul.basic.persona)),
-                name: 'Pragmatic Scientist',
+                name: 'Agent 1',
             },
             summaryDiary: 'A pragmatic and cautious scientist who weighs the risks and ethical implications of every decision.'
         },
@@ -134,9 +134,11 @@ export const initialAgent2Profile: AgentProfile = {
             ...JSON.parse(JSON.stringify(emptyProfile.soul.basic)),
             persona: {
                 ...JSON.parse(JSON.stringify(emptyProfile.soul.basic.persona)),
-                name: 'Visionary Artist',
+                name: 'Agent 2',
             },
             summaryDiary: 'A visionary artist and dreamer who sees boundless potential and beauty in the cosmos.'
         },
     }
 };
+
+    

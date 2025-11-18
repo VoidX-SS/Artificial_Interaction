@@ -40,7 +40,7 @@ export default function Home() {
   const [isStopping, setIsStopping] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('system');
   const [leisurelyChat, setLeisurelyChat] = useState(true);
   const [apiKey, setApiKey] = useState('');
 
@@ -473,3 +473,5 @@ export default function Home() {
     </main>
   );
 }
+
+    
