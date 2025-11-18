@@ -5,6 +5,7 @@ import { MessageSquare, Loader2, Clock, Bot } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/components/app/chat-message';
 import type { Message } from '@/app/page';
+import type { I18n } from '@/lib/i18n';
 
 interface ChatDisplayProps {
   chatLog: Message[];
@@ -13,6 +14,7 @@ interface ChatDisplayProps {
   elapsedTime: number;
   agent1Name: string;
   agent2Name: string;
+  t: I18n;
 }
 
 const formatTime = (seconds: number) => {
@@ -21,15 +23,15 @@ const formatTime = (seconds: number) => {
     return `${mins}:${secs}`;
 }
 
-export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, agent1Name, agent2Name }: ChatDisplayProps) {
+export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, agent1Name, agent2Name, t }: ChatDisplayProps) {
   return (
     <div className="flex h-full flex-col">
-       <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card px-4">
-        <h1 className="text-lg font-semibold">Conversation</h1>
+       <header className="flex h-14 shrink-0 items-center justify-between border-b bg-background px-4">
+        <h1 className="text-lg font-semibold">{t.conversation}</h1>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
                 <Bot className="h-4 w-4" />
-                <span>{messageCount} Messages</span>
+                <span>{messageCount} {t.messages}</span>
             </div>
             <div className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
@@ -44,9 +46,9 @@ export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, 
               <div className="flex h-[calc(100vh-10rem)] items-center justify-center">
                 <div className="text-center text-muted-foreground">
                   <MessageSquare className="mx-auto h-12 w-12" />
-                  <p className="mt-4 text-lg">The conversation will appear here.</p>
+                  <p className="mt-4 text-lg">{t.conversationAppearHere}</p>
                   <p className="mt-1 text-sm">
-                    Configure the settings and press "Start Conversation".
+                    {t.pressStart}
                   </p>
                 </div>
               </div>
@@ -65,7 +67,7 @@ export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, 
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
                             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                         </div>
-                        <div className="w-full text-muted-foreground">Typing...</div>
+                        <div className="w-full text-muted-foreground">{t.typing}...</div>
                     </div>
                  )}
               </div>

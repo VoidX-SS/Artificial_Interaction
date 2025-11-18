@@ -7,24 +7,27 @@ import { ControlPanel } from '@/components/app/control-panel';
 import { ChatDisplay } from '@/components/app/chat-display';
 import { useToast } from '@/hooks/use-toast';
 import { generatePersonalityAction, generateChatResponseAction } from '@/app/actions';
+import { i18n, Language } from '@/lib/i18n';
 
 export interface Message {
   agent: string;
   text: string;
 }
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'system';
 
 export default function Home() {
+  const [language, setLanguage] = useState<Language>('vi');
+  const t = i18n[language];
   const { toast } = useToast();
   const [apiKey, setApiKey] = useState('');
-  const [topic, setTopic] = useState('The future of space exploration and its impact on humanity.');
+  const [topic, setTopic] = useState(t.defaultTopic);
   
   const [agent1Name, setAgent1Name] = useState('Agent 1');
   const [agent2Name, setAgent2Name] = useState('Agent 2');
 
-  const [personality1, setPersonality1] = useState('A pragmatic and cautious scientist who weighs the risks and ethical implications of every decision.');
-  const [personality2, setPersonality2] = useState('A visionary artist and dreamer who sees boundless potential and beauty in the cosmos.');
+  const [personality1, setPersonality1] = useState(t.defaultPersonality1);
+  const [personality2, setPersonality2] = useState(t.defaultPersonality2);
   
   const [temperature, setTemperature] = useState([0.7]);
   const [maxWords, setMaxWords] = useState([250]);
@@ -34,8 +37,7 @@ export default function Home() {
   const [isStopping, setIsStopping] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const [language, setLanguage] = useState('English');
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
 
 
   const isRunningRef = useRef(false);
@@ -70,7 +72,17 @@ export default function Home() {
   }, [isGenerating]);
 
   useEffect(() => {
-    document.documentElement.className = theme;
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = (e: MediaQueryListEvent) => {
+        document.documentElement.className = e.matches ? 'dark' : 'light';
+      };
+      document.documentElement.className = mediaQuery.matches ? 'dark' : 'light';
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      document.documentElement.className = theme;
+    }
   }, [theme]);
 
 
@@ -85,8 +97,8 @@ export default function Home() {
     if (!description.trim()) {
       toast({
         variant: 'destructive',
-        title: 'Error',
-        description: `Please provide a description for Agent ${agentNum} personality.`,
+        title: t.error,
+        description: t.providePersonalityDesc(agentNum),
       });
       return;
     }
@@ -95,22 +107,23 @@ export default function Home() {
     if(generatedPersonality.startsWith('Error:')) {
       toast({
         variant: 'destructive',
-        title: 'Personality Generation Failed',
+        title: t.personalityGenerationFailed,
         description: generatedPersonality,
       });
     } else {
       setter(generatedPersonality);
       toast({
-        title: 'Personality Generated',
-        description: `Agent ${agentNum}'s personality has been updated.`,
+        title: t.personalityGenerated,
+        description: t.personalityUpdated(agentNum),
       });
     }
   };
 
   const constructPrompt = (currentAgentName: string, history: Message[]) => {
     const personality = currentAgentName === agent1Name ? personality1 : personality2;
+    const langInstruction = language === 'vi' ? 'The conversation must be in Vietnamese.' : 'The conversation must be in English.';
     let prompt = `Your personality is: ${personality}\n\n`;
-    prompt += `The conversation should be in ${language}.\n`;
+    prompt += `${langInstruction}\n`;
     prompt += `Your response must be a maximum of ${maxWords[0]} words.\n\n`;
     prompt += `Conversation Topic: ${topic}\n\n`;
     prompt += 'Conversation History:\n';
@@ -129,22 +142,31 @@ export default function Home() {
     if (!topic.trim()) {
       toast({
         variant: 'destructive',
-        title: 'Error',
-        description: 'Please provide a conversation topic.',
+        title: t.error,
+        description: t.provideTopic,
       });
       return;
     }
-    setChatLog([]);
-    setElapsedTime(0);
+    
+    // Don't reset chat log to allow continuation
+    // setChatLog([]);
+    if (!isGenerating) {
+        setElapsedTime(0);
+    }
     setIsGenerating(true);
     isRunningRef.current = true;
 
-    let currentHistory: Message[] = [];
+    let currentHistory: Message[] = [...chatLog];
     let currentAgentName = agent1Name;
+    if (chatLog.length > 0) {
+      const lastSpeaker = chatLog[chatLog.length - 1].agent;
+      currentAgentName = lastSpeaker === agent1Name ? agent2Name : agent1Name;
+    }
+
 
     for (let i = 0; i < exchanges[0] * 2; i++) {
       if (!isRunningRef.current) {
-        toast({ title: 'Conversation Stopped', description: 'The AI conversation has been manually stopped.' });
+        toast({ title: t.conversationStopped, description: t.conversationStoppedManually });
         break;
       }
 
@@ -154,7 +176,7 @@ export default function Home() {
       if (response.startsWith('Error:')) {
         toast({
           variant: 'destructive',
-          title: `Error from ${currentAgentName}`,
+          title: t.errorFrom(currentAgentName),
           description: response,
         });
         break; 
@@ -165,6 +187,11 @@ export default function Home() {
       setChatLog(prev => [...prev, newMessage]);
 
       currentAgentName = currentAgentName === agent1Name ? agent2Name : agent1Name;
+      
+      // Stop if we have generated the requested number of exchanges from the point of starting
+      if (currentHistory.length >= chatLog.length + exchanges[0] * 2) {
+        break;
+      }
     }
 
     setIsGenerating(false);
@@ -186,7 +213,7 @@ export default function Home() {
     handleStop();
     setChatLog([]);
     setElapsedTime(0);
-    toast({ title: 'Conversation Reset', description: 'The chat has been cleared.' });
+    toast({ title: t.conversationReset, description: t.chatCleared });
   };
 
   const handleSave = () => {
@@ -211,7 +238,7 @@ export default function Home() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast({ title: 'Session Saved', description: 'Your conversation has been saved.'});
+    toast({ title: t.sessionSaved, description: t.sessionSavedDesc });
   };
 
   const handleLoadClick = () => {
@@ -240,11 +267,11 @@ export default function Home() {
         setMaxWords(loadedData.maxWords || [250]);
         setExchanges(loadedData.exchanges || [5]);
         setChatLog(loadedData.chatLog || []);
-        setLanguage(loadedData.language || 'English');
+        setLanguage(loadedData.language || 'vi');
         
-        toast({ title: 'Session Loaded', description: 'Your conversation has been loaded.' });
+        toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
       } catch (error) {
-        toast({ variant: 'destructive', title: 'Load Failed', description: 'The selected file is not a valid session file.'});
+        toast({ variant: 'destructive', title: t.loadFailed, description: t.loadFailedDesc});
       }
     };
     reader.readAsText(file);
@@ -280,7 +307,6 @@ export default function Home() {
           isStopping={isStopping}
           onStart={handleStart}
           onStop={handleStop}
-  
           onReset={handleReset}
           onGeneratePersonality={handleGeneratePersonality}
           onSave={handleSave}
@@ -290,6 +316,7 @@ export default function Home() {
           theme={theme}
           setTheme={setTheme}
           chatLog={chatLog}
+          t={t}
         />
         <ChatDisplay 
           chatLog={chatLog} 
@@ -298,6 +325,7 @@ export default function Home() {
           elapsedTime={elapsedTime}
           agent1Name={agent1Name}
           agent2Name={agent2Name}
+          t={t}
         />
       </div>
       <input
