@@ -25,19 +25,16 @@ const formatTime = (seconds: number) => {
 }
 
 export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, agent1Name, agent2Name, t }: ChatDisplayProps) {
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const scrollViewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
-        if (viewport) {
-            viewport.scrollTop = viewport.scrollHeight;
-        }
+    if (scrollViewportRef.current) {
+        scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
     }
   }, [chatLog, isGenerating]);
   
   return (
-    <div className="flex h-full flex-col bg-background">
+    <div className="flex h-screen flex-col bg-background">
        <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
         <h1 className="text-lg font-semibold">{t.conversation}</h1>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -51,8 +48,8 @@ export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, 
             </div>
         </div>
       </header>
-      <div className="flex-1 overflow-y-auto">
-        <ScrollArea className="h-full" ref={scrollAreaRef}>
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full" viewportRef={scrollViewportRef}>
           <div className="p-4 md:p-6">
             {chatLog.length === 0 ? (
               <div className="flex h-[calc(100vh-10rem)] items-center justify-center">
