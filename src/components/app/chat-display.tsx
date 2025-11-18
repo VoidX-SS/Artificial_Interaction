@@ -1,9 +1,9 @@
+
 "use client";
 
 import { MessageSquare, Loader2, Clock, Bot } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/components/app/chat-message';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Message } from '@/app/page';
 
 interface ChatDisplayProps {
@@ -11,6 +11,8 @@ interface ChatDisplayProps {
   isGenerating: boolean;
   messageCount: number;
   elapsedTime: number;
+  agent1Name: string;
+  agent2Name: string;
 }
 
 const formatTime = (seconds: number) => {
@@ -19,7 +21,7 @@ const formatTime = (seconds: number) => {
     return `${mins}:${secs}`;
 }
 
-export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime }: ChatDisplayProps) {
+export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, agent1Name, agent2Name }: ChatDisplayProps) {
   return (
     <div className="flex h-full flex-col">
        <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card px-4">
@@ -51,7 +53,12 @@ export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime }
             ) : (
               <div className="space-y-6">
                 {chatLog.map((msg, index) => (
-                  <ChatMessage key={index} agent={msg.agent} text={msg.text} />
+                  <ChatMessage 
+                    key={index} 
+                    agent={msg.agent} 
+                    text={msg.text} 
+                    isAgent1={msg.agent === agent1Name}
+                  />
                 ))}
                  {isGenerating && (
                     <div className="flex items-center gap-3">

@@ -15,8 +15,11 @@ import {
   KeyRound,
   FileText,
   Pencil,
+  Languages,
+  Palette,
 } from 'lucide-react';
 
+import type { Theme, Message } from '@/app/page';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -26,12 +29,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 interface ControlPanelProps {
   apiKey: string;
   setApiKey: (e: ChangeEvent<HTMLInputElement>) => void;
   topic: string;
   setTopic: Dispatch<SetStateAction<string>>;
+  agent1Name: string;
+  setAgent1Name: Dispatch<SetStateAction<string>>;
+  agent2Name: string;
+  setAgent2Name: Dispatch<SetStateAction<string>>;
   personality1: string;
   setPersonality1: Dispatch<SetStateAction<string>>;
   personality2: string;
@@ -48,6 +58,13 @@ interface ControlPanelProps {
   onStop: () => void;
   onReset: () => void;
   onGeneratePersonality: (agentNum: 1 | 2) => void;
+  onSave: () => void;
+  onLoad: () => void;
+  language: string;
+  setLanguage: Dispatch<SetStateAction<string>>;
+  theme: Theme;
+  setTheme: Dispatch<SetStateAction<Theme>>;
+  chatLog: Message[];
 }
 
 export function ControlPanel({
@@ -55,6 +72,10 @@ export function ControlPanel({
   setApiKey,
   topic,
   setTopic,
+  agent1Name,
+  setAgent1Name,
+  agent2Name,
+  setAgent2Name,
   personality1,
   setPersonality1,
   personality2,
@@ -71,11 +92,24 @@ export function ControlPanel({
   onStop,
   onReset,
   onGeneratePersonality,
+  onSave,
+  onLoad,
+  language,
+  setLanguage,
+  theme,
+  setTheme,
+  chatLog
 }: ControlPanelProps) {
   return (
     <div className="flex h-screen flex-col border-r bg-card">
-      <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+      <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
         <h1 className="text-lg font-semibold">Dualogue Controls</h1>
+        <SettingsDialog 
+            language={language}
+            setLanguage={setLanguage}
+            theme={theme}
+            setTheme={setTheme}
+        />
       </header>
       <ScrollArea className="flex-1">
           <div className="flex flex-col gap-6 p-4">
@@ -104,6 +138,8 @@ export function ControlPanel({
             <div className="grid gap-6">
               <AgentCard
                 agentNum={1}
+                name={agent1Name}
+                setName={setAgent1Name}
                 personality={personality1}
                 setPersonality={setPersonality1}
                 onGeneratePersonality={onGeneratePersonality}
@@ -111,6 +147,8 @@ export function ControlPanel({
               />
               <AgentCard
                 agentNum={2}
+                name={agent2Name}
+                setName={setAgent2Name}
                 personality={personality2}
                 setPersonality={setPersonality2}
                 onGeneratePersonality={onGeneratePersonality}
@@ -198,10 +236,10 @@ export function ControlPanel({
             </Button>
             </div>
             <div className="grid grid-cols-2 gap-2">
-                <Button variant="secondary" disabled>
+                <Button variant="secondary" onClick={onLoad} disabled={isGenerating}>
                     <Upload /> Load
                 </Button>
-                <Button variant="secondary" disabled>
+                <Button variant="secondary" onClick={onSave} disabled={isGenerating || !chatLog.length}>
                     <Save /> Save
                 </Button>
             </div>
@@ -213,12 +251,16 @@ export function ControlPanel({
 
 function AgentCard({
     agentNum,
+    name,
+    setName,
     personality,
     setPersonality,
     onGeneratePersonality,
     isGenerating
   }: {
     agentNum: 1 | 2;
+    name: string;
+    setName: Dispatch<SetStateAction<string>>;
     personality: string;
     setPersonality: Dispatch<SetStateAction<string>>;
     onGeneratePersonality: (agentNum: 1 | 2) => void;
@@ -235,7 +277,7 @@ function AgentCard({
                 </AvatarFallback>
               </Avatar>
               <div>
-                  <CardTitle>Agent {agentNum}</CardTitle>
+                  <CardTitle>{name}</CardTitle>
                   <CardDescription>Define this agent's personality.</CardDescription>
               </div>
             </div>
@@ -245,26 +287,37 @@ function AgentCard({
                   <Pencil className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Edit Agent {agentNum} Personality</DialogTitle>
+                  <DialogTitle>Edit Agent {agentNum}</DialogTitle>
                   <DialogDescription>
-                    Describe the personality for Agent {agentNum}. You can write a detailed description or use the AI to generate one.
+                    Customize the agent's name and personality.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
-                  <Textarea
-                    id={`personality-${agentNum}`}
-                    placeholder={`e.g., A skeptical philosopher...`}
-                    value={personality}
-                    onChange={(e) => setPersonality(e.target.value)}
-                    rows={8}
-                    disabled={isGenerating}
-                    className="col-span-3"
-                  />
-                  <Button variant="ghost" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating} className="col-span-3">
+                  <div className="space-y-2">
+                    <Label htmlFor={`name-${agentNum}`}>Agent Name</Label>
+                    <Input
+                      id={`name-${agentNum}`}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      disabled={isGenerating}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`personality-${agentNum}`}>Personality</Label>
+                    <Textarea
+                      id={`personality-${agentNum}`}
+                      placeholder={`e.g., A skeptical philosopher...`}
+                      value={personality}
+                      onChange={(e) => setPersonality(e.target.value)}
+                      rows={8}
+                      disabled={isGenerating}
+                    />
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating}>
                     <Sparkles className="mr-2 h-4 w-4" />
-                    Generate with AI
+                    Generate Personality with AI
                   </Button>
                 </div>
                 <DialogFooter>
@@ -311,6 +364,63 @@ function ParameterSlider({
     )
 }
 
-    
-
-    
+function SettingsDialog({ language, setLanguage, theme, setTheme }: {
+    language: string;
+    setLanguage: Dispatch<SetStateAction<string>>;
+    theme: Theme;
+    setTheme: Dispatch<SetStateAction<Theme>>;
+}) {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <Settings className="h-5 w-5" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Settings</DialogTitle>
+                    <DialogDescription>
+                        Adjust application settings.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-6 py-4">
+                    <div className="space-y-3">
+                      <Label className="flex items-center gap-2"><Languages/> Chat Language</Label>
+                       <Select value={language} onValueChange={setLanguage}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="English">English</SelectItem>
+                            <SelectItem value="Vietnamese">Vietnamese</SelectItem>
+                            <SelectItem value="Spanish">Spanish</SelectItem>
+                            <SelectItem value="French">French</SelectItem>
+                            <SelectItem value="German">German</SelectItem>
+                            <SelectItem value="Japanese">Japanese</SelectItem>
+                        </SelectContent>
+                       </Select>
+                    </div>
+                    <div className="space-y-3">
+                        <Label className="flex items-center gap-2"><Palette/> Theme</Label>
+                        <RadioGroup value={theme} onValueChange={(value: string) => setTheme(value as Theme)} className="flex space-x-4">
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="light" id="light" />
+                                <Label htmlFor="light">Light</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="dark" id="dark" />
+                                <Label htmlFor="dark">Dark</Label>
+                            </div>
+                        </RadioGroup>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button>Done</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
