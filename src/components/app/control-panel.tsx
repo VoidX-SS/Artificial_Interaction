@@ -14,6 +14,7 @@ import {
   Settings,
   KeyRound,
   FileText,
+  Pencil,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface ControlPanelProps {
   apiKey: string;
@@ -225,32 +227,51 @@ function AgentCard({
     return (
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <Avatar>
-              <AvatarFallback className={agentNum === 1 ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}>
-                <Bot />
-              </AvatarFallback>
-            </Avatar>
-            <div className='w-full'>
-                <CardTitle>Agent {agentNum}</CardTitle>
-                <CardDescription>Define this agent's personality.</CardDescription>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Avatar>
+                <AvatarFallback className={agentNum === 1 ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}>
+                  <Bot />
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                  <CardTitle>Agent {agentNum}</CardTitle>
+                  <CardDescription>Define this agent's personality.</CardDescription>
+              </div>
             </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" disabled={isGenerating}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium leading-none">Personality</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Describe the personality for Agent {agentNum}.
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <Textarea
+                      id={`personality-${agentNum}`}
+                      placeholder={`e.g., A skeptical philosopher...`}
+                      value={personality}
+                      onChange={(e) => setPersonality(e.target.value)}
+                      rows={5}
+                      disabled={isGenerating}
+                    />
+                    <Button variant="ghost" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating}>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Generate with AI
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Textarea
-            id={`personality-${agentNum}`}
-            placeholder={`e.g., A skeptical philosopher...`}
-            value={personality}
-            onChange={(e) => setPersonality(e.target.value)}
-            rows={4}
-            disabled={isGenerating}
-          />
-          <Button variant="ghost" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating}>
-            <Sparkles className="mr-2 h-4 w-4" />
-            Generate with AI
-          </Button>
-        </CardContent>
       </Card>
     )
 }
@@ -285,3 +306,5 @@ function ParameterSlider({
         </div>
     )
 }
+
+    
