@@ -310,8 +310,13 @@ function AgentCard({
                       id={`personality-${agentNum}`}
                       placeholder={`e.g., A skeptical philosopher...`}
                       value={personality}
-                      onChange={(e) => setPersonality(e.target.value)}
-                      rows={8}
+                      onChange={(e) => {
+                          setPersonality(e.target.value);
+                          // Auto-resize
+                          e.target.style.height = 'auto';
+                          e.target.style.height = `${e.target.scrollHeight}px`;
+                      }}
+                      className="resize-none overflow-hidden"
                       disabled={isGenerating}
                     />
                   </div>
@@ -424,3 +429,5 @@ function SettingsDialog({ language, setLanguage, theme, setTheme }: {
         </Dialog>
     );
 }
+
+    
