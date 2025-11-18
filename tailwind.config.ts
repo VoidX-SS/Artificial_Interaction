@@ -13,6 +13,7 @@ export default {
         body: ['Inter', 'sans-serif'],
         headline: ['Inter', 'sans-serif'],
         code: ['monospace'],
+        chat: ['"Be Vietnam Pro"', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',

@@ -21,7 +21,7 @@ export function ChatMessage({ agent, text, isAgent1 }: ChatMessageProps) {
       </Avatar>
       <div className="flex-1 space-y-1">
         <p className="font-semibold">{agent}</p>
-        <div className="prose prose-sm max-w-none text-foreground dark:prose-invert">
+        <div className="prose prose-sm max-w-none text-foreground dark:prose-invert font-chat">
             {text.split('\n').map((line, index) => (
                 <p key={index} className="mb-2 last:mb-0">{line}</p>
             ))}
