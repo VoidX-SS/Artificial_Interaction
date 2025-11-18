@@ -1,12 +1,11 @@
 
+
 // src/lib/i18n.ts
 
 export type Language = 'en' | 'vi';
 
 export interface I18n {
   defaultTopic: string;
-  defaultPersonality1: string;
-  defaultPersonality2: string;
   error: string;
   providePersonalityDesc: (agentNum: 1 | 2) => string;
   personalityGenerationFailed: string;
@@ -20,10 +19,16 @@ export interface I18n {
   chatCleared: string;
   sessionSaved: string;
   sessionSavedDesc: string;
+  profilesSaved: string;
+  profilesSavedDesc: string;
   sessionLoaded: string;
   sessionLoadedDesc: string;
+  profilesLoaded: string;
+  profilesLoadedDesc: string;
   loadFailed: string;
   loadFailedDesc: string;
+  profileLoadFailed: string;
+  profileLoadFailedDesc: string;
   conversation: string;
   messages: string;
   conversationAppearHere: string;
@@ -34,7 +39,8 @@ export interface I18n {
   conversationSetupDesc: string;
   topic: string;
   topicPlaceholder: string;
-  agentPersonalityDesc: string;
+  agent: string;
+  agentProfileDesc: string;
   editAgent: string;
   editAgentDesc: string;
   agentName: string;
@@ -50,14 +56,13 @@ export interface I18n {
   maxWordsDesc: string;
   exchanges: string;
   exchangesDesc: string;
-  apiKey: string;
-  apiKeyDesc: string;
-  apiKeyPlaceholder: string;
   stop: string;
   startConversation: string;
   continueConversation: string;
-  load: string;
-  save: string;
+  loadSession: string;
+  saveSession: string;
+  loadProfiles: string;
+  saveProfiles: string;
   settings: string;
   settingsDesc: string;
   language: string;
@@ -67,12 +72,53 @@ export interface I18n {
   system: string;
   leisurelyChat: string;
   leisurelyChatDesc: string;
+  agentSoul: string;
+  agentMatrix: string;
+  basic: string;
+  advanced: string;
+  persona: string;
+  age: string;
+  nationality: string;
+  location: string;
+  curiosityIndex: string;
+  summaryDiary: string;
+  socialPosition: string;
+  job: string;
+  financialStatus: string;
+  qualityOfLife: string;
+  happinessIndex: string;
+  relationships: string;
+  emotionIndex: string;
+  health: string;
+  appearance: string;
+  iq: string;
+  eq: string;
+  antipathy: string;
+  nextIntention: string;
+  matrixConnection: string;
+  connection: string;
+  trust: string;
+  intimacy: string;
+  dependency: string;
+  matrixFavor: string;
+  dob: string;
+  zodiac: string;
+  personalityType: string;
+  thinkingStyle: string;
+  strengths: string;
+  weaknesses: string;
+  hobbies: string;
+  dislikes: string;
+  dreams: string;
+  coreBeliefs: string;
+  lifePhilosophy: string;
+  pastTrauma: string;
+  liveDashboard: string,
+  liveDashboardDesc: string,
 }
 
 const en: I18n = {
   defaultTopic: 'The future of space exploration and its impact on humanity.',
-  defaultPersonality1: 'A pragmatic and cautious scientist who weighs the risks and ethical implications of every decision.',
-  defaultPersonality2: 'A visionary artist and dreamer who sees boundless potential and beauty in the cosmos.',
   error: 'Error',
   providePersonalityDesc: (agentNum: 1 | 2) => `Please provide a description for Agent ${agentNum} personality.`,
   personalityGenerationFailed: 'Personality Generation Failed',
@@ -85,11 +131,17 @@ const en: I18n = {
   conversationReset: 'Conversation Reset',
   chatCleared: 'The chat has been cleared.',
   sessionSaved: 'Session Saved',
-  sessionSavedDesc: 'Your conversation has been saved.',
+  sessionSavedDesc: 'Your conversation session has been saved.',
+  profilesSaved: 'Profiles Saved',
+  profilesSavedDesc: 'The current agent profiles have been saved.',
   sessionLoaded: 'Session Loaded',
-  sessionLoadedDesc: 'Your conversation has been loaded.',
+  sessionLoadedDesc: 'Your conversation session has been loaded.',
+  profilesLoaded: 'Profiles Loaded',
+  profilesLoadedDesc: 'Agent profiles have been loaded.',
   loadFailed: 'Load Failed',
   loadFailedDesc: 'The selected file is not a valid session file.',
+  profileLoadFailed: 'Profile Load Failed',
+  profileLoadFailedDesc: 'The selected file is not a valid profile file.',
   conversation: 'Conversation',
   messages: 'Messages',
   conversationAppearHere: 'The conversation will appear here.',
@@ -100,13 +152,14 @@ const en: I18n = {
   conversationSetupDesc: 'Define the starting point for the AI agents.',
   topic: 'Topic / Starting Prompt',
   topicPlaceholder: 'e.g., The ethics of artificial intelligence...',
-  agentPersonalityDesc: "Define this agent's personality.",
+  agent: 'Agent',
+  agentProfileDesc: "View and edit this agent's profile.",
   editAgent: 'Edit Agent',
-  editAgentDesc: "Customize the agent's name and personality.",
+  editAgentDesc: "Customize the agent's soul and matrix.",
   agentName: 'Agent Name',
   personality: 'Personality',
   personalityPlaceholder: 'e.g., A skeptical philosopher...',
-  generatePersonality: 'Generate Personality with AI',
+  generatePersonality: 'Generate Summary Diary with AI',
   done: 'Done',
   modelParameters: 'Model Parameters',
   modelParametersDesc: 'Fine-tune the behavior of the AI models.',
@@ -116,14 +169,13 @@ const en: I18n = {
   maxWordsDesc: 'Maximum number of words for each AI response.',
   exchanges: 'Exchanges',
   exchangesDesc: 'Number of back-and-forth turns in the conversation.',
-  apiKey: 'API Key',
-  apiKeyDesc: 'Enter your Google AI API key to power the conversation.',
-  apiKeyPlaceholder: 'Enter your API key',
   stop: 'Stop',
   startConversation: 'Start Conversation',
   continueConversation: 'Continue Conversation',
-  load: 'Load',
-  save: 'Save',
+  loadSession: 'Load Session',
+  saveSession: 'Save Session',
+  loadProfiles: 'Load Profiles',
+  saveProfiles: 'Save Profiles',
   settings: 'Settings',
   settingsDesc: 'Adjust application settings.',
   language: 'Language',
@@ -132,13 +184,54 @@ const en: I18n = {
   dark: 'Dark',
   system: 'System',
   leisurelyChat: 'Leisurely Chat',
-  leisurelyChatDesc: 'When enabled, adds a realistic reading-time delay between messages.',
+  leisurelyChatDesc: 'Adds a realistic reading-time delay between messages.',
+  agentSoul: "Agent's Soul",
+  agentMatrix: "Agent's Matrix",
+  basic: "Basic",
+  advanced: "Advanced",
+  persona: "Persona",
+  age: "Age",
+  nationality: "Nationality",
+  location: "Location",
+  curiosityIndex: "Curiosity Index",
+  summaryDiary: "Summary Diary (AI-Gen Base)",
+  socialPosition: "Social Position",
+  job: "Job",
+  financialStatus: "Financial Status",
+  qualityOfLife: "Quality of Life",
+  happinessIndex: "Happiness Index",
+  relationships: "Relationships",
+  emotionIndex: "Emotion Index (Dynamic)",
+  health: "Health",
+  appearance: "Appearance",
+  iq: "IQ",
+  eq: "EQ",
+  antipathy: "Antipathy towards other",
+  nextIntention: "Next Intention",
+  matrixConnection: "Matrix Connection (Dynamic)",
+  connection: "Connection",
+  trust: "Trust",
+  intimacy: "Intimacy",
+  dependency: "Dependency",
+  matrixFavor: "Matrix Favor (Static)",
+  dob: "Date of Birth",
+  zodiac: "Zodiac Sign",
+  personalityType: "Personality Type (e.g. MBTI)",
+  thinkingStyle: "Thinking Style",
+  strengths: "Strengths",
+  weaknesses: "Weaknesses",
+  hobbies: "Hobbies",
+  dislikes: "Dislikes",
+  dreams: "Dreams & Ambitions",
+  coreBeliefs: "Core Beliefs",
+  lifePhilosophy: "Life Philosophy",
+  pastTrauma: "Past Trauma (if any)",
+  liveDashboard: 'Live Dashboard',
+  liveDashboardDesc: 'Real-time monitoring of Agent Matrix values during the conversation.',
 };
 
 const vi: I18n = {
   defaultTopic: 'Tương lai của việc thám hiểm không gian và tác động của nó đối với nhân loại.',
-  defaultPersonality1: 'Một nhà khoa học thực dụng và thận trọng, luôn cân nhắc rủi ro và ý nghĩa đạo đức của mọi quyết định.',
-  defaultPersonality2: 'Một nghệ sĩ và kẻ mơ mộng có tầm nhìn, nhìn thấy tiềm năng và vẻ đẹp vô biên trong vũ trụ.',
   error: 'Lỗi',
   providePersonalityDesc: (agentNum: 1 | 2) => `Vui lòng cung cấp mô tả cho tính cách của Agent ${agentNum}.`,
   personalityGenerationFailed: 'Tạo tính cách thất bại',
@@ -150,29 +243,36 @@ const vi: I18n = {
   errorFrom: (agentName: string) => `Lỗi từ ${agentName}`,
   conversationReset: 'Đặt lại cuộc trò chuyện',
   chatCleared: 'Trò chuyện đã được xóa.',
-  sessionSaved: 'Đã lưu phiên',
-  sessionSavedDesc: 'Cuộc trò chuyện của bạn đã được lưu.',
-  sessionLoaded: 'Đã tải phiên',
-  sessionLoadedDesc: 'Cuộc trò chuyện của bạn đã được tải.',
+  sessionSaved: 'Đã lưu phiên trò chuyện',
+  sessionSavedDesc: 'Phiên trò chuyện của bạn đã được lưu.',
+  profilesSaved: 'Đã lưu hồ sơ',
+  profilesSavedDesc: 'Hồ sơ agent hiện tại đã được lưu.',
+  sessionLoaded: 'Đã tải phiên trò chuyện',
+  sessionLoadedDesc: 'Phiên trò chuyện của bạn đã được tải.',
+  profilesLoaded: 'Đã tải hồ sơ',
+  profilesLoadedDesc: 'Hồ sơ agent đã được tải.',
   loadFailed: 'Tải thất bại',
   loadFailedDesc: 'Tệp đã chọn không phải là tệp phiên hợp lệ.',
+  profileLoadFailed: 'Tải hồ sơ thất bại',
+  profileLoadFailedDesc: 'Tệp đã chọn không phải là tệp hồ sơ hợp lệ.',
   conversation: 'Cuộc hội thoại',
   messages: 'Tin nhắn',
   conversationAppearHere: 'Cuộc trò chuyện sẽ xuất hiện ở đây.',
-  pressStart: 'Định cấu hình cài đặt và nhấn "Bắt đầu cuộc trò chuyện".',
+  pressStart: 'Định cấu hình cài đặt và nhấn "Bắt đầu".',
   typing: 'Đang nhập',
   controls: 'Bảng điều khiển Dualogue',
   conversationSetup: 'Thiết lập cuộc trò chuyện',
   conversationSetupDesc: 'Xác định điểm bắt đầu cho các agent AI.',
   topic: 'Chủ đề / Gợi ý bắt đầu',
   topicPlaceholder: 'ví dụ: Đạo đức của trí tuệ nhân tạo...',
-  agentPersonalityDesc: 'Xác định tính cách của agent này.',
+  agent: 'Agent',
+  agentProfileDesc: 'Xem và chỉnh sửa hồ sơ của agent này.',
   editAgent: 'Chỉnh sửa Agent',
-  editAgentDesc: 'Tùy chỉnh tên và tính cách của agent.',
+  editAgentDesc: 'Tùy chỉnh linh hồn và ma trận của agent.',
   agentName: 'Tên Agent',
   personality: 'Tính cách',
   personalityPlaceholder: 'ví dụ: Một triết gia hoài nghi...',
-  generatePersonality: 'Tạo tính cách bằng AI',
+  generatePersonality: 'Tạo Nhật ký Tóm tắt bằng AI',
   done: 'Xong',
   modelParameters: 'Thông số mô hình',
   modelParametersDesc: 'Tinh chỉnh hành vi của các mô hình AI.',
@@ -182,14 +282,13 @@ const vi: I18n = {
   maxWordsDesc: 'Số từ tối đa cho mỗi phản hồi của AI.',
   exchanges: 'Lượt trao đổi',
   exchangesDesc: 'Số lượt trao đổi qua lại trong cuộc trò chuyện.',
-  apiKey: 'API Key',
-  apiKeyDesc: 'Nhập Google AI API key của bạn để cung cấp năng lượng cho cuộc trò chuyện.',
-  apiKeyPlaceholder: 'Nhập API key của bạn',
   stop: 'Dừng',
   startConversation: 'Bắt đầu',
   continueConversation: 'Tiếp tục',
-  load: 'Tải',
-  save: 'Lưu',
+  loadSession: 'Tải phiên',
+  saveSession: 'Lưu phiên',
+  loadProfiles: 'Tải hồ sơ',
+  saveProfiles: 'Lưu hồ sơ',
   settings: 'Cài đặt',
   settingsDesc: 'Điều chỉnh cài đặt ứng dụng.',
   language: 'Ngôn ngữ',
@@ -198,9 +297,50 @@ const vi: I18n = {
   dark: 'Tối',
   system: 'Hệ thống',
   leisurelyChat: 'Chat thong thả',
-  leisurelyChatDesc: 'Khi bật, thêm độ trễ mô phỏng thời gian đọc thực tế giữa các tin nhắn.',
+  leisurelyChatDesc: 'Thêm độ trễ mô phỏng thời gian đọc thực tế giữa các tin nhắn.',
+  agentSoul: "Linh hồn Agent",
+  agentMatrix: "Matrix Agent",
+  basic: "Cơ bản",
+  advanced: "Nâng cao",
+  persona: "Persona",
+  age: "Tuổi",
+  nationality: "Quốc tịch",
+  location: "Nơi sống",
+  curiosityIndex: "Chỉ số ham học hỏi",
+  summaryDiary: "Nhật ký tóm tắt (Nền tảng cho AI)",
+  socialPosition: "Vị trí xã hội",
+  job: "Công việc",
+  financialStatus: "Tài chính",
+  qualityOfLife: "Chất lượng cuộc sống",
+  happinessIndex: "Chỉ số hạnh phúc",
+  relationships: "Các mối quan hệ",
+  emotionIndex: "Emotion Index (Động)",
+  health: "Sức khỏe",
+  appearance: "Ngoại hình",
+  iq: "Chỉ số IQ",
+  eq: "Chỉ số EQ",
+  antipathy: "Chỉ số ác cảm đối phương",
+  nextIntention: "Ý định tiếp theo",
+  matrixConnection: "Matrix Connection (Động)",
+  connection: "Kết nối",
+  trust: "Độ tin tưởng",
+  intimacy: "Độ thân mật",
+  dependency: "Độ phụ thuộc",
+  matrixFavor: "Matrix Favor (Tĩnh)",
+  dob: "Ngày sinh",
+  zodiac: "Cung hoàng đạo",
+  personalityType: "Nhóm tính cách (ví dụ: MBTI)",
+  thinkingStyle: "Lối tư duy",
+  strengths: "Những lĩnh vực vượt trội",
+  weaknesses: "Những lĩnh vực không trội",
+  hobbies: "Sở thích cá nhân",
+  dislikes: "Sở ghét cá nhân",
+  dreams: "Ước mơ, hoài bão",
+  coreBeliefs: "Niềm tin cốt lõi",
+  lifePhilosophy: "Tư tưởng sống",
+  pastTrauma: "Vết thương tâm lý (nếu có)",
+  liveDashboard: 'Bảng điều khiển trực tiếp',
+  liveDashboardDesc: 'Theo dõi chỉ số Matrix của Agent theo thời gian thực.',
 };
 
 export const i18n = { en, vi };
-
-    

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Bot } from 'lucide-react';
@@ -15,7 +16,7 @@ export function ChatMessage({ agent, text, isAgent1 }: ChatMessageProps) {
   return (
     <div className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <Avatar>
-        <AvatarFallback className={isAgent1 ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}>
+        <AvatarFallback className={isAgent1 ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300" : "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"}>
           <Bot className="h-5 w-5" />
         </AvatarFallback>
       </Avatar>

@@ -1,7 +1,8 @@
+
 // src/app/actions.ts
 'use server';
 
-import { generateAIPersonality, type GenerateAIPersonalityInput } from '@/ai/flows/generate-ai-personality';
+import { generateAIPersonality } from '@/ai/flows/generate-ai-personality';
 import { generateConversationStarter } from '@/ai/flows/generate-conversation-starter';
 import type { Language } from '@/lib/i18n';
 

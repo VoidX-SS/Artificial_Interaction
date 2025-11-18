@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import type { Dispatch, SetStateAction, ChangeEvent } from 'react';
@@ -9,15 +10,13 @@ import {
   RefreshCw,
   Save,
   Upload,
-  Sparkles,
-  Loader,
   Settings,
-  KeyRound,
   FileText,
-  Pencil,
   Languages,
   Palette,
   Clock,
+  Users,
+  Download
 } from 'lucide-react';
 
 import type { Theme, Message } from '@/app/page';
@@ -34,20 +33,18 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { i18n, Language, type I18n } from '@/lib/i18n';
 import { Switch } from '@/components/ui/switch';
+import { AgentProfileSheet } from './agent-profile-sheet';
+import { AgentProfile } from '@/lib/types';
+import { Loader } from 'lucide-react';
+
 
 interface ControlPanelProps {
-  apiKey: string;
-  setApiKey: (e: ChangeEvent<HTMLInputElement>) => void;
   topic: string;
   setTopic: Dispatch<SetStateAction<string>>;
-  agent1Name: string;
-  setAgent1Name: Dispatch<SetStateAction<string>>;
-  agent2Name: string;
-  setAgent2Name: Dispatch<SetStateAction<string>>;
-  personality1: string;
-  setPersonality1: Dispatch<SetStateAction<string>>;
-  personality2: string;
-  setPersonality2: Dispatch<SetStateAction<string>>;
+  agent1Profile: AgentProfile;
+  setAgent1Profile: Dispatch<SetStateAction<AgentProfile>>;
+  agent2Profile: AgentProfile;
+  setAgent2Profile: Dispatch<SetStateAction<AgentProfile>>;
   temperature: number[];
   setTemperature: Dispatch<SetStateAction<number[]>>;
   maxWords: number[];
@@ -62,6 +59,8 @@ interface ControlPanelProps {
   onGeneratePersonality: (agentNum: 1 | 2) => void;
   onSave: () => void;
   onLoad: () => void;
+  onSaveProfiles: () => void;
+  onLoadProfiles: () => void;
   language: Language;
   setLanguage: Dispatch<SetStateAction<Language>>;
   theme: Theme;
@@ -73,18 +72,12 @@ interface ControlPanelProps {
 }
 
 export function ControlPanel({
-  apiKey,
-  setApiKey,
   topic,
   setTopic,
-  agent1Name,
-  setAgent1Name,
-  agent2Name,
-  setAgent2Name,
-  personality1,
-  setPersonality1,
-  personality2,
-  setPersonality2,
+  agent1Profile,
+  setAgent1Profile,
+  agent2Profile,
+  setAgent2Profile,
   temperature,
   setTemperature,
   maxWords,
@@ -99,6 +92,8 @@ export function ControlPanel({
   onGeneratePersonality,
   onSave,
   onLoad,
+  onSaveProfiles,
+  onLoadProfiles,
   language,
   setLanguage,
   theme,
@@ -154,20 +149,16 @@ export function ControlPanel({
             <div className="grid gap-6">
               <AgentCard
                 agentNum={1}
-                name={agent1Name}
-                setName={setAgent1Name}
-                personality={personality1}
-                setPersonality={setPersonality1}
+                profile={agent1Profile}
+                setProfile={setAgent1Profile}
                 onGeneratePersonality={onGeneratePersonality}
                 isGenerating={isGenerating}
                 t={t}
               />
               <AgentCard
                 agentNum={2}
-                name={agent2Name}
-                setName={setAgent2Name}
-                personality={personality2}
-                setPersonality={setPersonality2}
+                profile={agent2Profile}
+                setProfile={setAgent2Profile}
                 onGeneratePersonality={onGeneratePersonality}
                 isGenerating={isGenerating}
                 t={t}
@@ -215,24 +206,6 @@ export function ControlPanel({
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <KeyRound className="h-5 w-5" /> {t.apiKey}
-                </CardTitle>
-                <CardDescription>{t.apiKeyDesc}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Input
-                  id="api-key"
-                  type="password"
-                  placeholder={t.apiKeyPlaceholder}
-                  value={apiKey}
-                  onChange={setApiKey}
-                  disabled={isGenerating}
-                />
-              </CardContent>
-            </Card>
           </div>
       </ScrollArea>
       <footer className="shrink-0 border-t p-4">
@@ -255,10 +228,18 @@ export function ControlPanel({
             </div>
             <div className="grid grid-cols-2 gap-2">
                 <Button variant="secondary" onClick={onLoad} disabled={isGenerating}>
-                    <Upload /> {t.load}
+                    <Upload className="h-4 w-4" /> {t.loadSession}
                 </Button>
                 <Button variant="secondary" onClick={onSave} disabled={isGenerating || !chatLog.length}>
-                    <Save /> {t.save}
+                    <Save className="h-4 w-4" /> {t.saveSession}
+                </Button>
+            </div>
+             <div className="grid grid-cols-2 gap-2">
+                <Button variant="secondary" onClick={onLoadProfiles} disabled={isGenerating}>
+                    <Users className="h-4 w-4" /> {t.loadProfiles}
+                </Button>
+                <Button variant="secondary" onClick={onSaveProfiles} disabled={isGenerating}>
+                    <Download className="h-4 w-4" /> {t.saveProfiles}
                 </Button>
             </div>
         </div>
@@ -269,19 +250,15 @@ export function ControlPanel({
 
 function AgentCard({
     agentNum,
-    name,
-    setName,
-    personality,
-    setPersonality,
+    profile,
+    setProfile,
     onGeneratePersonality,
     isGenerating,
     t,
   }: {
     agentNum: 1 | 2;
-    name: string;
-    setName: Dispatch<SetStateAction<string>>;
-    personality: string;
-    setPersonality: Dispatch<SetStateAction<string>>;
+    profile: AgentProfile;
+    setProfile: Dispatch<SetStateAction<AgentProfile>>;
     onGeneratePersonality: (agentNum: 1 | 2) => void;
     isGenerating: boolean;
     t: I18n;
@@ -292,63 +269,23 @@ function AgentCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar>
-                <AvatarFallback className={agentNum === 1 ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}>
+                <AvatarFallback className={agentNum === 1 ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300" : "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"}>
                   <Bot />
                 </AvatarFallback>
               </Avatar>
               <div>
-                  <CardTitle>{name}</CardTitle>
-                  <CardDescription>{t.agentPersonalityDesc}</CardDescription>
+                  <CardTitle>{profile.soul.basic.persona.name || `${t.agent} ${agentNum}`}</CardTitle>
+                  <CardDescription>{t.agentProfileDesc}</CardDescription>
               </div>
             </div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" disabled={isGenerating}>
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>{t.editAgent} {agentNum}</DialogTitle>
-                  <DialogDescription>
-                    {t.editAgentDesc}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor={`name-${agentNum}`}>{t.agentName}</Label>
-                    <Input
-                      id={`name-${agentNum}`}
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      disabled={isGenerating}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor={`personality-${agentNum}`}>{t.personality}</Label>
-                    <Textarea
-                      id={`personality-${agentNum}`}
-                      placeholder={t.personalityPlaceholder}
-                      value={personality}
-                      onChange={(e) => {
-                          setPersonality(e.target.value);
-                      }}
-                      rows={8}
-                      disabled={isGenerating}
-                    />
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating}>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    {t.generatePersonality}
-                  </Button>
-                </div>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button>{t.done}</Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <AgentProfileSheet
+              agentNum={agentNum}
+              profile={profile}
+              setProfile={setProfile}
+              onGeneratePersonality={onGeneratePersonality}
+              isGenerating={isGenerating}
+              t={t}
+            />
           </div>
         </CardHeader>
       </Card>
