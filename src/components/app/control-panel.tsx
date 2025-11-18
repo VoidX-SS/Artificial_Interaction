@@ -127,8 +127,13 @@ export function ControlPanel({
                     id="topic"
                     placeholder="e.g., The ethics of artificial intelligence..."
                     value={topic}
-                    onChange={(e) => setTopic(e.target.value)}
-                    rows={4}
+                    onChange={(e) => {
+                        setTopic(e.target.value);
+                        e.target.style.height = 'auto';
+                        e.target.style.height = `${e.target.scrollHeight}px`;
+                    }}
+                    rows={1}
+                    className="resize-none overflow-hidden"
                     disabled={isGenerating}
                   />
                 </div>
@@ -310,13 +315,8 @@ function AgentCard({
                       id={`personality-${agentNum}`}
                       placeholder={`e.g., A skeptical philosopher...`}
                       value={personality}
-                      onChange={(e) => {
-                          setPersonality(e.target.value);
-                          // Auto-resize
-                          e.target.style.height = 'auto';
-                          e.target.style.height = `${e.target.scrollHeight}px`;
-                      }}
-                      className="resize-none overflow-hidden"
+                      onChange={(e) => setPersonality(e.target.value)}
+                      rows={8}
                       disabled={isGenerating}
                     />
                   </div>
@@ -429,5 +429,7 @@ function SettingsDialog({ language, setLanguage, theme, setTheme }: {
         </Dialog>
     );
 }
+
+    
 
     
