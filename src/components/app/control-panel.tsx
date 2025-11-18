@@ -180,30 +180,32 @@ export function ControlPanel({
           </div>
         </ScrollArea>
       </div>
-      <footer className="flex shrink-0 flex-col gap-2 border-t p-4">
-        <div className="flex w-full gap-2">
-          {isGenerating ? (
-            <Button variant="destructive" className="w-full" onClick={onStop} disabled={isStopping}>
-              {isStopping ? <Loader className="animate-spin" /> : <StopCircle />}
-              Stop
+      <footer className="shrink-0 border-t p-4">
+        <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full gap-2">
+            {isGenerating ? (
+                <Button variant="destructive" className="w-full" onClick={onStop} disabled={isStopping}>
+                {isStopping ? <Loader className="animate-spin" /> : <StopCircle />}
+                Stop
+                </Button>
+            ) : (
+                <Button className="w-full" onClick={onStart}>
+                <Play />
+                Start Conversation
+                </Button>
+            )}
+            <Button variant="outline" onClick={onReset} disabled={isGenerating}>
+                <RefreshCw />
             </Button>
-          ) : (
-            <Button className="w-full" onClick={onStart}>
-              <Play />
-              Start Conversation
-            </Button>
-          )}
-          <Button variant="outline" onClick={onReset} disabled={isGenerating}>
-            <RefreshCw />
-          </Button>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-            <Button variant="secondary" disabled>
-                <Upload /> Load
-            </Button>
-            <Button variant="secondary" disabled>
-                <Save /> Save
-            </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+                <Button variant="secondary" disabled>
+                    <Upload /> Load
+                </Button>
+                <Button variant="secondary" disabled>
+                    <Save /> Save
+                </Button>
+            </div>
         </div>
       </footer>
     </div>
