@@ -27,7 +27,7 @@ export default function Home() {
   const [personality2, setPersonality2] = useState('A visionary artist and dreamer who sees boundless potential and beauty in the cosmos.');
   
   const [temperature, setTemperature] = useState([0.7]);
-  const [maxTokens, setMaxTokens] = useState([256]);
+  const [maxWords, setMaxWords] = useState([250]);
   const [exchanges, setExchanges] = useState([5]);
   const [chatLog, setChatLog] = useState<Message[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -110,7 +110,8 @@ export default function Home() {
   const constructPrompt = (currentAgentName: string, history: Message[]) => {
     const personality = currentAgentName === agent1Name ? personality1 : personality2;
     let prompt = `Your personality is: ${personality}\n\n`;
-    prompt += `The conversation should be in ${language}.\n\n`;
+    prompt += `The conversation should be in ${language}.\n`;
+    prompt += `Your response must be a maximum of ${maxWords[0]} words.\n\n`;
     prompt += `Conversation Topic: ${topic}\n\n`;
     prompt += 'Conversation History:\n';
     if (history.length === 0) {
@@ -196,7 +197,7 @@ export default function Home() {
       personality1,
       personality2,
       temperature,
-      maxTokens,
+      maxWords,
       exchanges,
       chatLog,
       language,
@@ -236,7 +237,7 @@ export default function Home() {
         setPersonality1(loadedData.personality1 || '');
         setPersonality2(loadedData.personality2 || '');
         setTemperature(loadedData.temperature || [0.7]);
-        setMaxTokens(loadedData.maxTokens || [256]);
+        setMaxWords(loadedData.maxWords || [250]);
         setExchanges(loadedData.exchanges || [5]);
         setChatLog(loadedData.chatLog || []);
         setLanguage(loadedData.language || 'English');
@@ -271,8 +272,8 @@ export default function Home() {
           setPersonality2={setPersonality2}
           temperature={temperature}
           setTemperature={setTemperature}
-          maxTokens={maxTokens}
-          setMaxTokens={setMaxTokens}
+          maxWords={maxWords}
+          setMaxWords={setMaxWords}
           exchanges={exchanges}
           setExchanges={setExchanges}
           isGenerating={isGenerating}

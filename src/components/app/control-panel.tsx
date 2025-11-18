@@ -48,8 +48,8 @@ interface ControlPanelProps {
   setPersonality2: Dispatch<SetStateAction<string>>;
   temperature: number[];
   setTemperature: Dispatch<SetStateAction<number[]>>;
-  maxTokens: number[];
-  setMaxTokens: Dispatch<SetStateAction<number[]>>;
+  maxWords: number[];
+  setMaxWords: Dispatch<SetStateAction<number[]>>;
   exchanges: number[];
   setExchanges: Dispatch<SetStateAction<number[]>>;
   isGenerating: boolean;
@@ -82,8 +82,8 @@ export function ControlPanel({
   setPersonality2,
   temperature,
   setTemperature,
-  maxTokens,
-  setMaxTokens,
+  maxWords,
+  setMaxWords,
   exchanges,
   setExchanges,
   isGenerating,
@@ -174,19 +174,19 @@ export function ControlPanel({
                   value={temperature}
                   onValueChange={setTemperature}
                   min={0}
-                  max={1}
+                  max={2}
                   step={0.1}
                   description="Controls randomness. Lower is more deterministic."
                   disabled={isGenerating}
                 />
                 <ParameterSlider
-                  label="Max Tokens"
-                  value={maxTokens}
-                  onValueChange={setMaxTokens}
-                  min={64}
-                  max={1024}
-                  step={8}
-                  description="Maximum length of each AI response."
+                  label="Max Words"
+                  value={maxWords}
+                  onValueChange={setMaxWords}
+                  min={10}
+                  max={2000}
+                  step={10}
+                  description="Maximum number of words for each AI response."
                   disabled={isGenerating}
                 />
                 <ParameterSlider
@@ -194,7 +194,7 @@ export function ControlPanel({
                   value={exchanges}
                   onValueChange={setExchanges}
                   min={1}
-                  max={10}
+                  max={100}
                   step={1}
                   description="Number of back-and-forth turns in the conversation."
                   disabled={isGenerating}
@@ -315,7 +315,9 @@ function AgentCard({
                       id={`personality-${agentNum}`}
                       placeholder={`e.g., A skeptical philosopher...`}
                       value={personality}
-                      onChange={(e) => setPersonality(e.target.value)}
+                      onChange={(e) => {
+                          setPersonality(e.target.value);
+                      }}
                       rows={8}
                       disabled={isGenerating}
                     />
