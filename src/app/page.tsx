@@ -408,6 +408,8 @@ export default function Home() {
             agent1={agent1Profile}
             agent2={agent2Profile}
             t={t}
+            onStop={handleStop}
+            isStopping={isStopping}
           />
         ) : (
           <ControlPanel

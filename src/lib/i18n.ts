@@ -55,6 +55,7 @@ export interface I18n {
   exchanges: string;
   exchangesDesc: string;
   stop: string;
+  stopConversation: string;
   startConversation: string;
   continueConversation: string;
   loadSession: string;
@@ -171,6 +172,7 @@ const en: I18n = {
   exchanges: 'Exchanges',
   exchangesDesc: 'Number of back-and-forth turns in the conversation.',
   stop: 'Stop',
+  stopConversation: 'Stop Conversation',
   startConversation: 'Start Conversation',
   continueConversation: 'Continue Conversation',
   loadSession: 'Load Session',
@@ -287,6 +289,7 @@ const vi: I18n = {
   exchanges: 'Lượt trao đổi',
   exchangesDesc: 'Số lượt trao đổi qua lại trong cuộc trò chuyện.',
   stop: 'Dừng',
+  stopConversation: 'Dừng cuộc trò chuyện',
   startConversation: 'Bắt đầu',
   continueConversation: 'Tiếp tục',
   loadSession: 'Tải phiên',

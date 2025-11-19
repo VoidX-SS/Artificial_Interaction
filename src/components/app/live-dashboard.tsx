@@ -4,16 +4,19 @@ import { AgentProfile } from "@/lib/types";
 import { I18n } from "@/lib/i18n";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bot, Zap } from "lucide-react";
+import { Bot, Loader, StopCircle, Zap } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 
 interface LiveDashboardProps {
   agent1: AgentProfile;
   agent2: AgentProfile;
   t: I18n;
+  onStop: () => void;
+  isStopping: boolean;
 }
 
-export function LiveDashboard({ agent1, agent2, t }: LiveDashboardProps) {
+export function LiveDashboard({ agent1, agent2, t, onStop, isStopping }: LiveDashboardProps) {
   return (
     <div className="flex h-screen flex-col border-r bg-card">
       <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
@@ -28,8 +31,11 @@ export function LiveDashboard({ agent1, agent2, t }: LiveDashboardProps) {
             <AgentMatrixDisplay agentNum={2} profile={agent2} t={t} />
         </div>
       </ScrollArea>
-       <footer className="shrink-0 border-t p-4 text-center">
-            <p className="text-sm text-muted-foreground">{t.liveDashboardDesc}</p>
+       <footer className="shrink-0 border-t p-4">
+            <Button variant="destructive" className="w-full" onClick={onStop} disabled={isStopping}>
+              {isStopping ? <Loader className="animate-spin" /> : <StopCircle />}
+              {t.stopConversation}
+            </Button>
       </footer>
     </div>
   );
