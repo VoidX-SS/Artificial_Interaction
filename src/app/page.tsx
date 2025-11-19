@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -41,6 +42,7 @@ export default function Home() {
 
   const [theme, setTheme] = useState<Theme>('system');
   const [leisurelyChat, setLeisurelyChat] = useState(true);
+  const [deepInteraction, setDeepInteraction] = useState(true);
   const [apiKey, setApiKey] = useState('');
 
 
@@ -125,26 +127,74 @@ export default function Home() {
 
   const constructPrompt = (currentAgentProfile: AgentProfile, otherAgentProfile: AgentProfile, history: Message[]) => {
     const langInstruction = language === 'vi' ? 'The conversation must be in Vietnamese.' : 'The conversation must be in English.';
-    
+
     const profileString = JSON.stringify({ soul: currentAgentProfile.soul, matrix: currentAgentProfile.matrix }, null, 2);
     const otherProfileString = JSON.stringify({ soul: { basic: { persona: otherAgentProfile.soul.basic.persona } } }, null, 2);
 
-    let prompt = `You are an AI character. Your entire persona and current state are defined by the following JSON object. Adhere to it strictly.\n\n`;
-    prompt += `YOUR PROFILE:\n${profileString}\n\n`;
-    prompt += `You are in a conversation with another agent. Here is their basic persona:\n${otherProfileString}\n\n`;
-    prompt += `LANGUAGE GUIDELINE: ${langInstruction}\n`;
-    prompt += `RESPONSE WORD LIMIT: Your response must be a maximum of ${maxWords[0]} words.\n\n`;
-    prompt += `CONVERSATION TOPIC: ${topic}\n\n`;
-    prompt += 'CONVERSATION HISTORY (read from top to bottom):\n';
-    if (history.length === 0) {
-      prompt += 'This is the beginning of the conversation. Please start.\n';
-    } else {
-      history.forEach(msg => {
-        prompt += `${msg.agent}: ${msg.text}\n`;
-      });
-    }
-    prompt += `\nINSTRUCTIONS: Now, as ${currentAgentProfile.soul.basic.persona.name}, provide your next response. After your text response, you MUST provide an updated JSON object of your OWN dynamic matrices ('emotionIndex' and 'matrixConnection') based on the current conversation context. The JSON object must be enclosed in triple backticks (\`\`\`).\n`;
-    prompt += `${currentAgentProfile.soul.basic.persona.name}:`;
+    const prompt = `You are an AI character. Your entire persona, thoughts, and emotional state are defined by the following JSON object. Adhere to it strictly.
+This is not just data; it is your identity. Your response MUST be a direct result of these parameters.
+
+YOUR PROFILE:
+${profileString}
+
+---
+**UNDERSTANDING YOUR PROFILE:**
+You have a 'soul' (your core, static identity) and a 'matrix' (your dynamic, real-time state).
+
+1.  **'emotionIndex' (Your Internal State):** This is how you feel *right now*.
+    *   \`health\`, \`appearance\`, \`iq\`, \`eq\`: Your self-perception. These can change based on the conversation (e.g., a compliment might boost 'appearance', an insult might lower it).
+    *   \`antipathy\`: Your current level of dislike/hostility towards the other agent. This fluctuates heavily based on their words.
+    *   \`nextIntention\`: **CRITICAL**. This is what you plan to do or say next. **You MUST update this field** in your response based on your new emotional state and the conversation's flow. Examples: "Ask a clarifying question," "Challenge their last point," "Share a personal story," "Change the subject."
+
+2.  **'matrixConnection' (Your Relationship State):** This defines your connection to the *other agent*.
+    *   \`connection\`: How "in-sync" you feel. Do you understand each other?
+    *   \`trust\`: How much you believe what they say.
+    *   \`intimacy\`: How emotionally close you feel to them.
+    *   \`dependency\`: How much you feel you need their approval or input.
+
+---
+You are in a conversation with another agent. Here is their basic persona:
+${otherProfileString}
+
+---
+**CONVERSATION RULES:**
+*   **LANGUAGE:** ${langInstruction}
+*   **WORD LIMIT:** Your text response must be a maximum of ${maxWords[0]} words.
+*   **TOPIC:** ${deepInteraction && history.length > 0 ? "The topic has evolved. Continue the current conversational thread." : `The initial topic is: ${topic}` }
+
+---
+**CONVERSATION HISTORY (from oldest to newest):**
+${history.length === 0 ? 'This is the beginning of the conversation. Please start.' : history.map(msg => `${msg.agent}: ${msg.text}`).join('\n')}
+
+---
+**YOUR TASK (MANDATORY):**
+As ${currentAgentProfile.soul.basic.persona.name}, provide your next response. Your response MUST be in two parts:
+1.  Your text reply (following the word limit).
+2.  A JSON object enclosed in triple backticks (\`\`\`json ... \`\`\`) containing your **UPDATED** dynamic matrices. You MUST calculate and return new values for **ALL** fields within 'emotionIndex' (including 'nextIntention') and 'matrixConnection' based on the last message and the history.
+
+Example Response Format:
+<Your text response here...>
+\`\`\`json
+{
+  "emotionIndex": {
+    "health": ...,
+    "appearance": ...,
+    "iq": ...,
+    "eq": ...,
+    "antipathy": ...,
+    "nextIntention": "Your new intention here"
+  },
+  "matrixConnection": {
+    "connection": ...,
+    "trust": ...,
+    "intimacy": ...,
+    "dependency": ...
+  }
+}
+\`\`\`
+
+Now, generate your response.
+${currentAgentProfile.soul.basic.persona.name}:`;
 
     return prompt;
   };
@@ -297,6 +347,7 @@ export default function Home() {
       elapsedTime,
       theme,
       leisurelyChat,
+      deepInteraction,
     };
     const blob = new Blob([JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -357,6 +408,7 @@ export default function Home() {
         setElapsedTime(loadedData.elapsedTime ?? 0);
         setTheme(loadedData.theme ?? 'light');
         setLeisurelyChat(loadedData.leisurelyChat === undefined ? true : loadedData.leisurelyChat);
+        setDeepInteraction(loadedData.deepInteraction === undefined ? true : loadedData.deepInteraction);
 
         toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
       } catch (error) {
@@ -442,6 +494,8 @@ export default function Home() {
             chatLog={chatLog}
             leisurelyChat={leisurelyChat}
             setLeisurelyChat={setLeisurelyChat}
+            deepInteraction={deepInteraction}
+            setDeepInteraction={setDeepInteraction}
             apiKey={apiKey}
             setApiKey={setApiKey}
             t={t}

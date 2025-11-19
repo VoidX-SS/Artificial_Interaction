@@ -1,4 +1,3 @@
-
 // src/lib/i18n.ts
 
 export type Language = 'en' | 'vi';
@@ -72,6 +71,8 @@ export interface I18n {
   system: string;
   leisurelyChat: string;
   leisurelyChatDesc: string;
+  deepInteraction: string;
+  deepInteractionDesc: string;
   agentSoul: string;
   agentMatrix: string;
   basic: string;
@@ -174,7 +175,7 @@ const en: I18n = {
   maxWords: 'Max Words',
   maxWordsDesc: 'Maximum number of words for each AI response.',
   exchanges: 'Exchanges',
-  exchangesDesc: 'Number of back-and-forth turns in the conversation.',
+  exchangesDesc: 'Number of individual messages in the conversation.',
   stop: 'Stop',
   stopConversation: 'Stop Conversation',
   startConversation: 'Start Conversation',
@@ -192,6 +193,8 @@ const en: I18n = {
   system: 'System',
   leisurelyChat: 'Leisurely Chat',
   leisurelyChatDesc: 'Adds a realistic reading-time delay between messages.',
+  deepInteraction: 'Deep Interaction',
+  deepInteractionDesc: 'Allows the conversation to evolve beyond the initial topic.',
   agentSoul: "Agent's Soul",
   agentMatrix: "Agent's Matrix",
   basic: "Basic",
@@ -226,7 +229,7 @@ const en: I18n = {
   personalityType: "Personality Type (e.g. MBTI)",
   thinkingStyle: "Thinking Style",
   strengths: "Strengths",
-wAighteaknesses: "Weaknesses",
+  weaknesses: "Weaknesses",
   hobbies: "Hobbies",
   dislikes: "Dislikes",
   dreams: "Dreams & Ambitions",
@@ -262,7 +265,7 @@ const vi: I18n = {
   profilesSavedDesc: 'Hồ sơ agent hiện tại đã được lưu.',
   sessionLoaded: 'Đã tải phiên trò chuyện',
   sessionLoadedDesc: 'Phiên trò chuyện của bạn đã được tải.',
-profilesLoaded: 'Đã tải hồ sơ',
+  profilesLoaded: 'Đã tải hồ sơ',
   profilesLoadedDesc: 'Hồ sơ agent đã được tải.',
   loadFailed: 'Tải thất bại',
   loadFailedDesc: 'Tệp đã chọn không phải là tệp phiên hợp lệ.',
@@ -294,7 +297,7 @@ profilesLoaded: 'Đã tải hồ sơ',
   maxWords: 'Số từ tối đa',
   maxWordsDesc: 'Số từ tối đa cho mỗi phản hồi của AI.',
   exchanges: 'Lượt trao đổi',
-  exchangesDesc: 'Số lượt trao đổi qua lại trong cuộc trò chuyện.',
+  exchangesDesc: 'Số lượng tin nhắn riêng lẻ trong cuộc trò chuyện.',
   stop: 'Dừng',
   stopConversation: 'Dừng cuộc trò chuyện',
   startConversation: 'Bắt đầu',
@@ -312,6 +315,8 @@ profilesLoaded: 'Đã tải hồ sơ',
   system: 'Hệ thống',
   leisurelyChat: 'Chat thong thả',
   leisurelyChatDesc: 'Thêm độ trễ mô phỏng thời gian đọc thực tế giữa các tin nhắn.',
+  deepInteraction: 'Tương tác sâu',
+  deepInteractionDesc: 'Cho phép cuộc trò chuyện phát triển ngoài chủ đề ban đầu.',
   agentSoul: "Linh hồn Agent",
   agentMatrix: "Matrix Agent",
   basic: "Cơ bản",
@@ -364,5 +369,3 @@ profilesLoaded: 'Đã tải hồ sơ',
 };
 
 export const i18n = { en, vi };
-
-    

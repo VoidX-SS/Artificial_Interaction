@@ -17,7 +17,8 @@ import {
   Clock,
   Users,
   Download,
-  KeyRound
+  KeyRound,
+  WandSparkles
 } from 'lucide-react';
 
 import type { Theme, Message } from '@/app/page';
@@ -70,6 +71,8 @@ interface ControlPanelProps {
   t: I18n;
   leisurelyChat: boolean;
   setLeisurelyChat: Dispatch<SetStateAction<boolean>>;
+  deepInteraction: boolean;
+  setDeepInteraction: Dispatch<SetStateAction<boolean>>;
   apiKey: string;
   setApiKey: Dispatch<SetStateAction<string>>;
 }
@@ -105,6 +108,8 @@ export function ControlPanel({
   t,
   leisurelyChat,
   setLeisurelyChat,
+  deepInteraction,
+  setDeepInteraction,
   apiKey,
   setApiKey
 }: ControlPanelProps) {
@@ -119,6 +124,8 @@ export function ControlPanel({
             setTheme={setTheme}
             leisurelyChat={leisurelyChat}
             setLeisurelyChat={setLeisurelyChat}
+            deepInteraction={deepInteraction}
+            setDeepInteraction={setDeepInteraction}
             apiKey={apiKey}
             setApiKey={setApiKey}
             t={t}
@@ -330,13 +337,15 @@ function ParameterSlider({
     )
 }
 
-function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, apiKey, setApiKey, t }: {
+function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, deepInteraction, setDeepInteraction, apiKey, setApiKey, t }: {
     language: Language;
     setLanguage: Dispatch<SetStateAction<Language>>;
     theme: Theme;
     setTheme: Dispatch<SetStateAction<Theme>>;
     leisurelyChat: boolean;
     setLeisurelyChat: Dispatch<SetStateAction<boolean>>;
+    deepInteraction: boolean;
+    setDeepInteraction: Dispatch<SetStateAction<boolean>>;
     apiKey: string;
     setApiKey: Dispatch<SetStateAction<string>>;
     t: I18n;
@@ -405,6 +414,19 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
                             />
                             <Label htmlFor="leisurely-mode" className="text-sm font-normal text-muted-foreground">
                                 {t.leisurelyChatDesc}
+                            </Label>
+                        </div>
+                    </div>
+                    <div className="space-y-3">
+                        <Label className="flex items-center gap-2"><WandSparkles /> {t.deepInteraction}</Label>
+                         <div className="flex items-center space-x-2">
+                            <Switch
+                                id="deep-interaction-mode"
+                                checked={deepInteraction}
+                                onCheckedChange={setDeepInteraction}
+                            />
+                            <Label htmlFor="deep-interaction-mode" className="text-sm font-normal text-muted-foreground">
+                                {t.deepInteractionDesc}
                             </Label>
                         </div>
                     </div>
