@@ -1,6 +1,6 @@
-
 "use client";
 
+import { useState, useEffect } from "react";
 import { AgentProfile } from "@/lib/types";
 import { I18n } from "@/lib/i18n";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bot, Loader, StopCircle, Zap } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface LiveDashboardProps {
   agent1: AgentProfile;
@@ -50,6 +51,13 @@ interface AgentMatrixDisplayProps {
 
 function AgentMatrixDisplay({ agentNum, profile, t }: AgentMatrixDisplayProps) {
     const { emotionIndex, matrixConnection } = profile.matrix;
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    useEffect(() => {
+        setIsUpdating(true);
+        const timer = setTimeout(() => setIsUpdating(false), 750); // Duration of the blink animation
+        return () => clearTimeout(timer);
+    }, [profile.matrix]);
 
     return (
         <Card>
@@ -59,6 +67,10 @@ function AgentMatrixDisplay({ agentNum, profile, t }: AgentMatrixDisplayProps) {
                         <Bot className="h-5 w-5" />
                     </div>
                     {profile.soul.basic.persona.name}
+                    <div className={cn(
+                        "h-3 w-3 rounded-full bg-green-500 transition-all",
+                        isUpdating && "animate-blink"
+                    )}></div>
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
