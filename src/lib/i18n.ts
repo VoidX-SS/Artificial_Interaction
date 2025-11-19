@@ -1,5 +1,3 @@
-
-
 // src/lib/i18n.ts
 
 export type Language = 'en' | 'vi';
