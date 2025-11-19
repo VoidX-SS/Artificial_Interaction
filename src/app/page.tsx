@@ -200,23 +200,29 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
   };
 
   const parseResponse = (responseText: string) => {
-    const textMatch = responseText.split('```json')[0].trim();
-    const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
+    const jsonBlockRegex = /```json\s*([\s\S]*?)\s*```/;
+    const jsonMatch = responseText.match(jsonBlockRegex);
+  
+    let text = responseText;
+    let matrixData = null;
   
     if (jsonMatch && jsonMatch[1]) {
       try {
-        const matrixData = JSON.parse(jsonMatch[1]);
-        return {
-          text: textMatch,
-          emotionIndex: matrixData.emotionIndex,
-          matrixConnection: matrixData.matrixConnection,
-        };
+        matrixData = JSON.parse(jsonMatch[1]);
+        // Remove the JSON block from the text response
+        text = responseText.replace(jsonBlockRegex, '').trim();
       } catch (e) {
         console.error("Failed to parse matrix JSON from AI response:", e);
-        return { text: textMatch, emotionIndex: undefined, matrixConnection: undefined };
+        // If JSON parsing fails, the whole response is considered text
+        matrixData = null;
       }
     }
-    return { text: responseText, emotionIndex: undefined, matrixConnection: undefined };
+  
+    return {
+      text: text.trim(),
+      emotionIndex: matrixData?.emotionIndex,
+      matrixConnection: matrixData?.matrixConnection,
+    };
   };
 
   const handleStart = async () => {
@@ -528,3 +534,5 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
     </main>
   );
 }
+
+    
