@@ -108,6 +108,19 @@ export function AgentProfileSheet({
       }
     }));
   };
+  
+  const handleMatrixFavorChange = (field: keyof AgentMatrix['matrixFavor'], value: string) => {
+    setProfile(prev => ({
+        ...prev,
+        matrix: {
+            ...prev.matrix,
+            matrixFavor: {
+                ...prev.matrix.matrixFavor,
+                [field]: value,
+            }
+        }
+    }))
+  }
 
   const handleSyncMatrixToSoul = () => {
     setProfile(prev => {
@@ -115,7 +128,6 @@ export function AgentProfileSheet({
         ...prev.soul,
         basic: {
           ...prev.soul.basic,
-          // Note: We don't sync persona fields like name, age etc.
         },
         advanced: {
           ...prev.soul.advanced,
@@ -126,15 +138,15 @@ export function AgentProfileSheet({
         },
       };
 
-      toast({
-        title: t.profileSynced,
-        description: t.profileSyncedDesc,
-      });
-
       return {
         ...prev,
         soul: newSoul
       };
+    });
+
+    toast({
+      title: t.profileSynced,
+      description: t.profileSyncedDesc,
     });
   };
 
@@ -247,19 +259,19 @@ export function AgentProfileSheet({
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 space-y-4 border border-t-0 rounded-b-md">
                      <div className="grid grid-cols-2 gap-4">
-                        <InputWithLabel label={t.dob} value={profile.matrix.matrixFavor.dob} onChange={e => handleMatrixChange('matrixFavor', 'dob', e.target.value)} disabled={isGenerating} />
-                        <InputWithLabel label={t.zodiac} value={profile.matrix.matrixFavor.zodiac} onChange={e => handleMatrixChange('matrixFavor', 'zodiac', e.target.value)} disabled={isGenerating} />
+                        <InputWithLabel label={t.dob} value={profile.matrix.matrixFavor.dob} onChange={e => handleMatrixFavorChange('dob', e.target.value)} disabled={isGenerating} />
+                        <InputWithLabel label={t.zodiac} value={profile.matrix.matrixFavor.zodiac} onChange={e => handleMatrixFavorChange('zodiac', e.target.value)} disabled={isGenerating} />
                      </div>
-                     <InputWithLabel label={t.personalityType} value={profile.matrix.matrixFavor.personalityType} onChange={e => handleMatrixChange('matrixFavor', 'personalityType', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.thinkingStyle} value={profile.matrix.matrixFavor.thinkingStyle} onChange={e => handleMatrixChange('matrixFavor', 'thinkingStyle', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.strengths} value={profile.matrix.matrixFavor.strengths} onChange={e => handleMatrixChange('matrixFavor', 'strengths', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.weaknesses} value={profile.matrix.matrixFavor.weaknesses} onChange={e => handleMatrixChange('matrixFavor', 'weaknesses', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.hobbies} value={profile.matrix.matrixFavor.hobbies} onChange={e => handleMatrixChange('matrixFavor', 'hobbies', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.dislikes} value={profile.matrix.matrixFavor.dislikes} onChange={e => handleMatrixChange('matrixFavor', 'dislikes', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.dreams} value={profile.matrix.matrixFavor.dreams} onChange={e => handleMatrixChange('matrixFavor', 'dreams', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.coreBeliefs} value={profile.matrix.matrixFavor.coreBeliefs} onChange={e => handleMatrixChange('matrixFavor', 'coreBeliefs', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.lifePhilosophy} value={profile.matrix.matrixFavor.lifePhilosophy} onChange={e => handleMatrixChange('matrixFavor', 'lifePhilosophy', e.target.value)} disabled={isGenerating} />
-                     <TextareaWithLabel label={t.pastTrauma} value={profile.matrix.matrixFavor.pastTrauma} onChange={e => handleMatrixChange('matrixFavor', 'pastTrauma', e.target.value)} disabled={isGenerating} />
+                     <InputWithLabel label={t.personalityType} value={profile.matrix.matrixFavor.personalityType} onChange={e => handleMatrixFavorChange('personalityType', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.thinkingStyle} value={profile.matrix.matrixFavor.thinkingStyle} onChange={e => handleMatrixFavorChange('thinkingStyle', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.strengths} value={profile.matrix.matrixFavor.strengths} onChange={e => handleMatrixFavorChange('strengths', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.weaknesses} value={profile.matrix.matrixFavor.weaknesses} onChange={e => handleMatrixFavorChange('weaknesses', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.hobbies} value={profile.matrix.matrixFavor.hobbies} onChange={e => handleMatrixFavorChange('hobbies', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.dislikes} value={profile.matrix.matrixFavor.dislikes} onChange={e => handleMatrixFavorChange('dislikes', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.dreams} value={profile.matrix.matrixFavor.dreams} onChange={e => handleMatrixFavorChange('dreams', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.coreBeliefs} value={profile.matrix.matrixFavor.coreBeliefs} onChange={e => handleMatrixFavorChange('coreBeliefs', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.lifePhilosophy} value={profile.matrix.matrixFavor.lifePhilosophy} onChange={e => handleMatrixFavorChange('lifePhilosophy', e.target.value)} disabled={isGenerating} />
+                     <TextareaWithLabel label={t.pastTrauma} value={profile.matrix.matrixFavor.pastTrauma} onChange={e => handleMatrixFavorChange('pastTrauma', e.target.value)} disabled={isGenerating} />
                   </CollapsibleContent>
                 </Collapsible>
               </div>
