@@ -1,3 +1,4 @@
+
 "use client";
 
 import { AgentProfile } from "@/lib/types";
@@ -64,8 +65,9 @@ function AgentMatrixDisplay({ agentNum, profile, t }: AgentMatrixDisplayProps) {
                 <h4 className="font-semibold">{t.emotionIndex}</h4>
                 <ProgressWithLabel label={t.health} value={emotionIndex.health} />
                 <ProgressWithLabel label={t.appearance} value={emotionIndex.appearance} />
+                <ProgressWithLabel label={t.iq} value={emotionIndex.iq} max={200}/>
+                <ProgressWithLabel label={t.eq} value={emotionIndex.eq} max={200}/>
                 <ProgressWithLabel label={t.antipathy} value={emotionIndex.antipathy} />
-                <ProgressWithLabel label={t.happinessIndex} value={profile.soul.advanced.socialPosition.happinessIndex} />
                 
                 <h4 className="font-semibold mt-4">{t.matrixConnection}</h4>
                 <ProgressWithLabel label={t.connection} value={matrixConnection.connection} />
@@ -80,16 +82,18 @@ function AgentMatrixDisplay({ agentNum, profile, t }: AgentMatrixDisplayProps) {
 interface ProgressWithLabelProps {
     label: string;
     value: number;
+    max?: number;
 }
 
-function ProgressWithLabel({ label, value }: ProgressWithLabelProps) {
+function ProgressWithLabel({ label, value, max = 100 }: ProgressWithLabelProps) {
+    const percentage = max === 100 ? value : Math.round((value / max) * 100);
     return (
         <div className="space-y-1">
             <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">{label}</span>
-                <span>{value}%</span>
+                <span>{value}</span>
             </div>
-            <Progress value={value} />
+            <Progress value={percentage} />
         </div>
     )
 }
