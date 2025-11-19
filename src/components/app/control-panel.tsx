@@ -205,7 +205,7 @@ export function ControlPanel({
                   value={exchanges}
                   onValueChange={setExchanges}
                   min={1}
-                  max={100}
+                  max={50}
                   step={1}
                   description={t.exchangesDesc}
                   disabled={isGenerating}
