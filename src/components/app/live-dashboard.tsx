@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -5,7 +6,7 @@ import { AgentProfile } from "@/lib/types";
 import { I18n } from "@/lib/i18n";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bot, Loader, StopCircle, Zap } from "lucide-react";
+import { Bot, Heart, Loader, StopCircle, Zap, BrainCircuit, Smile, Angry } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,11 @@ interface LiveDashboardProps {
 }
 
 export function LiveDashboard({ agent1, agent2, t, onStop, isStopping }: LiveDashboardProps) {
+  const avgConnection = (agent1.matrix.matrixConnection.connection + agent2.matrix.matrixConnection.connection) / 2;
+  const avgTrust = (agent1.matrix.matrixConnection.trust + agent2.matrix.matrixConnection.trust) / 2;
+  const avgIntimacy = (agent1.matrix.matrixConnection.intimacy + agent2.matrix.matrixConnection.intimacy) / 2;
+  const avgDependency = (agent1.matrix.matrixConnection.dependency + agent2.matrix.matrixConnection.dependency) / 2;
+
   return (
     <div className="flex h-screen flex-col border-r bg-card">
       <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
@@ -31,6 +37,22 @@ export function LiveDashboard({ agent1, agent2, t, onStop, isStopping }: LiveDas
         <div className="p-4 space-y-6">
             <AgentMatrixDisplay agentNum={1} profile={agent1} t={t} />
             <AgentMatrixDisplay agentNum={2} profile={agent2} t={t} />
+            <Card>
+              <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300">
+                          <Heart className="h-5 w-5" />
+                      </div>
+                      {t.matrixConnection}
+                  </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                  <ProgressWithLabel label={t.connection} value={avgConnection} />
+                  <ProgressWithLabel label={t.trust} value={avgTrust} />
+                  <ProgressWithLabel label={t.intimacy} value={avgIntimacy} />
+                  <ProgressWithLabel label={t.dependency} value={avgDependency} />
+              </CardContent>
+            </Card>
         </div>
       </ScrollArea>
        <footer className="shrink-0 border-t p-4">
@@ -50,7 +72,8 @@ interface AgentMatrixDisplayProps {
 }
 
 function AgentMatrixDisplay({ agentNum, profile, t }: AgentMatrixDisplayProps) {
-    const { emotionIndex, matrixConnection } = profile.matrix;
+    const { emotionIndex } = profile.matrix;
+    const { happinessIndex } = profile.soul.advanced.socialPosition;
     const [isUpdating, setIsUpdating] = useState(false);
 
     useEffect(() => {
@@ -79,13 +102,16 @@ function AgentMatrixDisplay({ agentNum, profile, t }: AgentMatrixDisplayProps) {
                 <ProgressWithLabel label={t.appearance} value={emotionIndex.appearance} />
                 <ProgressWithLabel label={t.iq} value={emotionIndex.iq} max={200}/>
                 <ProgressWithLabel label={t.eq} value={emotionIndex.eq} max={200}/>
+                <ProgressWithLabel label={t.happinessIndex} value={happinessIndex} />
                 <ProgressWithLabel label={t.antipathy} value={emotionIndex.antipathy} />
-                
-                <h4 className="font-semibold mt-4">{t.matrixConnection}</h4>
-                <ProgressWithLabel label={t.connection} value={matrixConnection.connection} />
-                <ProgressWithLabel label={t.trust} value={matrixConnection.trust} />
-                <ProgressWithLabel label={t.intimacy} value={matrixConnection.intimacy} />
-                <ProgressWithLabel label={t.dependency} value={matrixConnection.dependency} />
+                <div className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">{t.nextIntention}</span>
+                  </div>
+                  <p className="text-sm font-medium p-2 bg-muted rounded-md h-10 flex items-center">
+                    {emotionIndex.nextIntention || "..."}
+                  </p>
+                </div>
             </CardContent>
         </Card>
     )
@@ -109,3 +135,5 @@ function ProgressWithLabel({ label, value, max = 100 }: ProgressWithLabelProps) 
         </div>
     )
 }
+
+    

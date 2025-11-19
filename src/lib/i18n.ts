@@ -1,3 +1,4 @@
+
 // src/lib/i18n.ts
 
 export type Language = 'en' | 'vi';
@@ -117,6 +118,9 @@ export interface I18n {
   apiKey: string;
   apiKeyPlaceholder: string;
   apiKeyDesc: string;
+  syncProfile: string;
+  profileSynced: string;
+  profileSyncedDesc: string;
 }
 
 const en: I18n = {
@@ -222,7 +226,7 @@ const en: I18n = {
   personalityType: "Personality Type (e.g. MBTI)",
   thinkingStyle: "Thinking Style",
   strengths: "Strengths",
-  weaknesses: "Weaknesses",
+wAighteaknesses: "Weaknesses",
   hobbies: "Hobbies",
   dislikes: "Dislikes",
   dreams: "Dreams & Ambitions",
@@ -234,6 +238,9 @@ const en: I18n = {
   apiKey: 'Google AI API Key',
   apiKeyPlaceholder: 'Enter your API Key',
   apiKeyDesc: 'Your key is used only for this session and is not stored.',
+  syncProfile: 'Sync current matrix to soul',
+  profileSynced: 'Profile Synced',
+  profileSyncedDesc: 'The dynamic matrix values have been updated to the soul.',
 };
 
 const vi: I18n = {
@@ -255,7 +262,7 @@ const vi: I18n = {
   profilesSavedDesc: 'Hồ sơ agent hiện tại đã được lưu.',
   sessionLoaded: 'Đã tải phiên trò chuyện',
   sessionLoadedDesc: 'Phiên trò chuyện của bạn đã được tải.',
-  profilesLoaded: 'Đã tải hồ sơ',
+profilesLoaded: 'Đã tải hồ sơ',
   profilesLoadedDesc: 'Hồ sơ agent đã được tải.',
   loadFailed: 'Tải thất bại',
   loadFailedDesc: 'Tệp đã chọn không phải là tệp phiên hợp lệ.',
@@ -351,6 +358,11 @@ const vi: I18n = {
   apiKey: 'Google AI API Key',
   apiKeyPlaceholder: 'Nhập API Key của bạn',
   apiKeyDesc: 'Key của bạn chỉ được dùng cho phiên này và không được lưu trữ.',
+  syncProfile: 'Đồng bộ chỉ số hiện tại vào Soul',
+  profileSynced: 'Đã đồng bộ hồ sơ',
+  profileSyncedDesc: 'Các giá trị matrix động đã được cập nhật vào soul.',
 };
 
 export const i18n = { en, vi };
+
+    

@@ -26,7 +26,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronsUpDown, Pencil, Sparkles } from "lucide-react";
+import { ChevronsUpDown, Pencil, Sparkles, RefreshCcw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
 
 interface AgentProfileSheetProps {
   agentNum: 1 | 2;
@@ -45,6 +47,7 @@ export function AgentProfileSheet({
   isGenerating,
   t,
 }: AgentProfileSheetProps) {
+  const { toast } = useToast();
 
   const handleSoulChange = <T extends keyof AgentSoul, U extends keyof AgentSoul[T]>(
     category: T,
@@ -106,6 +109,36 @@ export function AgentProfileSheet({
     }));
   };
 
+  const handleSyncMatrixToSoul = () => {
+    setProfile(prev => {
+      const newSoul: AgentSoul = {
+        ...prev.soul,
+        basic: {
+          ...prev.soul.basic,
+          // Note: We don't sync persona fields like name, age etc.
+        },
+        advanced: {
+          ...prev.soul.advanced,
+          socialPosition: {
+            ...prev.soul.advanced.socialPosition,
+            happinessIndex: prev.matrix.emotionIndex.health, // Example: mapping health to happiness
+          },
+        },
+      };
+
+      toast({
+        title: t.profileSynced,
+        description: t.profileSyncedDesc,
+      });
+
+      return {
+        ...prev,
+        soul: newSoul
+      };
+    });
+  };
+
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -118,6 +151,10 @@ export function AgentProfileSheet({
           <SheetTitle>{t.editAgent} {agentNum}: {profile.soul.basic.persona.name}</SheetTitle>
           <SheetDescription>{t.editAgentDesc}</SheetDescription>
         </SheetHeader>
+        <Button variant="outline" size="sm" onClick={handleSyncMatrixToSoul} className="mt-2" disabled={isGenerating}>
+            <RefreshCcw className="mr-2 h-4 w-4" />
+            {t.syncProfile}
+        </Button>
         <Tabs defaultValue="soul" className="mt-4 flex-1 flex flex-col overflow-hidden">
           <TabsList className="grid w-full grid-cols-2 bg-accent">
             <TabsTrigger value="soul">{t.agentSoul}</TabsTrigger>
@@ -269,3 +306,5 @@ function SliderWithLabel(props: React.ComponentProps<typeof Slider> & { label: s
     </div>
   );
 }
+
+    
