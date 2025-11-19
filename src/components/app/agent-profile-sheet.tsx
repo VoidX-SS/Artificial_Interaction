@@ -119,7 +119,7 @@ export function AgentProfileSheet({
           <SheetDescription>{t.editAgentDesc}</SheetDescription>
         </SheetHeader>
         <Tabs defaultValue="soul" className="mt-4 flex-1 flex flex-col overflow-hidden">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 bg-accent">
             <TabsTrigger value="soul">{t.agentSoul}</TabsTrigger>
             <TabsTrigger value="matrix">{t.agentMatrix}</TabsTrigger>
           </TabsList>
@@ -269,5 +269,3 @@ function SliderWithLabel(props: React.ComponentProps<typeof Slider> & { label: s
     </div>
   );
 }
-
-    
