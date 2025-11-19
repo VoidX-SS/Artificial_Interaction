@@ -195,13 +195,13 @@ export default function Home() {
     }
 
 
-    for (let i = 0; i < exchanges[0] * 2; i++) {
+    for (let i = 0; i < exchanges[0]; i++) {
       if (!isRunningRef.current) {
         toast({ title: t.conversationStopped, description: t.conversationStoppedManually });
         break;
       }
       
-      if (currentHistory.length >= initialChatLength + exchanges[0] * 2) {
+      if (currentHistory.length >= initialChatLength + exchanges[0]) {
         break;
       }
 
