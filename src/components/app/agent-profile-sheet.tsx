@@ -127,7 +127,7 @@ export function AgentProfileSheet({
             <TabsContent value="soul" className="py-4">
               <div className="space-y-6">
                 <Collapsible defaultOpen>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-muted px-3 py-2 font-semibold">
+                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-accent px-3 py-2 font-semibold">
                     {t.basic}
                     <ChevronsUpDown className="h-4 w-4" />
                   </CollapsibleTrigger>
@@ -152,7 +152,7 @@ export function AgentProfileSheet({
                 </Collapsible>
 
                 <Collapsible>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-muted px-3 py-2 font-semibold">
+                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-accent px-3 py-2 font-semibold">
                     {t.advanced}
                     <ChevronsUpDown className="h-4 w-4" />
                   </CollapsibleTrigger>
@@ -176,7 +176,7 @@ export function AgentProfileSheet({
             <TabsContent value="matrix" className="py-4">
                <div className="space-y-6">
                 <Collapsible defaultOpen>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-muted px-3 py-2 font-semibold">
+                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-accent px-3 py-2 font-semibold">
                     {t.emotionIndex}
                     <ChevronsUpDown className="h-4 w-4" />
                   </CollapsibleTrigger>
@@ -191,7 +191,7 @@ export function AgentProfileSheet({
                 </Collapsible>
 
                 <Collapsible defaultOpen>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-muted px-3 py-2 font-semibold">
+                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-accent px-3 py-2 font-semibold">
                     {t.matrixConnection}
                     <ChevronsUpDown className="h-4 w-4" />
                   </CollapsibleTrigger>
@@ -204,7 +204,7 @@ export function AgentProfileSheet({
                 </Collapsible>
 
                 <Collapsible>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-muted px-3 py-2 font-semibold">
+                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-accent px-3 py-2 font-semibold">
                      {t.matrixFavor}
                     <ChevronsUpDown className="h-4 w-4" />
                   </CollapsibleTrigger>
