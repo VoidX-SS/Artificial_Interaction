@@ -91,35 +91,45 @@ export default function Home() {
     const langInstruction = language === 'vi' ? 'Cuộc hội thoại PHẢI bằng tiếng Việt.' : 'The conversation must be in English.';
 
     let prompt = "BỐI CẢNH\n";
-    prompt += `Bạn tên là ${currentAgent.soul.basic.persona.name}, ${currentAgent.soul.basic.persona.age} tuổi. `;
-    prompt += `Chỉ số hạnh phúc hiện tại của bạn là ${currentAgent.soul.advanced.socialPosition.happinessIndex}, IQ của bạn là ${currentAgent.matrix.emotionIndex.iq}. `;
-    prompt += `Bạn đang nói chuyện với ${otherAgent.soul.basic.persona.name}, mối quan hệ của hai bạn là: ${relationship}.\n\n`;
+    prompt += `Bạn là ${currentAgent.soul.basic.persona.name}, ${currentAgent.soul.basic.persona.age} tuổi, quốc tịch ${currentAgent.soul.basic.persona.nationality} và đang sống tại ${currentAgent.soul.basic.persona.location}. `;
+    prompt += `Công việc hiện tại của bạn là ${currentAgent.soul.advanced.socialPosition.job} với tình hình tài chính ${currentAgent.soul.advanced.socialPosition.financialStatus}. `;
+    prompt += `Chỉ số hạnh phúc của bạn là ${currentAgent.soul.advanced.socialPosition.happinessIndex}, chất lượng cuộc sống là ${currentAgent.soul.advanced.socialPosition.qualityOfLife}. `;
+    prompt += `Về các chỉ số nội tại, sức khỏe của bạn ở mức ${currentAgent.matrix.emotionIndex.health}, ngoại hình ${currentAgent.matrix.emotionIndex.appearance}, IQ ${currentAgent.matrix.emotionIndex.iq}, và EQ ${currentAgent.matrix.emotionIndex.eq}. `;
+    prompt += `Bạn đang nói chuyện với ${otherAgent.soul.basic.persona.name}. Mối quan hệ của hai bạn là: ${relationship}.\n\n`;
 
     if (history.length === 0) {
-        prompt += `Chủ đề là ${topic}, bạn hãy nói trước.\n`;
+        prompt += `Chủ đề là "${topic}", bạn hãy nói trước.\n`;
     } else {
         const lastMessage = history[history.length - 1];
-        prompt += `Tin nhắn bạn ấy nói là: "${lastMessage.text}", hãy phát triển hội thoại bằng cách phản hồi tiếp.\n`;
-        const historyText = history.map(msg => `${msg.agent}: ${msg.text}`).join('\n');
-        prompt += `Những gì cả hai đã trao đổi là:\n${historyText}\n`;
+        prompt += `Tin nhắn cuối cùng của ${lastMessage.agent} là: "${lastMessage.text}". Hãy phát triển hội thoại bằng cách phản hồi tiếp.\n`;
+        if (history.length > 1) {
+            const historyText = history.slice(0, -1).map(msg => `${msg.agent}: ${msg.text}`).join('\n');
+            prompt += `Những gì cả hai đã trao đổi trước đó là:\n${historyText}\n`;
+        }
     }
 
     if (!deepInteraction) {
-        prompt += `Chủ đề cả hai đang trao đổi là ${topic}\n`;
+        prompt += `Hãy luôn bám sát chủ đề chính của cuộc trò chuyện là: "${topic}"\n`;
     }
 
     prompt += "\nĐẦU RA\n";
-    prompt += `Là một output dạng json có message (nội dung bạn nói), personality (các chỉ số matrix của bạn đã được cập nhật), và nextIntention (ý định tiếp theo của bạn).\n`;
-    prompt += `Ngôn ngữ: ${langInstruction}\n`;
-    prompt += `Tối đa ${maxWords[0]} chữ cho phần message.\n`;
+    prompt += `Bạn PHẢI trả lời bằng một đối tượng JSON duy nhất có các trường sau: "message" (nội dung bạn nói), "personality" (chứa "emotionIndex" và "matrixConnection" đã được cập nhật), và "nextIntention" (ý định tiếp theo của bạn).\n`;
+    prompt += `Ngôn ngữ cho trường "message": ${langInstruction}\n`;
+    prompt += `Giới hạn số từ cho trường "message": Tối đa ${maxWords[0]} chữ.\n`;
     
     return prompt;
   }
 
   const parseResponse = (rawResponse: any) => {
       if (typeof rawResponse === 'string') {
-        // This is an error string
-        return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
+        try {
+          // Sometimes the model returns a stringified JSON
+          const parsed = JSON.parse(rawResponse);
+          rawResponse = parsed;
+        } catch(e) {
+          // This is an error string or a plain text response
+          return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
+        }
       }
       if (typeof rawResponse === 'object' && rawResponse !== null) {
         const { message, personality, nextIntention } = rawResponse;
@@ -167,7 +177,7 @@ export default function Home() {
         break;
       }
       
-      if (currentHistory.length >= initialChatLength + exchanges[0]) {
+      if (chatLog.length + i >= initialChatLength + exchanges[0]) {
         break;
       }
 
@@ -220,7 +230,6 @@ export default function Home() {
         matrixConnection: matrixConnection
       };
       
-      // Update the agent's matrix based on the response
       const profileUpdater = currentAgentTurn === 'agent1' ? setAgent1Profile : setAgent2Profile;
       if (emotionIndex || matrixConnection || nextIntention) {
         profileUpdater(prev => ({
@@ -236,7 +245,6 @@ export default function Home() {
         }));
       }
 
-      // We must wait for the state to update before adding to history to show live intention
       await new Promise(resolve => setTimeout(resolve, 0));
 
       currentHistory = [...currentHistory, newMessage];
@@ -472,4 +480,5 @@ export default function Home() {
       />
     </main>
   );
-}
+
+    
