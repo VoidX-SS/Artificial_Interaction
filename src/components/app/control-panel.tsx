@@ -76,6 +76,8 @@ interface ControlPanelProps {
   setDeepInteraction: Dispatch<SetStateAction<boolean>>;
   apiKey: string;
   setApiKey: Dispatch<SetStateAction<string>>;
+  apiKey2: string;
+  setApiKey2: Dispatch<SetStateAction<string>>;
 }
 
 export function ControlPanel({
@@ -113,7 +115,9 @@ export function ControlPanel({
   deepInteraction,
   setDeepInteraction,
   apiKey,
-  setApiKey
+  setApiKey,
+  apiKey2,
+  setApiKey2,
 }: ControlPanelProps) {
   return (
     <div className="flex h-screen flex-col border-r bg-card">
@@ -130,6 +134,8 @@ export function ControlPanel({
             setDeepInteraction={setDeepInteraction}
             apiKey={apiKey}
             setApiKey={setApiKey}
+            apiKey2={apiKey2}
+            setApiKey2={setApiKey2}
             t={t}
         />
       </header>
@@ -350,7 +356,7 @@ function ParameterSlider({
     )
 }
 
-function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, deepInteraction, setDeepInteraction, apiKey, setApiKey, t }: {
+function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, deepInteraction, setDeepInteraction, apiKey, setApiKey, apiKey2, setApiKey2, t }: {
     language: Language;
     setLanguage: Dispatch<SetStateAction<Language>>;
     theme: Theme;
@@ -361,6 +367,8 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
     setDeepInteraction: Dispatch<SetStateAction<boolean>>;
     apiKey: string;
     setApiKey: Dispatch<SetStateAction<string>>;
+    apiKey2: string;
+    setApiKey2: Dispatch<SetStateAction<string>>;
     t: I18n;
 }) {
     return (
@@ -377,73 +385,85 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
                         {t.settingsDesc}
                     </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-6 py-4">
-                    <div className="space-y-3">
-                      <Label className="flex items-center gap-2"><Languages/> {t.language}</Label>
-                       <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select a language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="vi">Tiếng Việt</SelectItem>
-                            <SelectItem value="en">English</SelectItem>
-                        </SelectContent>
-                       </Select>
-                    </div>
-                     <div className="space-y-3">
-                        <Label className="flex items-center gap-2"><KeyRound /> {t.apiKey}</Label>
-                        <Input 
-                            type="password"
-                            placeholder={t.apiKeyPlaceholder}
-                            value={apiKey}
-                            onChange={(e) => setApiKey(e.target.value)}
-                        />
-                        <p className="text-xs text-muted-foreground">{t.apiKeyDesc}</p>
-                    </div>
-                    <div className="space-y-3">
-                        <Label className="flex items-center gap-2"><Palette/> {t.theme}</Label>
-                        <RadioGroup value={theme} onValueChange={(value: string) => setTheme(value as Theme)} className="flex space-x-4">
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="light" id="light" />
-                                <Label htmlFor="light">{t.light}</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="dark" id="dark" />
-                                <Label htmlFor="dark">{t.dark}</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="system" id="system" />
-                                <Label htmlFor="system">{t.system}</Label>
-                            </div>
-                        </RadioGroup>
-                    </div>
-                    <div className="space-y-3">
-                        <Label className="flex items-center gap-2"><Clock /> {t.leisurelyChat}</Label>
-                         <div className="flex items-center space-x-2">
-                            <Switch
-                                id="leisurely-mode"
-                                checked={leisurelyChat}
-                                onCheckedChange={setLeisurelyChat}
+                <ScrollArea className="max-h-[70vh] pr-6">
+                    <div className="space-y-6 py-4">
+                        <div className="space-y-3">
+                        <Label className="flex items-center gap-2"><Languages/> {t.language}</Label>
+                        <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a language" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="vi">Tiếng Việt</SelectItem>
+                                <SelectItem value="en">English</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-3">
+                            <Label className="flex items-center gap-2"><KeyRound /> {t.apiKey} (Agent 1)</Label>
+                            <Input 
+                                type="password"
+                                placeholder={t.apiKeyPlaceholder}
+                                value={apiKey}
+                                onChange={(e) => setApiKey(e.target.value)}
                             />
-                            <Label htmlFor="leisurely-mode" className="text-sm font-normal text-muted-foreground">
-                                {t.leisurelyChatDesc}
-                            </Label>
+                            <p className="text-xs text-muted-foreground">{t.apiKeyDesc}</p>
+                        </div>
+                        <div className="space-y-3">
+                            <Label className="flex items-center gap-2"><KeyRound /> {t.apiKey} (Agent 2)</Label>
+                            <Input 
+                                type="password"
+                                placeholder={t.apiKeyPlaceholder}
+                                value={apiKey2}
+                                onChange={(e) => setApiKey2(e.target.value)}
+                            />
+                            <p className="text-xs text-muted-foreground">{t.apiKeyDesc}</p>
+                        </div>
+                        <div className="space-y-3">
+                            <Label className="flex items-center gap-2"><Palette/> {t.theme}</Label>
+                            <RadioGroup value={theme} onValueChange={(value: string) => setTheme(value as Theme)} className="flex space-x-4">
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="light" id="light" />
+                                    <Label htmlFor="light">{t.light}</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="dark" id="dark" />
+                                    <Label htmlFor="dark">{t.dark}</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="system" id="system" />
+                                    <Label htmlFor="system">{t.system}</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
+                        <div className="space-y-3">
+                            <Label className="flex items-center gap-2"><Clock /> {t.leisurelyChat}</Label>
+                            <div className="flex items-center space-x-2">
+                                <Switch
+                                    id="leisurely-mode"
+                                    checked={leisurelyChat}
+                                    onCheckedChange={setLeisurelyChat}
+                                />
+                                <Label htmlFor="leisurely-mode" className="text-sm font-normal text-muted-foreground">
+                                    {t.leisurelyChatDesc}
+                                </Label>
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <Label className="flex items-center gap-2"><WandSparkles /> {t.deepInteraction}</Label>
+                            <div className="flex items-center space-x-2">
+                                <Switch
+                                    id="deep-interaction-mode"
+                                    checked={deepInteraction}
+                                    onCheckedChange={setDeepInteraction}
+                                />
+                                <Label htmlFor="deep-interaction-mode" className="text-sm font-normal text-muted-foreground">
+                                    {t.deepInteractionDesc}
+                                </Label>
+                            </div>
                         </div>
                     </div>
-                    <div className="space-y-3">
-                        <Label className="flex items-center gap-2"><WandSparkles /> {t.deepInteraction}</Label>
-                         <div className="flex items-center space-x-2">
-                            <Switch
-                                id="deep-interaction-mode"
-                                checked={deepInteraction}
-                                onCheckedChange={setDeepInteraction}
-                            />
-                            <Label htmlFor="deep-interaction-mode" className="text-sm font-normal text-muted-foreground">
-                                {t.deepInteractionDesc}
-                            </Label>
-                        </div>
-                    </div>
-                </div>
+                </ScrollArea>
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button>{t.done}</Button>
@@ -453,7 +473,3 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
         </Dialog>
     );
 }
-
-    
-
-    

@@ -1,62 +1,69 @@
 'use server';
 
 /**
- * @fileOverview Flow for generating a conversation starter for the AI agents.
+ * @fileOverview Flow for generating the next turn in a conversation.
  *
- * - generateConversationStarter - A function that generates a conversation starter.
- * - GenerateConversationStarterInput - The input type for the generateConversationStarter function.
- * - GenerateConversationStarterOutput - The return type for the generateConversationStarter function.
+ * - generateNextTurn - A function that generates a response from an agent.
+ * - GenerateNextTurnInput - The input type for the generateNextTurn function.
+ * - GenerateNextTurnOutput - The return type for the generateNextTurn function.
  */
 
 import {ai, getAiWithApiKey} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const GenerateConversationStarterInputSchema = z.object({
-  topic: z.string().describe('The topic or starting prompt for the conversation.'),
+const GenerateNextTurnInputSchema = z.object({
+  prompt: z.string().describe('The full prompt for the AI agent.'),
   apiKey: z.string().optional().describe('Optional API key for Google AI.'),
 });
 
-export type GenerateConversationStarterInput = z.infer<
-  typeof GenerateConversationStarterInputSchema
->;
+export type GenerateNextTurnInput = z.infer<typeof GenerateNextTurnInputSchema>;
 
-const GenerateConversationStarterOutputSchema = z.object({
-  conversationStarter: z.string().describe('The generated conversation starter.'),
+const GenerateNextTurnOutputSchema = z.object({
+    message: z.string().describe("The agent's text response for the conversation."),
+    personality: z.object({
+        emotionIndex: z.object({
+            health: z.number(),
+            appearance: z.number(),
+            iq: z.number(),
+            eq: z.number(),
+            antipathy: z.number(),
+        }),
+        matrixConnection: z.object({
+            connection: z.number(),
+            trust: z.number(),
+            intimacy: z.number(),
+            dependency: z.number(),
+        }),
+    }),
+    nextIntention: z.string().describe("The agent's next immediate intention."),
 });
 
-export type GenerateConversationStarterOutput = z.infer<
-  typeof GenerateConversationStarterOutputSchema
->;
 
-export async function generateConversationStarter(
-  input: GenerateConversationStarterInput
-): Promise<GenerateConversationStarterOutput> {
+export type GenerateNextTurnOutput = z.infer<typeof GenerateNextTurnOutputSchema>;
+
+export async function generateNextTurn(
+  input: GenerateNextTurnInput
+): Promise<GenerateNextTurnOutput> {
   const customAi = input.apiKey ? getAiWithApiKey(input.apiKey) : ai;
 
-  const prompt = customAi.definePrompt({
-    name: 'generateConversationStarterPrompt',
-    input: {schema: GenerateConversationStarterInputSchema},
-    output: {schema: GenerateConversationStarterOutputSchema},
-    prompt: `You are an AI assistant helping to start a conversation between two AI agents.
-
-  Based on the given topic or starting prompt, generate a suitable conversation starter.
-
-  Topic/Starting Prompt: {{{topic}}}
-
-  Conversation Starter: `,
+  const responseGenerationPrompt = customAi.definePrompt({
+    name: 'responseGenerationPrompt',
+    input: {schema: GenerateNextTurnInputSchema},
+    output: {schema: GenerateNextTurnOutputSchema},
+    prompt: `{{{prompt}}}`,
   });
 
-  const generateConversationStarterFlow = customAi.defineFlow(
+  const generateNextTurnFlow = customAi.defineFlow(
     {
-      name: 'generateConversationStarterFlow',
-      inputSchema: GenerateConversationStarterInputSchema,
-      outputSchema: GenerateConversationStarterOutputSchema,
+      name: 'generateNextTurnFlow',
+      inputSchema: GenerateNextTurnInputSchema,
+      outputSchema: GenerateNextTurnOutputSchema,
     },
     async flowInput => {
-      const {output} = await prompt(flowInput);
+      const {output} = await responseGenerationPrompt(flowInput);
       return output!;
     }
   );
   
-  return generateConversationStarterFlow(input);
+  return generateNextTurnFlow(input);
 }

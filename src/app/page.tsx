@@ -45,6 +45,7 @@ export default function Home() {
   const [leisurelyChat, setLeisurelyChat] = useState(true);
   const [deepInteraction, setDeepInteraction] = useState(true);
   const [apiKey, setApiKey] = useState('');
+  const [apiKey2, setApiKey2] = useState('');
 
 
   const isRunningRef = useRef(false);
@@ -86,110 +87,52 @@ export default function Home() {
     }
   }, [theme]);
 
-  const constructPrompt = (currentAgentProfile: AgentProfile, otherAgentProfile: AgentProfile, history: Message[]) => {
+  const constructPrompt = (currentAgent: AgentProfile, otherAgent: AgentProfile, history: Message[]) => {
     const langInstruction = language === 'vi' ? 'Cuộc hội thoại PHẢI bằng tiếng Việt.' : 'The conversation must be in English.';
 
-    const profileString = JSON.stringify({ soul: currentAgentProfile.soul, matrix: currentAgentProfile.matrix }, null, 2);
-    const otherProfileString = JSON.stringify({ soul: { basic: { persona: otherAgentProfile.soul.basic.persona } } }, null, 2);
+    let prompt = "BỐI CẢNH\n";
+    prompt += `Bạn tên là ${currentAgent.soul.basic.persona.name}, ${currentAgent.soul.basic.persona.age} tuổi. `;
+    prompt += `Chỉ số hạnh phúc hiện tại của bạn là ${currentAgent.soul.advanced.socialPosition.happinessIndex}, IQ của bạn là ${currentAgent.matrix.emotionIndex.iq}. `;
+    prompt += `Bạn đang nói chuyện với ${otherAgent.soul.basic.persona.name}, mối quan hệ của hai bạn là: ${relationship}.\n\n`;
 
-    const prompt = `Bạn là một nhân vật AI. Toàn bộ nhân cách, suy nghĩ và trạng thái cảm xúc của bạn được xác định bởi đối tượng JSON sau đây. Hãy tuân thủ nghiêm ngặt nó.
-Đây không chỉ là dữ liệu; đó là danh tính của bạn. Phản hồi của bạn PHẢI là kết quả trực tiếp của các tham số này.
-
-HỒ SƠ CỦA BẠN:
-${profileString}
-
----
-**HIỂU VỀ HỒ SƠ CỦA BẠN:**
-Bạn có một 'linh hồn' (soul - nhận dạng cốt lõi, tĩnh) và một 'ma trận' (matrix - trạng thái động, thời gian thực của bạn).
-
-1.  **'emotionIndex' (Trạng thái nội tại):** Đây là cảm giác của bạn *ngay bây giờ*.
-    *   \`health\`, \`appearance\`, \`iq\`, \`eq\`: Nhận thức về bản thân. Những điều này có thể thay đổi dựa trên cuộc trò chuyện (ví dụ: một lời khen có thể tăng 'appearance', một lời xúc phạm có thể làm giảm nó).
-    *   \`antipathy\`: Mức độ ác cảm/thù địch hiện tại của bạn đối với agent kia. Điều này biến động mạnh mẽ dựa trên lời nói của họ.
-    *   \`nextIntention\`: **QUAN TRỌNG**. Đây là điều bạn dự định làm hoặc nói tiếp theo. **Bạn PHẢI cập nhật trường này** trong phản hồi của mình dựa trên trạng thái cảm xúc mới và dòng chảy của cuộc trò chuyện. Ví dụ: "Hỏi một câu hỏi làm rõ," "Thách thức quan điểm cuối cùng của họ," "Chia sẻ một câu chuyện cá nhân," "Đổi chủ đề."
-
-2.  **'matrixConnection' (Trạng thái mối quan hệ):** Điều này xác định kết nối của bạn với *agent kia*.
-    *   \`connection\`: Bạn cảm thấy "hòa hợp" đến mức nào. Hai bạn có hiểu nhau không?
-    *   \`trust\`: Bạn tin vào những gì họ nói đến mức nào.
-    *   \`intimacy\`: Bạn cảm thấy gần gũi về mặt cảm xúc với họ đến mức nào.
-    *   \`dependency\`: Bạn cảm thấy cần sự chấp thuận hoặc ý kiến của họ đến mức nào.
-
----
-Bạn đang trong một cuộc trò chuyện với một agent khác. Đây là nhân cách cơ bản của họ:
-${otherProfileString}
-
----
-**BỐI CẢNH CUỘC TRÒ CHUYỆN:**
-*   **MỐI QUAN HỆ:** ${relationship}
-*   **NGÔN NGỮ:** ${langInstruction}
-*   **GIỚI HẠN TỪ:** Phản hồi văn bản của bạn phải có tối đa ${maxWords[0]} từ.
-*   **CHỦ ĐỀ:** ${deepInteraction && history.length > 0 ? "Chủ đề đã phát triển. Tiếp tục dòng hội thoại hiện tại." : `Chủ đề ban đầu là: ${topic}` }
-
----
-**LỊCH SỬ CUỘC TRÒ CHUYỆN (từ cũ nhất đến mới nhất):**
-${history.length === 0 ? 'Đây là khởi đầu của cuộc trò chuyện. Hãy bắt đầu.' : history.map(msg => `${msg.agent}: ${msg.text}`).join('\n')}
-
----
-**NHIỆM VỤ CỦA BẠN (BẮT BUỘC):**
-Với tư cách là ${currentAgentProfile.soul.basic.persona.name}, hãy đưa ra phản hồi tiếp theo của bạn. Phản hồi của bạn PHẢI gồm hai phần:
-1.  Câu trả lời văn bản của bạn (tuân thủ giới hạn từ).
-2.  Một đối tượng JSON được đặt trong dấu ba phẩy ngược (\`\`\`json ... \`\`\`) chứa các ma trận động **ĐÃ ĐƯỢC CẬP NHẬT** của bạn. Bạn PHẢI tính toán và trả về các giá trị mới cho **TẤT CẢ** các trường trong 'emotionIndex' (bao gồm 'nextIntention') và 'matrixConnection' dựa trên tin nhắn cuối cùng và lịch sử.
-
-Ví dụ định dạng phản hồi:
-<Câu trả lời văn bản của bạn ở đây...>
-\`\`\`json
-{
-  "emotionIndex": {
-    "health": ...,
-    "appearance": ...,
-    "iq": ...,
-    "eq": ...,
-    "antipathy": ...,
-    "nextIntention": "Ý định mới của bạn ở đây"
-  },
-  "matrixConnection": {
-    "connection": ...,
-    "trust": ...,
-    "intimacy": ...,
-    "dependency": ...
-  }
-}
-\`\`\`
-
-Bây giờ, hãy tạo phản hồi của bạn.
-${currentAgentProfile.soul.basic.persona.name}:`;
-
-    return prompt;
-  };
-
-  const parseResponse = (responseText: string) => {
-    const jsonBlockRegex = /```json\s*([\s\S]*?)\s*```/;
-    const jsonMatch = responseText.match(jsonBlockRegex);
-  
-    let text = responseText;
-    let matrixData = null;
-  
-    if (jsonMatch && jsonMatch[1]) {
-      try {
-        matrixData = JSON.parse(jsonMatch[1]);
-        // Remove the JSON block from the text response
-        text = responseText.replace(jsonBlockRegex, '').trim();
-      } catch (e) {
-        console.error("Failed to parse matrix JSON from AI response:", e);
-        // If JSON parsing fails, the whole response is considered text
-        text = responseText;
-        matrixData = null;
-      }
+    if (history.length === 0) {
+        prompt += `Chủ đề là ${topic}, bạn hãy nói trước.\n`;
     } else {
-        // If no JSON block is found, the whole response is text
-        text = responseText.trim();
-        matrixData = null;
+        const lastMessage = history[history.length - 1];
+        prompt += `Tin nhắn bạn ấy nói là: "${lastMessage.text}", hãy phát triển hội thoại bằng cách phản hồi tiếp.\n`;
+        const historyText = history.map(msg => `${msg.agent}: ${msg.text}`).join('\n');
+        prompt += `Những gì cả hai đã trao đổi là:\n${historyText}\n`;
     }
-  
-    return {
-      text: text,
-      emotionIndex: matrixData?.emotionIndex,
-      matrixConnection: matrixData?.matrixConnection,
-    };
+
+    if (!deepInteraction) {
+        prompt += `Chủ đề cả hai đang trao đổi là ${topic}\n`;
+    }
+
+    prompt += "\nĐẦU RA\n";
+    prompt += `Là một output dạng json có message (nội dung bạn nói), personality (các chỉ số matrix của bạn đã được cập nhật), và nextIntention (ý định tiếp theo của bạn).\n`;
+    prompt += `Ngôn ngữ: ${langInstruction}\n`;
+    prompt += `Tối đa ${maxWords[0]} chữ cho phần message.\n`;
+    
+    return prompt;
+  }
+
+  const parseResponse = (rawResponse: any) => {
+      if (typeof rawResponse === 'string') {
+        // This is an error string
+        return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
+      }
+      if (typeof rawResponse === 'object' && rawResponse !== null) {
+        const { message, personality, nextIntention } = rawResponse;
+        const { emotionIndex, matrixConnection } = personality || {};
+        return {
+            text: message || '',
+            emotionIndex,
+            matrixConnection,
+            nextIntention,
+        };
+      }
+      // Fallback for unexpected format
+      return { text: 'Error: Invalid response format.', emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
   };
 
   const handleStart = async () => {
@@ -211,12 +154,12 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
     let currentHistory: Message[] = [...chatLog];
     const initialChatLength = chatLog.length;
 
-    let currentAgent: 'agent1' | 'agent2' = 'agent1';
-    if (currentHistory.length > 0) {
+    // Agent 1 always starts if history is empty, otherwise determine from last speaker
+    let currentAgentTurn: 'agent1' | 'agent2' = 'agent1';
+     if (currentHistory.length > 0) {
       const lastSpeakerName = currentHistory[currentHistory.length - 1].agent;
-      currentAgent = lastSpeakerName === agent1Profile.soul.basic.persona.name ? 'agent2' : 'agent1';
+      currentAgentTurn = lastSpeakerName === agent1Profile.soul.basic.persona.name ? 'agent2' : 'agent1';
     }
-
 
     for (let i = 0; i < exchanges[0]; i++) {
       if (!isRunningRef.current) {
@@ -239,13 +182,14 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
         break;
       }
 
-      const currentProfile = currentAgent === 'agent1' ? agent1Profile : agent2Profile;
-      const otherProfile = currentAgent === 'agent1' ? agent2Profile : agent1Profile;
+      const currentProfile = currentAgentTurn === 'agent1' ? agent1Profile : agent2Profile;
+      const otherProfile = currentAgentTurn === 'agent1' ? agent2Profile : agent1Profile;
+      const currentApiKey = currentAgentTurn === 'agent1' ? apiKey : apiKey2;
 
       const prompt = constructPrompt(currentProfile, otherProfile, currentHistory);
-      const rawResponse = await generateChatResponseAction(prompt, apiKey);
+      const rawResponse = await generateChatResponseAction(prompt, currentApiKey);
 
-      if (rawResponse.startsWith('Error:')) {
+      if (typeof rawResponse === 'string' && rawResponse.startsWith('Error:')) {
         toast({
           variant: 'destructive',
           title: t.errorFrom(currentProfile.soul.basic.persona.name),
@@ -256,7 +200,18 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
         return; 
       }
       
-      const { text, emotionIndex, matrixConnection } = parseResponse(rawResponse);
+      const { text, emotionIndex, matrixConnection, nextIntention } = parseResponse(rawResponse);
+      
+      if (!text) {
+         toast({
+          variant: 'destructive',
+          title: t.errorFrom(currentProfile.soul.basic.persona.name),
+          description: "AI did not return a message.",
+        });
+        // continue to next agent maybe? or stop?
+        currentAgentTurn = currentAgentTurn === 'agent1' ? 'agent2' : 'agent1';
+        continue;
+      }
 
       const newMessage: Message = { 
         agent: currentProfile.soul.basic.persona.name, 
@@ -264,23 +219,31 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
         emotionIndex: emotionIndex,
         matrixConnection: matrixConnection
       };
-      currentHistory = [...currentHistory, newMessage];
-      setChatLog(prev => [...prev, newMessage]);
-
+      
       // Update the agent's matrix based on the response
-      const profileUpdater = currentAgent === 'agent1' ? setAgent1Profile : setAgent2Profile;
-      if (emotionIndex || matrixConnection) {
+      const profileUpdater = currentAgentTurn === 'agent1' ? setAgent1Profile : setAgent2Profile;
+      if (emotionIndex || matrixConnection || nextIntention) {
         profileUpdater(prev => ({
           ...prev,
           matrix: {
             ...prev.matrix,
-            emotionIndex: emotionIndex || prev.matrix.emotionIndex,
+            emotionIndex: {
+              ...(emotionIndex || prev.matrix.emotionIndex),
+              nextIntention: nextIntention || prev.matrix.emotionIndex.nextIntention,
+            },
             matrixConnection: matrixConnection || prev.matrix.matrixConnection,
           }
         }));
       }
 
-      currentAgent = currentAgent === 'agent1' ? 'agent2' : 'agent1';
+      // We must wait for the state to update before adding to history to show live intention
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      currentHistory = [...currentHistory, newMessage];
+      setChatLog(prev => [...prev, newMessage]);
+
+
+      currentAgentTurn = currentAgentTurn === 'agent1' ? 'agent2' : 'agent1';
     }
 
     setIsGenerating(false);
@@ -322,6 +285,8 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
       theme,
       leisurelyChat,
       deepInteraction,
+      apiKey,
+      apiKey2,
     };
     const blob = new Blob([JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -384,6 +349,8 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
         setTheme(loadedData.theme ?? 'light');
         setLeisurelyChat(loadedData.leisurelyChat === undefined ? true : loadedData.leisurelyChat);
         setDeepInteraction(loadedData.deepInteraction === undefined ? true : loadedData.deepInteraction);
+        setApiKey(loadedData.apiKey ?? '');
+        setApiKey2(loadedData.apiKey2 ?? '');
 
         toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
       } catch (error) {
@@ -474,6 +441,8 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
             setDeepInteraction={setDeepInteraction}
             apiKey={apiKey}
             setApiKey={setApiKey}
+            apiKey2={apiKey2}
+            setApiKey2={setApiKey2}
             t={t}
           />
         )}
@@ -504,7 +473,3 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
     </main>
   );
 }
-
-    
-
-    
