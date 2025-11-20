@@ -58,7 +58,6 @@ interface ControlPanelProps {
   onStart: () => void;
   onStop: () => void;
   onReset: () => void;
-  onGeneratePersonality: (agentNum: 1 | 2) => void;
   onSave: () => void;
   onLoad: () => void;
   onSaveProfiles: () => void;
@@ -95,7 +94,6 @@ export function ControlPanel({
   onStart,
   onStop,
   onReset,
-  onGeneratePersonality,
   onSave,
   onLoad,
   onSaveProfiles,
@@ -165,7 +163,6 @@ export function ControlPanel({
                 agentNum={1}
                 profile={agent1Profile}
                 setProfile={setAgent1Profile}
-                onGeneratePersonality={onGeneratePersonality}
                 isGenerating={isGenerating}
                 t={t}
               />
@@ -173,7 +170,6 @@ export function ControlPanel({
                 agentNum={2}
                 profile={agent2Profile}
                 setProfile={setAgent2Profile}
-                onGeneratePersonality={onGeneratePersonality}
                 isGenerating={isGenerating}
                 t={t}
               />
@@ -266,14 +262,12 @@ function AgentCard({
     agentNum,
     profile,
     setProfile,
-    onGeneratePersonality,
     isGenerating,
     t,
   }: {
     agentNum: 1 | 2;
     profile: AgentProfile;
     setProfile: Dispatch<SetStateAction<AgentProfile>>;
-    onGeneratePersonality: (agentNum: 1 | 2) => void;
     isGenerating: boolean;
     t: I18n;
   }) {
@@ -296,7 +290,6 @@ function AgentCard({
               agentNum={agentNum}
               profile={profile}
               setProfile={setProfile}
-              onGeneratePersonality={onGeneratePersonality}
               isGenerating={isGenerating}
               t={t}
             />

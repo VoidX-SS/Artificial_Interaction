@@ -26,7 +26,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronsUpDown, Pencil, Sparkles, RefreshCcw } from "lucide-react";
+import { ChevronsUpDown, Pencil, RefreshCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 
@@ -34,7 +34,6 @@ interface AgentProfileSheetProps {
   agentNum: 1 | 2;
   profile: AgentProfile;
   setProfile: Dispatch<SetStateAction<AgentProfile>>;
-  onGeneratePersonality: (agentNum: 1 | 2) => void;
   isGenerating: boolean;
   t: I18n;
 }
@@ -43,7 +42,6 @@ export function AgentProfileSheet({
   agentNum,
   profile,
   setProfile,
-  onGeneratePersonality,
   isGenerating,
   t,
 }: AgentProfileSheetProps) {
@@ -193,10 +191,6 @@ export function AgentProfileSheet({
                         <Label>{t.summaryDiary}</Label>
                         <Textarea placeholder={t.personalityPlaceholder} value={profile.soul.basic.summaryDiary} onChange={e => handleSimpleSoulChange('basic', 'summaryDiary', e.target.value)} rows={8} disabled={isGenerating}/>
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => onGeneratePersonality(agentNum)} disabled={isGenerating}>
-                        <Sparkles className="mr-2 h-4 w-4" />
-                        {t.generatePersonality}
-                    </Button>
                   </CollapsibleContent>
                 </Collapsible>
 

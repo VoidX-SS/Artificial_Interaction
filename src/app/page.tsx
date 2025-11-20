@@ -6,7 +6,7 @@ import type { ChangeEvent } from 'react';
 import { ControlPanel } from '@/components/app/control-panel';
 import { ChatDisplay } from '@/components/app/chat-display';
 import { useToast } from '@/hooks/use-toast';
-import { generatePersonalityAction, generateChatResponseAction } from '@/app/actions';
+import { generateChatResponseAction } from '@/app/actions';
 import { i18n, Language } from '@/lib/i18n';
 import { AgentProfile, initialAgent1Profile, initialAgent2Profile } from '@/lib/types';
 import { LiveDashboard } from '@/components/app/live-dashboard';
@@ -84,46 +84,6 @@ export default function Home() {
       document.documentElement.className = theme;
     }
   }, [theme]);
-
-  const handleGeneratePersonality = async (agentNum: 1 | 2) => {
-    const profile = agentNum === 1 ? agent1Profile : agent2Profile;
-    const description = profile.soul.basic.summaryDiary; // Using summary diary as the basis for generation
-
-    if (!description.trim()) {
-      toast({
-        variant: 'destructive',
-        title: t.error,
-        description: t.providePersonalityDesc(agentNum),
-      });
-      return;
-    }
-
-    const setter = agentNum === 1 ? setAgent1Profile : setAgent2Profile;
-    const generatedPersonality = await generatePersonalityAction(description, language, apiKey);
-    
-    if(generatedPersonality.startsWith('Error:')) {
-      toast({
-        variant: 'destructive',
-        title: t.personalityGenerationFailed,
-        description: generatedPersonality,
-      });
-    } else {
-      setter(prev => ({
-        ...prev,
-        soul: {
-          ...prev.soul,
-          basic: {
-            ...prev.soul.basic,
-            summaryDiary: generatedPersonality
-          }
-        }
-      }));
-      toast({
-        title: t.personalityGenerated,
-        description: t.personalityUpdated(agentNum),
-      });
-    }
-  };
 
   const constructPrompt = (currentAgentProfile: AgentProfile, otherAgentProfile: AgentProfile, history: Message[]) => {
     const langInstruction = language === 'vi' ? 'The conversation must be in Vietnamese.' : 'The conversation must be in English.';
@@ -214,6 +174,7 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
       } catch (e) {
         console.error("Failed to parse matrix JSON from AI response:", e);
         // If JSON parsing fails, the whole response is considered text
+        text = responseText;
         matrixData = null;
       }
     }
@@ -488,7 +449,6 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
             onStart={handleStart}
             onStop={handleStop}
             onReset={handleReset}
-            onGeneratePersonality={handleGeneratePersonality}
             onSave={handleSave}
             onLoad={handleLoadClick}
             onSaveProfiles={handleSaveProfiles}
