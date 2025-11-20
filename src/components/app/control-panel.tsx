@@ -43,6 +43,8 @@ import { Loader } from 'lucide-react';
 interface ControlPanelProps {
   topic: string;
   setTopic: Dispatch<SetStateAction<string>>;
+  relationship: string;
+  setRelationship: Dispatch<SetStateAction<string>>;
   agent1Profile: AgentProfile;
   setAgent1Profile: Dispatch<SetStateAction<AgentProfile>>;
   agent2Profile: AgentProfile;
@@ -79,6 +81,8 @@ interface ControlPanelProps {
 export function ControlPanel({
   topic,
   setTopic,
+  relationship,
+  setRelationship,
   agent1Profile,
   setAgent1Profile,
   agent2Profile,
@@ -138,7 +142,7 @@ export function ControlPanel({
                 </CardTitle>
                 <CardDescription>{t.conversationSetupDesc}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="topic">{t.topic}</Label>
                   <Textarea
@@ -147,6 +151,22 @@ export function ControlPanel({
                     value={topic}
                     onChange={(e) => {
                         setTopic(e.target.value);
+                        e.target.style.height = 'auto';
+                        e.target.style.height = `${e.target.scrollHeight}px`;
+                    }}
+                    rows={1}
+                    className="resize-none overflow-hidden"
+                    disabled={isGenerating}
+                  />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="relationship">{t.relationship}</Label>
+                  <Textarea
+                    id="relationship"
+                    placeholder={t.relationshipPlaceholder}
+                    value={relationship}
+                    onChange={(e) => {
+                        setRelationship(e.target.value);
                         e.target.style.height = 'auto';
                         e.target.style.height = `${e.target.scrollHeight}px`;
                     }}

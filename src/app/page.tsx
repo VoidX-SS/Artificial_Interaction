@@ -31,6 +31,7 @@ export default function Home() {
   const [agent2Profile, setAgent2Profile] = useState<AgentProfile>(initialAgent2Profile);
 
   const [topic, setTopic] = useState(t.defaultTopic);
+  const [relationship, setRelationship] = useState(t.defaultRelationship);
   
   const [temperature, setTemperature] = useState([0.7]);
   const [maxWords, setMaxWords] = useState([250]);
@@ -117,7 +118,8 @@ You are in a conversation with another agent. Here is their basic persona:
 ${otherProfileString}
 
 ---
-**CONVERSATION RULES:**
+**CONVERSATION CONTEXT:**
+*   **RELATIONSHIP:** ${relationship}
 *   **LANGUAGE:** ${langInstruction}
 *   **WORD LIMIT:** Your text response must be a maximum of ${maxWords[0]} words.
 *   **TOPIC:** ${deepInteraction && history.length > 0 ? "The topic has evolved. Continue the current conversational thread." : `The initial topic is: ${topic}` }
@@ -177,10 +179,14 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
         text = responseText;
         matrixData = null;
       }
+    } else {
+        // If no JSON block is found, the whole response is text
+        text = responseText.trim();
+        matrixData = null;
     }
   
     return {
-      text: text.trim(),
+      text: text,
       emotionIndex: matrixData?.emotionIndex,
       matrixConnection: matrixData?.matrixConnection,
     };
@@ -304,6 +310,7 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
   const handleSave = () => {
     const sessionData = {
       topic,
+      relationship,
       agent1Profile,
       agent2Profile,
       temperature,
@@ -365,6 +372,7 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
         const loadedData = JSON.parse(result);
         
         setTopic(loadedData.topic ?? t.defaultTopic);
+        setRelationship(loadedData.relationship ?? t.defaultRelationship);
         setAgent1Profile(loadedData.agent1Profile ?? initialAgent1Profile);
         setAgent2Profile(loadedData.agent2Profile ?? initialAgent2Profile);
         setTemperature(loadedData.temperature ?? [0.7]);
@@ -434,6 +442,8 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
           <ControlPanel
             topic={topic}
             setTopic={setTopic}
+            relationship={relationship}
+            setRelationship={setRelationship}
             agent1Profile={agent1Profile}
             setAgent1Profile={setAgent1Profile}
             agent2Profile={agent2Profile}

@@ -4,11 +4,8 @@ export type Language = 'en' | 'vi';
 
 export interface I18n {
   defaultTopic: string;
+  defaultRelationship: string;
   error: string;
-  providePersonalityDesc: (agentNum: 1 | 2) => string;
-  personalityGenerationFailed: string;
-  personalityGenerated: string;
-  personalityUpdated: (agentNum: 1 | 2) => string;
   provideTopic: string;
   conversationStopped: string;
   conversationStoppedManually: string;
@@ -37,14 +34,13 @@ export interface I18n {
   conversationSetupDesc: string;
   topic: string;
   topicPlaceholder: string;
+  relationship: string;
+  relationshipPlaceholder: string;
   agent: string;
   agentProfileDesc: string;
   editAgent: string;
   editAgentDesc: string;
   agentName: string;
-  personality: string;
-  personalityPlaceholder: string;
-  generatePersonality: string;
   done: string;
   modelParameters: string;
   modelParametersDesc: string;
@@ -126,11 +122,8 @@ export interface I18n {
 
 const en: I18n = {
   defaultTopic: 'The future of space exploration and its impact on humanity.',
+  defaultRelationship: 'Two strangers meeting for the first time.',
   error: 'Error',
-  providePersonalityDesc: (agentNum: 1 | 2) => `Please provide a description for Agent ${agentNum} personality.`,
-  personalityGenerationFailed: 'Personality Generation Failed',
-  personalityGenerated: 'Personality Generated',
-  personalityUpdated: (agentNum: 1 | 2) => `Agent ${agentNum}'s personality has been updated.`,
   provideTopic: 'Please provide a conversation topic.',
   conversationStopped: 'Conversation Stopped',
   conversationStoppedManually: 'The AI conversation has been manually stopped.',
@@ -159,14 +152,13 @@ const en: I18n = {
   conversationSetupDesc: 'Define the starting point for the AI agents.',
   topic: 'Topic / Starting Prompt',
   topicPlaceholder: 'e.g., The ethics of artificial intelligence...',
+  relationship: 'Relationship between agents',
+  relationshipPlaceholder: 'e.g., Old friends who haven\'t seen each other in years.',
   agent: 'Agent',
   agentProfileDesc: "View and edit this agent's profile.",
   editAgent: 'Edit Agent',
   editAgentDesc: "Customize the agent's soul and matrix.",
   agentName: 'Agent Name',
-  personality: 'Personality',
-  personalityPlaceholder: 'e.g., A skeptical philosopher...',
-  generatePersonality: 'Generate Summary Diary with AI',
   done: 'Done',
   modelParameters: 'Model Parameters',
   modelParametersDesc: 'Fine-tune the behavior of the AI models.',
@@ -248,11 +240,8 @@ const en: I18n = {
 
 const vi: I18n = {
   defaultTopic: 'Tương lai của việc thám hiểm không gian và tác động của nó đối với nhân loại.',
+  defaultRelationship: 'Hai người lạ lần đầu gặp mặt.',
   error: 'Lỗi',
-  providePersonalityDesc: (agentNum: 1 | 2) => `Vui lòng cung cấp mô tả cho tính cách của Agent ${agentNum}.`,
-  personalityGenerationFailed: 'Tạo tính cách thất bại',
-  personalityGenerated: 'Đã tạo tính cách',
-  personalityUpdated: (agentNum: 1 | 2) => `Tính cách của Agent ${agentNum} đã được cập nhật.`,
   provideTopic: 'Vui lòng cung cấp chủ đề cuộc trò chuyện.',
   conversationStopped: 'Cuộc trò chuyện đã dừng',
   conversationStoppedManually: 'Cuộc trò chuyện AI đã được dừng theo cách thủ công.',
@@ -281,14 +270,13 @@ const vi: I18n = {
   conversationSetupDesc: 'Xác định điểm bắt đầu cho các agent AI.',
   topic: 'Chủ đề / Gợi ý bắt đầu',
   topicPlaceholder: 'ví dụ: Đạo đức của trí tuệ nhân tạo...',
+  relationship: 'Mối quan hệ của hai Agent',
+  relationshipPlaceholder: 'ví dụ: Đôi bạn thân lâu năm không gặp.',
   agent: 'Agent',
   agentProfileDesc: 'Xem và chỉnh sửa hồ sơ của agent này.',
   editAgent: 'Chỉnh sửa Agent',
   editAgentDesc: 'Tùy chỉnh linh hồn và ma trận của agent.',
   agentName: 'Tên Agent',
-  personality: 'Tính cách',
-  personalityPlaceholder: 'ví dụ: Một triết gia hoài nghi...',
-  generatePersonality: 'Tạo Nhật ký Tóm tắt bằng AI',
   done: 'Xong',
   modelParameters: 'Thông số mô hình',
   modelParametersDesc: 'Tinh chỉnh hành vi của các mô hình AI.',
