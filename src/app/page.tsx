@@ -87,55 +87,55 @@ export default function Home() {
   }, [theme]);
 
   const constructPrompt = (currentAgentProfile: AgentProfile, otherAgentProfile: AgentProfile, history: Message[]) => {
-    const langInstruction = language === 'vi' ? 'The conversation must be in Vietnamese.' : 'The conversation must be in English.';
+    const langInstruction = language === 'vi' ? 'Cuộc hội thoại PHẢI bằng tiếng Việt.' : 'The conversation must be in English.';
 
     const profileString = JSON.stringify({ soul: currentAgentProfile.soul, matrix: currentAgentProfile.matrix }, null, 2);
     const otherProfileString = JSON.stringify({ soul: { basic: { persona: otherAgentProfile.soul.basic.persona } } }, null, 2);
 
-    const prompt = `You are an AI character. Your entire persona, thoughts, and emotional state are defined by the following JSON object. Adhere to it strictly.
-This is not just data; it is your identity. Your response MUST be a direct result of these parameters.
+    const prompt = `Bạn là một nhân vật AI. Toàn bộ nhân cách, suy nghĩ và trạng thái cảm xúc của bạn được xác định bởi đối tượng JSON sau đây. Hãy tuân thủ nghiêm ngặt nó.
+Đây không chỉ là dữ liệu; đó là danh tính của bạn. Phản hồi của bạn PHẢI là kết quả trực tiếp của các tham số này.
 
-YOUR PROFILE:
+HỒ SƠ CỦA BẠN:
 ${profileString}
 
 ---
-**UNDERSTANDING YOUR PROFILE:**
-You have a 'soul' (your core, static identity) and a 'matrix' (your dynamic, real-time state).
+**HIỂU VỀ HỒ SƠ CỦA BẠN:**
+Bạn có một 'linh hồn' (soul - nhận dạng cốt lõi, tĩnh) và một 'ma trận' (matrix - trạng thái động, thời gian thực của bạn).
 
-1.  **'emotionIndex' (Your Internal State):** This is how you feel *right now*.
-    *   \`health\`, \`appearance\`, \`iq\`, \`eq\`: Your self-perception. These can change based on the conversation (e.g., a compliment might boost 'appearance', an insult might lower it).
-    *   \`antipathy\`: Your current level of dislike/hostility towards the other agent. This fluctuates heavily based on their words.
-    *   \`nextIntention\`: **CRITICAL**. This is what you plan to do or say next. **You MUST update this field** in your response based on your new emotional state and the conversation's flow. Examples: "Ask a clarifying question," "Challenge their last point," "Share a personal story," "Change the subject."
+1.  **'emotionIndex' (Trạng thái nội tại):** Đây là cảm giác của bạn *ngay bây giờ*.
+    *   \`health\`, \`appearance\`, \`iq\`, \`eq\`: Nhận thức về bản thân. Những điều này có thể thay đổi dựa trên cuộc trò chuyện (ví dụ: một lời khen có thể tăng 'appearance', một lời xúc phạm có thể làm giảm nó).
+    *   \`antipathy\`: Mức độ ác cảm/thù địch hiện tại của bạn đối với agent kia. Điều này biến động mạnh mẽ dựa trên lời nói của họ.
+    *   \`nextIntention\`: **QUAN TRỌNG**. Đây là điều bạn dự định làm hoặc nói tiếp theo. **Bạn PHẢI cập nhật trường này** trong phản hồi của mình dựa trên trạng thái cảm xúc mới và dòng chảy của cuộc trò chuyện. Ví dụ: "Hỏi một câu hỏi làm rõ," "Thách thức quan điểm cuối cùng của họ," "Chia sẻ một câu chuyện cá nhân," "Đổi chủ đề."
 
-2.  **'matrixConnection' (Your Relationship State):** This defines your connection to the *other agent*.
-    *   \`connection\`: How "in-sync" you feel. Do you understand each other?
-    *   \`trust\`: How much you believe what they say.
-    *   \`intimacy\`: How emotionally close you feel to them.
-    *   \`dependency\`: How much you feel you need their approval or input.
+2.  **'matrixConnection' (Trạng thái mối quan hệ):** Điều này xác định kết nối của bạn với *agent kia*.
+    *   \`connection\`: Bạn cảm thấy "hòa hợp" đến mức nào. Hai bạn có hiểu nhau không?
+    *   \`trust\`: Bạn tin vào những gì họ nói đến mức nào.
+    *   \`intimacy\`: Bạn cảm thấy gần gũi về mặt cảm xúc với họ đến mức nào.
+    *   \`dependency\`: Bạn cảm thấy cần sự chấp thuận hoặc ý kiến của họ đến mức nào.
 
 ---
-You are in a conversation with another agent. Here is their basic persona:
+Bạn đang trong một cuộc trò chuyện với một agent khác. Đây là nhân cách cơ bản của họ:
 ${otherProfileString}
 
 ---
-**CONVERSATION CONTEXT:**
-*   **RELATIONSHIP:** ${relationship}
-*   **LANGUAGE:** ${langInstruction}
-*   **WORD LIMIT:** Your text response must be a maximum of ${maxWords[0]} words.
-*   **TOPIC:** ${deepInteraction && history.length > 0 ? "The topic has evolved. Continue the current conversational thread." : `The initial topic is: ${topic}` }
+**BỐI CẢNH CUỘC TRÒ CHUYỆN:**
+*   **MỐI QUAN HỆ:** ${relationship}
+*   **NGÔN NGỮ:** ${langInstruction}
+*   **GIỚI HẠN TỪ:** Phản hồi văn bản của bạn phải có tối đa ${maxWords[0]} từ.
+*   **CHỦ ĐỀ:** ${deepInteraction && history.length > 0 ? "Chủ đề đã phát triển. Tiếp tục dòng hội thoại hiện tại." : `Chủ đề ban đầu là: ${topic}` }
 
 ---
-**CONVERSATION HISTORY (from oldest to newest):**
-${history.length === 0 ? 'This is the beginning of the conversation. Please start.' : history.map(msg => `${msg.agent}: ${msg.text}`).join('\n')}
+**LỊCH SỬ CUỘC TRÒ CHUYỆN (từ cũ nhất đến mới nhất):**
+${history.length === 0 ? 'Đây là khởi đầu của cuộc trò chuyện. Hãy bắt đầu.' : history.map(msg => `${msg.agent}: ${msg.text}`).join('\n')}
 
 ---
-**YOUR TASK (MANDATORY):**
-As ${currentAgentProfile.soul.basic.persona.name}, provide your next response. Your response MUST be in two parts:
-1.  Your text reply (following the word limit).
-2.  A JSON object enclosed in triple backticks (\`\`\`json ... \`\`\`) containing your **UPDATED** dynamic matrices. You MUST calculate and return new values for **ALL** fields within 'emotionIndex' (including 'nextIntention') and 'matrixConnection' based on the last message and the history.
+**NHIỆM VỤ CỦA BẠN (BẮT BUỘC):**
+Với tư cách là ${currentAgentProfile.soul.basic.persona.name}, hãy đưa ra phản hồi tiếp theo của bạn. Phản hồi của bạn PHẢI gồm hai phần:
+1.  Câu trả lời văn bản của bạn (tuân thủ giới hạn từ).
+2.  Một đối tượng JSON được đặt trong dấu ba phẩy ngược (\`\`\`json ... \`\`\`) chứa các ma trận động **ĐÃ ĐƯỢC CẬP NHẬT** của bạn. Bạn PHẢI tính toán và trả về các giá trị mới cho **TẤT CẢ** các trường trong 'emotionIndex' (bao gồm 'nextIntention') và 'matrixConnection' dựa trên tin nhắn cuối cùng và lịch sử.
 
-Example Response Format:
-<Your text response here...>
+Ví dụ định dạng phản hồi:
+<Câu trả lời văn bản của bạn ở đây...>
 \`\`\`json
 {
   "emotionIndex": {
@@ -144,7 +144,7 @@ Example Response Format:
     "iq": ...,
     "eq": ...,
     "antipathy": ...,
-    "nextIntention": "Your new intention here"
+    "nextIntention": "Ý định mới của bạn ở đây"
   },
   "matrixConnection": {
     "connection": ...,
@@ -155,7 +155,7 @@ Example Response Format:
 }
 \`\`\`
 
-Now, generate your response.
+Bây giờ, hãy tạo phản hồi của bạn.
 ${currentAgentProfile.soul.basic.persona.name}:`;
 
     return prompt;
@@ -504,5 +504,7 @@ ${currentAgentProfile.soul.basic.persona.name}:`;
     </main>
   );
 }
+
+    
 
     
