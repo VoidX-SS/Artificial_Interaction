@@ -140,10 +140,6 @@ export function ControlPanel({
             setLeisurelyChat={setLeisurelyChat}
             deepInteraction={deepInteraction}
             setDeepInteraction={setDeepInteraction}
-            apiKey={apiKey}
-            setApiKey={setApiKey}
-            apiKey2={apiKey2}
-            setApiKey2={setApiKey2}
             t={t}
         />
       </header>
@@ -190,22 +186,22 @@ export function ControlPanel({
                   />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="pronouns">{t.pronouns}</Label>
-                    <Input
-                        id="pronouns"
-                        placeholder={t.pronounsPlaceholder}
-                        value={pronouns}
-                        onChange={(e) => setPronouns(e.target.value)}
-                        disabled={isGenerating}
-                    />
+                  <Label htmlFor="pronouns">{t.pronouns}</Label>
+                  <Input
+                      id="pronouns"
+                      placeholder={t.pronounsPlaceholder}
+                      value={pronouns}
+                      onChange={(e) => setPronouns(e.target.value)}
+                      disabled={isGenerating}
+                  />
                 </div>
                 <div className="space-y-2">
-                    <Label>{t.matrixConnection}</Label>
-                    <MatrixConnectionDialog 
-                        initialValues={agent1Profile.matrix.matrixConnection} 
-                        onSave={onMatrixConnectionChange}
-                        t={t}
-                    />
+                  <Label>{t.matrixConnection}</Label>
+                  <MatrixConnectionDialog 
+                      initialValues={agent1Profile.matrix.matrixConnection} 
+                      onSave={onMatrixConnectionChange}
+                      t={t}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -226,6 +222,15 @@ export function ControlPanel({
                 t={t}
               />
             </div>
+            
+            <ApiKeyCard 
+              apiKey={apiKey}
+              setApiKey={setApiKey}
+              apiKey2={apiKey2}
+              setApiKey2={setApiKey2}
+              t={t}
+              disabled={isGenerating}
+            />
 
             <Card>
               <CardHeader>
@@ -303,8 +308,8 @@ function SaveDialog({ t, onSave, onSaveProfiles, isGenerating, chatLogEmpty }: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="w-full" disabled={isGenerating}>
-            <Archive className="h-4 w-4" /> {t.save}
+        <Button variant="secondary" className="w-full">
+            <Download className="h-4 w-4" /> {t.save}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -315,11 +320,11 @@ function SaveDialog({ t, onSave, onSaveProfiles, isGenerating, chatLogEmpty }: {
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2">
-           <Button variant="outline" onClick={() => { onSave(); setOpen(false); }} disabled={chatLogEmpty}>
+           <Button variant="outline" onClick={() => { onSave(); setOpen(false); }} disabled={chatLogEmpty || isGenerating}>
             <FileText className="h-4 w-4" />
             {t.saveSession}
            </Button>
-           <Button variant="outline" onClick={() => { onSaveProfiles(); setOpen(false); }}>
+           <Button variant="outline" onClick={() => { onSaveProfiles(); setOpen(false); }} disabled={isGenerating}>
             <Users className="h-4 w-4" />
             {t.saveProfiles}
            </Button>
@@ -335,7 +340,7 @@ function LoadDialog({ t, onLoad, onLoadProfiles, disabled }: { t: I18n; onLoad: 
     <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
             <Button variant="secondary" className="w-full" disabled={disabled}>
-                <FileUp className="h-4 w-4" /> {t.load}
+                <Upload className="h-4 w-4" /> {t.load}
             </Button>
         </DialogTrigger>
         <DialogContent>
@@ -432,7 +437,7 @@ function ParameterSlider({
     )
 }
 
-function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, deepInteraction, setDeepInteraction, apiKey, setApiKey, apiKey2, setApiKey2, t }: {
+function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat, setLeisurelyChat, deepInteraction, setDeepInteraction, t }: {
     language: Language;
     setLanguage: Dispatch<SetStateAction<Language>>;
     theme: Theme;
@@ -441,10 +446,6 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
     setLeisurelyChat: Dispatch<SetStateAction<boolean>>;
     deepInteraction: boolean;
     setDeepInteraction: Dispatch<SetStateAction<boolean>>;
-    apiKey: string;
-    setApiKey: Dispatch<SetStateAction<string>>;
-    apiKey2: string;
-    setApiKey2: Dispatch<SetStateAction<string>>;
     t: I18n;
 }) {
     return (
@@ -474,26 +475,6 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
                                 <SelectItem value="en">English</SelectItem>
                             </SelectContent>
                         </Select>
-                        </div>
-                        <div className="space-y-3">
-                            <Label className="flex items-center gap-2"><KeyRound /> {t.apiKey} (Agent 1)</Label>
-                            <Input 
-                                type="password"
-                                placeholder={t.apiKeyPlaceholder}
-                                value={apiKey}
-                                onChange={(e) => setApiKey(e.target.value)}
-                            />
-                            <p className="text-xs text-muted-foreground">{t.apiKeyDesc}</p>
-                        </div>
-                        <div className="space-y-3">
-                            <Label className="flex items-center gap-2"><KeyRound /> {t.apiKey} (Agent 2)</Label>
-                            <Input 
-                                type="password"
-                                placeholder={t.apiKeyPlaceholder}
-                                value={apiKey2}
-                                onChange={(e) => setApiKey2(e.target.value)}
-                            />
-                            <p className="text-xs text-muted-foreground">{t.apiKeyDesc}</p>
                         </div>
                         <div className="space-y-3">
                             <Label className="flex items-center gap-2"><Palette/> {t.theme}</Label>
@@ -548,6 +529,66 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
             </DialogContent>
         </Dialog>
     );
+}
+
+function ApiKeyCard({ apiKey, setApiKey, apiKey2, setApiKey2, t, disabled }: {
+    apiKey: string;
+    setApiKey: Dispatch<SetStateAction<string>>;
+    apiKey2: string;
+    setApiKey2: Dispatch<SetStateAction<string>>;
+    t: I18n;
+    disabled: boolean;
+}) {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <KeyRound className="h-5 w-5" /> {t.apiKeys}
+                </CardTitle>
+                 <CardDescription>{t.apiKeysDesc}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Dialog>
+                    <DialogTrigger asChild>
+                         <Button variant="outline" className="w-full" disabled={disabled}>{t.setApiKeys}</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>{t.setApiKeys}</DialogTitle>
+                            <DialogDescription>{t.apiKeyDesc}</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="apiKey1">{t.apiKey} (Agent 1)</Label>
+                                <Input 
+                                    id="apiKey1"
+                                    type="password"
+                                    placeholder={t.apiKeyPlaceholder}
+                                    value={apiKey}
+                                    onChange={(e) => setApiKey(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="apiKey2">{t.apiKey} (Agent 2)</Label>
+                                <Input 
+                                    id="apiKey2"
+                                    type="password"
+                                    placeholder={t.apiKeyPlaceholder}
+                                    value={apiKey2}
+                                    onChange={(e) => setApiKey2(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button>{t.done}</Button>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </CardContent>
+        </Card>
+    )
 }
 
 

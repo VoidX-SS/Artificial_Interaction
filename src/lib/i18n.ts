@@ -138,6 +138,9 @@ export interface I18n {
   loadDesc: string;
   saveTitle: string;
   saveDesc: string;
+  apiKeys: string;
+  apiKeysDesc: string;
+  setApiKeys: string;
 }
 
 const en: I18n = {
@@ -200,7 +203,7 @@ const en: I18n = {
   loadProfiles: 'Load Profiles',
   saveProfiles: 'Save Profiles',
   settings: 'Settings',
-  settingsDesc: 'Adjust application settings.',
+settingsDesc: 'Adjust application settings.',
   language: 'Language',
   theme: 'Theme',
   light: 'Light',
@@ -276,6 +279,9 @@ const en: I18n = {
   loadDesc: 'What would you like to upload? You can upload a previous session or a set of agent profiles.',
   saveTitle: 'Save File',
   saveDesc: 'What would you like to save? You can save the current session or just the agent profiles.',
+  apiKeys: 'API Keys',
+  apiKeysDesc: 'Provide Google AI API keys for the agents.',
+  setApiKeys: 'Set API Keys',
 };
 
 const vi: I18n = {
@@ -386,7 +392,7 @@ const vi: I18n = {
   zodiac: "Cung hoàng đạo",
   personalityType: "Nhóm tính cách (ví dụ: MBTI)",
   thinkingStyle: "Lối tư duy",
-  strengths: "Những lĩnh vực vượt trội",
+strengths: "Những lĩnh vực vượt trội",
   weaknesses: "Những lĩnh vực không vượt trội",
   hobbies: "Sở thích cá nhân",
   dislikes: "Những điều không thích",
@@ -396,7 +402,7 @@ const vi: I18n = {
   pastTrauma: "Vết thương tâm lý trong quá khứ",
   liveDashboard: 'Theo dõi trực tiếp',
   liveDashboardDesc: 'Theo dõi sự thay đổi của tính cách trong quá trình nhắn tin.',
-  apiKey: 'Google API Key',
+  apiKey: 'Google AI API Key',
   apiKeyPlaceholder: 'Nhập API Key',
   apiKeyDesc: 'Key của bạn chỉ được dùng cho phiên này và không được lưu trữ.',
   syncProfile: 'Đồng bộ tính cách',
@@ -414,6 +420,9 @@ const vi: I18n = {
   loadDesc: 'Bạn muốn tải lên tệp nào? Bạn có thể tải lên một phiên trò chuyện trước đó hoặc tải lên hồ sơ của các nhân vật.',
   saveTitle: 'Lưu tệp',
   saveDesc: 'Bạn muốn lưu những gì? Bạn có thể lưu phiên trò chuyện hiện tại hoặc chỉ lưu hồ sơ của các nhân vật.',
+  apiKeys: 'API Keys',
+  apiKeysDesc: 'Cung cấp khóa API Google AI cho các nhân vật.',
+  setApiKeys: 'Thiết lập API Keys',
 };
 
 export const i18n = { en, vi };
