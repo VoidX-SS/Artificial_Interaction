@@ -19,6 +19,8 @@ import {
   KeyRound,
   WandSparkles,
   Heart,
+  Archive,
+  FileUp,
 } from 'lucide-react';
 
 import type { Theme, Message } from '@/app/page';
@@ -289,25 +291,75 @@ export function ControlPanel({
             </Button>
             </div>
             <div className="grid grid-cols-2 gap-2">
-                <Button variant="secondary" onClick={onLoad} disabled={isGenerating}>
-                    <Upload className="h-4 w-4" /> {t.loadSession}
-                </Button>
-                <Button variant="secondary" onClick={onSave} disabled={isGenerating || !chatLog.length}>
-                    <Save className="h-4 w-4" /> {t.saveSession}
-                </Button>
-            </div>
-             <div className="grid grid-cols-2 gap-2">
-                <Button variant="secondary" onClick={onLoadProfiles} disabled={isGenerating}>
-                    <Users className="h-4 w-4" /> {t.loadProfiles}
-                </Button>
-                <Button variant="secondary" onClick={onSaveProfiles} disabled={isGenerating}>
-                    <Download className="h-4 w-4" /> {t.saveProfiles}
-                </Button>
+                 <LoadDialog t={t} onLoad={onLoad} onLoadProfiles={onLoadProfiles} disabled={isGenerating} />
+                 <SaveDialog t={t} onSave={onSave} onSaveProfiles={onSaveProfiles} disabled={isGenerating || !chatLog.length} />
             </div>
         </div>
       </footer>
     </div>
   );
+}
+
+function SaveDialog({ t, onSave, onSaveProfiles, disabled }: { t: I18n; onSave: () => void; onSaveProfiles: () => void; disabled: boolean; }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="secondary" className="w-full" disabled={disabled}>
+            <Archive className="h-4 w-4" /> {t.save}
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t.saveTitle}</DialogTitle>
+          <DialogDescription>
+            {t.saveDesc}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2">
+           <Button variant="outline" onClick={() => { onSave(); setOpen(false); }}>
+            <FileText className="h-4 w-4" />
+            {t.saveSession}
+           </Button>
+           <Button variant="outline" onClick={() => { onSaveProfiles(); setOpen(false); }}>
+            <Users className="h-4 w-4" />
+            {t.saveProfiles}
+           </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function LoadDialog({ t, onLoad, onLoadProfiles, disabled }: { t: I18n; onLoad: () => void; onLoadProfiles: () => void; disabled: boolean; }) {
+    const [open, setOpen] = useState(false);
+    return (
+    <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+            <Button variant="secondary" className="w-full" disabled={disabled}>
+                <FileUp className="h-4 w-4" /> {t.load}
+            </Button>
+        </DialogTrigger>
+        <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t.loadTitle}</DialogTitle>
+          <DialogDescription>
+            {t.loadDesc}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2">
+           <Button variant="outline" onClick={() => { onLoad(); setOpen(false); }}>
+            <FileText className="h-4 w-4" />
+            {t.loadSession}
+           </Button>
+           <Button variant="outline" onClick={() => { onLoadProfiles(); setOpen(false); }}>
+            <Users className="h-4 w-4" />
+            {t.loadProfiles}
+           </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
 }
 
 function AgentCard({
@@ -574,3 +626,5 @@ function MatrixConnectionDialog({ initialValues, onSave, t }: {
     </Dialog>
   );
 }
+
+    

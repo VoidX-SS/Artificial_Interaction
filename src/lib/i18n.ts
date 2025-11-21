@@ -132,6 +132,12 @@ export interface I18n {
   trustDesc: string;
   intimacyDesc: string;
   dependencyDesc: string;
+  load: string;
+  save: string;
+  loadTitle: string;
+  loadDesc: string;
+  saveTitle: string;
+  saveDesc: string;
 }
 
 const en: I18n = {
@@ -263,6 +269,12 @@ const en: I18n = {
   trustDesc: 'How much the agents trust each other.',
   intimacyDesc: 'How close and intimate the agents are.',
   dependencyDesc: 'How much one agent relies on the other.',
+  load: 'Upload',
+  save: 'Save',
+  loadTitle: 'Upload File',
+  loadDesc: 'What would you like to upload? You can load a previous session or a set of agent profiles.',
+  saveTitle: 'Save File',
+  saveDesc: 'What would you like to save? You can save the current session or just the agent profiles.',
 };
 
 const vi: I18n = {
@@ -314,16 +326,16 @@ const vi: I18n = {
   temperatureDesc: 'Kiểm soát sự ngẫu nhiên. Càng thấp càng xác định.',
   maxWords: 'Số từ tối đa',
   maxWordsDesc: 'Số từ tối đa cho mỗi phản hồi của AI.',
-  exchanges: 'Lượt trao đổi',
+exchanges: 'Lượt trao đổi',
   exchangesDesc: 'Số lượng tin nhắn riêng lẻ trong cuộc trò chuyện.',
   stop: 'Dừng',
   stopConversation: 'Dừng cuộc trò chuyện',
   startConversation: 'Bắt đầu',
   continueConversation: 'Tiếp tục',
-  loadSession: 'Tải phiên',
-  saveSession: 'Lưu phiên',
-  loadProfiles: 'Tải hồ sơ',
-  saveProfiles: 'Lưu hồ sơ',
+  loadSession: 'Tải phiên trò chuyện',
+  saveSession: 'Lưu phiên trò chuyện',
+  loadProfiles: 'Tải hồ sơ Agent',
+  saveProfiles: 'Lưu hồ sơ Agent',
   settings: 'Cài đặt',
   settingsDesc: 'Điều chỉnh cài đặt ứng dụng.',
   language: 'Ngôn ngữ',
@@ -373,7 +385,7 @@ const vi: I18n = {
   personalityType: "Nhóm tính cách (ví dụ: MBTI)",
   thinkingStyle: "Lối tư duy",
   strengths: "Những lĩnh vực vượt trội",
-  weaknesses: "Những lĩnh vực không trội",
+weaknesses: "Những lĩnh vực không trội",
   hobbies: "Sở thích cá nhân",
   dislikes: "Sở ghét cá nhân",
   dreams: "Ước mơ, hoài bão",
@@ -394,6 +406,14 @@ const vi: I18n = {
   trustDesc: 'Mức độ hai agent tin tưởng lẫn nhau.',
   intimacyDesc: 'Mức độ thân thiết, gần gũi của hai agent.',
   dependencyDesc: 'Mức độ một agent phụ thuộc vào agent kia.',
+  load: 'Tải lên',
+  save: 'Lưu trữ',
+  loadTitle: 'Tải tệp lên',
+  loadDesc: 'Bạn muốn tải lên tệp nào? Bạn có thể tải một phiên trò chuyện trước đó hoặc một bộ hồ sơ agent.',
+  saveTitle: 'Lưu tệp',
+  saveDesc: 'Bạn muốn lưu những gì? Bạn có thể lưu phiên trò chuyện hiện tại hoặc chỉ lưu hồ sơ của các agent.',
 };
 
 export const i18n = { en, vi };
+
+    
