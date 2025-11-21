@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import type { Dispatch, SetStateAction, ChangeEvent } from 'react';
@@ -18,7 +17,8 @@ import {
   Users,
   Download,
   KeyRound,
-  WandSparkles
+  WandSparkles,
+  MessageSquareQuote,
 } from 'lucide-react';
 
 import type { Theme, Message } from '@/app/page';
@@ -45,6 +45,8 @@ interface ControlPanelProps {
   setTopic: Dispatch<SetStateAction<string>>;
   relationship: string;
   setRelationship: Dispatch<SetStateAction<string>>;
+  pronouns: string;
+  setPronouns: Dispatch<SetStateAction<string>>;
   agent1Profile: AgentProfile;
   setAgent1Profile: Dispatch<SetStateAction<AgentProfile>>;
   agent2Profile: AgentProfile;
@@ -85,6 +87,8 @@ export function ControlPanel({
   setTopic,
   relationship,
   setRelationship,
+  pronouns,
+  setPronouns,
   agent1Profile,
   setAgent1Profile,
   agent2Profile,
@@ -178,6 +182,16 @@ export function ControlPanel({
                     }}
                     rows={1}
                     className="resize-none overflow-hidden"
+                    disabled={isGenerating}
+                  />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="pronouns">{t.pronouns}</Label>
+                  <Input
+                    id="pronouns"
+                    placeholder={t.pronounsPlaceholder}
+                    value={pronouns}
+                    onChange={(e) => setPronouns(e.target.value)}
                     disabled={isGenerating}
                   />
                 </div>

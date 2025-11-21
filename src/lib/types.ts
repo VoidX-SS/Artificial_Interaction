@@ -1,4 +1,6 @@
 
+export type Gender = 'male' | 'female';
+
 export interface AgentProfile {
   soul: AgentSoul;
   matrix: AgentMatrix;
@@ -9,6 +11,7 @@ export interface AgentSoul {
     persona: {
       name: string;
       age: number;
+      gender: Gender;
       nationality: string;
       location: string;
     };
@@ -63,6 +66,7 @@ const emptyProfile: AgentProfile = {
       persona: {
         name: '',
         age: 30,
+        gender: 'male',
         nationality: '',
         location: '',
       },
@@ -120,6 +124,7 @@ export const initialAgent1Profile: AgentProfile = {
             persona: {
                 ...JSON.parse(JSON.stringify(emptyProfile.soul.basic.persona)),
                 name: 'Agent 1',
+                gender: 'male',
             },
             summaryDiary: 'A pragmatic and cautious scientist who weighs the risks and ethical implications of every decision.'
         },
@@ -135,10 +140,9 @@ export const initialAgent2Profile: AgentProfile = {
             persona: {
                 ...JSON.parse(JSON.stringify(emptyProfile.soul.basic.persona)),
                 name: 'Agent 2',
+                gender: 'female',
             },
             summaryDiary: 'A visionary artist and dreamer who sees boundless potential and beauty in the cosmos.'
         },
     }
 };
-
-    

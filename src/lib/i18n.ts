@@ -1,3 +1,4 @@
+
 // src/lib/i18n.ts
 
 export type Language = 'en' | 'vi';
@@ -5,6 +6,7 @@ export type Language = 'en' | 'vi';
 export interface I18n {
   defaultTopic: string;
   defaultRelationship: string;
+  defaultPronouns: string;
   error: string;
   provideTopic: string;
   conversationStopped: string;
@@ -36,6 +38,8 @@ export interface I18n {
   topicPlaceholder: string;
   relationship: string;
   relationshipPlaceholder: string;
+  pronouns: string;
+  pronounsPlaceholder: string;
   agent: string;
   agentProfileDesc: string;
   editAgent: string;
@@ -75,10 +79,14 @@ export interface I18n {
   advanced: string;
   persona: string;
   age: string;
+  gender: string;
+  male: string;
+  female: string;
   nationality: string;
   location: string;
   curiosityIndex: string;
   summaryDiary: string;
+  personalityPlaceholder: string;
   socialPosition: string;
   job: string;
   financialStatus: string;
@@ -123,6 +131,7 @@ export interface I18n {
 const en: I18n = {
   defaultTopic: 'The future of space exploration and its impact on humanity.',
   defaultRelationship: 'Two strangers meeting for the first time.',
+  defaultPronouns: 'I - You',
   error: 'Error',
   provideTopic: 'Please provide a conversation topic.',
   conversationStopped: 'Conversation Stopped',
@@ -154,6 +163,8 @@ const en: I18n = {
   topicPlaceholder: 'e.g., The ethics of artificial intelligence...',
   relationship: 'Relationship between agents',
   relationshipPlaceholder: 'e.g., Old friends who haven\'t seen each other in years.',
+  pronouns: 'Pronouns',
+  pronounsPlaceholder: 'e.g., anh-em, tôi-bạn, cậu-tớ,...',
   agent: 'Agent',
   agentProfileDesc: "View and edit this agent's profile.",
   editAgent: 'Edit Agent',
@@ -193,10 +204,14 @@ const en: I18n = {
   advanced: "Advanced",
   persona: "Persona",
   age: "Age",
+  gender: "Gender",
+  male: "Male",
+  female: "Female",
   nationality: "Nationality",
   location: "Location",
   curiosityIndex: "Curiosity Index",
   summaryDiary: "Summary Diary (AI-Gen Base)",
+  personalityPlaceholder: "Write a short paragraph describing the core personality of this agent...",
   socialPosition: "Social Position",
   job: "Job",
   financialStatus: "Financial Status",
@@ -241,6 +256,7 @@ const en: I18n = {
 const vi: I18n = {
   defaultTopic: 'Tương lai của việc thám hiểm không gian và tác động của nó đối với nhân loại.',
   defaultRelationship: 'Hai người lạ lần đầu gặp mặt.',
+  defaultPronouns: 'Tôi - bạn',
   error: 'Lỗi',
   provideTopic: 'Vui lòng cung cấp chủ đề cuộc trò chuyện.',
   conversationStopped: 'Cuộc trò chuyện đã dừng',
@@ -272,6 +288,8 @@ const vi: I18n = {
   topicPlaceholder: 'ví dụ: Đạo đức của trí tuệ nhân tạo...',
   relationship: 'Mối quan hệ của hai Agent',
   relationshipPlaceholder: 'ví dụ: Đôi bạn thân lâu năm không gặp.',
+  pronouns: 'Cách xưng hô',
+  pronounsPlaceholder: 'ví dụ: anh-em, tôi-bạn, cậu-tớ,...',
   agent: 'Agent',
   agentProfileDesc: 'Xem và chỉnh sửa hồ sơ của agent này.',
   editAgent: 'Chỉnh sửa Agent',
@@ -311,10 +329,14 @@ const vi: I18n = {
   advanced: "Nâng cao",
   persona: "Persona",
   age: "Tuổi",
+  gender: "Giới tính",
+  male: "Nam",
+  female: "Nữ",
   nationality: "Quốc tịch",
   location: "Nơi sống",
   curiosityIndex: "Chỉ số ham học hỏi",
   summaryDiary: "Nhật ký tóm tắt (Nền tảng cho AI)",
+  personalityPlaceholder: "Viết một đoạn ngắn mô tả tính cách cốt lõi của agent này...",
   socialPosition: "Vị trí xã hội",
   job: "Công việc",
   financialStatus: "Tài chính",
@@ -328,7 +350,7 @@ const vi: I18n = {
   eq: "Chỉ số EQ",
   antipathy: "Chỉ số ác cảm đối phương",
   nextIntention: "Ý định tiếp theo",
-  matrixConnection: "Matrix Connection (Động)",
+  matrixConnection: "Matrix Connection (Cảm nhận về mối quan hệ)",
   connection: "Kết nối",
   trust: "Độ tin tưởng",
   intimacy: "Độ thân mật",

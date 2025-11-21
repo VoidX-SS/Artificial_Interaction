@@ -2,7 +2,7 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-import { AgentProfile, AgentSoul, AgentMatrix } from "@/lib/types";
+import { AgentProfile, AgentSoul, AgentMatrix, Gender } from "@/lib/types";
 import { I18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +26,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ChevronsUpDown, Pencil, RefreshCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -124,14 +125,11 @@ export function AgentProfileSheet({
     setProfile(prev => {
       const newSoul: AgentSoul = {
         ...prev.soul,
-        basic: {
-          ...prev.soul.basic,
-        },
         advanced: {
           ...prev.soul.advanced,
           socialPosition: {
             ...prev.soul.advanced.socialPosition,
-            happinessIndex: prev.matrix.emotionIndex.health, // Example: mapping health to happiness
+            happinessIndex: Math.round((prev.matrix.emotionIndex.health + prev.matrix.emotionIndex.appearance) / 2),
           },
         },
       };
@@ -161,10 +159,12 @@ export function AgentProfileSheet({
           <SheetTitle>{t.editAgent} {agentNum}: {profile.soul.basic.persona.name}</SheetTitle>
           <SheetDescription>{t.editAgentDesc}</SheetDescription>
         </SheetHeader>
-        <Button variant="outline" size="sm" onClick={handleSyncMatrixToSoul} className="mt-2" disabled={isGenerating}>
-            <RefreshCcw className="mr-2 h-4 w-4" />
-            {t.syncProfile}
-        </Button>
+        <div className="mt-2">
+            <Button variant="outline" size="sm" onClick={handleSyncMatrixToSoul} disabled={isGenerating}>
+                <RefreshCcw className="mr-2 h-4 w-4" />
+                {t.syncProfile}
+            </Button>
+        </div>
         <Tabs defaultValue="soul" className="mt-4 flex-1 flex flex-col overflow-hidden">
           <TabsList className="grid w-full grid-cols-2 bg-accent">
             <TabsTrigger value="soul">{t.agentSoul}</TabsTrigger>
@@ -185,6 +185,24 @@ export function AgentProfileSheet({
                       <InputWithLabel label={t.age} type="number" value={profile.soul.basic.persona.age} onChange={e => handleSoulChange('basic', 'persona', 'age', parseInt(e.target.value) || 0)} disabled={isGenerating} />
                       <InputWithLabel label={t.nationality} value={profile.soul.basic.persona.nationality} onChange={e => handleSoulChange('basic', 'persona', 'nationality', e.target.value)} disabled={isGenerating} />
                       <InputWithLabel label={t.location} value={profile.soul.basic.persona.location} onChange={e => handleSoulChange('basic', 'persona', 'location', e.target.value)} disabled={isGenerating} />
+                    </div>
+                     <div className="space-y-2">
+                      <Label>{t.gender}</Label>
+                      <RadioGroup 
+                        value={profile.soul.basic.persona.gender} 
+                        onValueChange={(value: Gender) => handleSoulChange('basic', 'persona', 'gender', value)}
+                        className="flex space-x-4"
+                        disabled={isGenerating}
+                      >
+                          <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="male" id={`male-${agentNum}`} />
+                              <Label htmlFor={`male-${agentNum}`}>{t.male}</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="female" id={`female-${agentNum}`} />
+                              <Label htmlFor={`female-${agentNum}`}>{t.female}</Label>
+                          </div>
+                      </RadioGroup>
                     </div>
                     <SliderWithLabel label={t.curiosityIndex} value={[profile.soul.basic.curiosityIndex]} onValueChange={v => handleSimpleSoulChange('basic', 'curiosityIndex', v[0])} disabled={isGenerating} />
                     <div className="space-y-2">
@@ -312,5 +330,3 @@ function SliderWithLabel(props: React.ComponentProps<typeof Slider> & { label: s
     </div>
   );
 }
-
-    

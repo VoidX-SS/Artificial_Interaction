@@ -32,6 +32,7 @@ export default function Home() {
 
   const [topic, setTopic] = useState(t.defaultTopic);
   const [relationship, setRelationship] = useState(t.defaultRelationship);
+  const [pronouns, setPronouns] = useState(t.defaultPronouns);
   
   const [temperature, setTemperature] = useState([0.7]);
   const [maxWords, setMaxWords] = useState([250]);
@@ -90,58 +91,42 @@ export default function Home() {
   const constructPrompt = (currentAgent: AgentProfile, otherAgent: AgentProfile, history: Message[]) => {
     const langInstruction = language === 'vi' ? 'Cuộc hội thoại PHẢI bằng tiếng Việt.' : 'The conversation must be in English.';
 
-    let prompt = "BỐI CẢNH\n";
-    prompt += "--- Đây là tất cả thông tin về bạn. Hãy nhập vai và tuân thủ nghiêm ngặt. ---\n";
+    let prompt = "Bạn là một con người, trả lời tự nhiên nhất có thể.\n\n";
+    prompt += "--- BỐI CẢNH ---\n";
+    prompt += "**1. VỀ BẠN (SOUL & MATRIX):**\n";
     
     // SOUL
-    prompt += `VỀ CON NGƯỜI (SOUL): \n`;
-    prompt += `*   **Cơ bản:** Bạn là ${currentAgent.soul.basic.persona.name}, ${currentAgent.soul.basic.persona.age} tuổi, quốc tịch ${currentAgent.soul.basic.persona.nationality} và đang sống tại ${currentAgent.soul.basic.persona.location}. Chỉ số ham học hỏi của bạn là ${currentAgent.soul.basic.curiosityIndex}/100. Nền tảng tính cách của bạn được định hình bởi dòng nhật ký này: "${currentAgent.soul.basic.summaryDiary}".\n`;
-    prompt += `*   **Nâng cao:** Công việc hiện tại của bạn là ${currentAgent.soul.advanced.socialPosition.job} với tình hình tài chính ${currentAgent.soul.advanced.socialPosition.financialStatus}. Chất lượng cuộc sống của bạn là ${currentAgent.soul.advanced.socialPosition.qualityOfLife}/100, và chỉ số hạnh phúc là ${currentAgent.soul.advanced.socialPosition.happinessIndex}/100. Về các mối quan hệ xã hội: ${currentAgent.soul.advanced.relationships}.\n\n`;
+    prompt += `*   **CON NGƯỜI (SOUL - TÍNH CÁCH GỐC):**\n`;
+    prompt += `    *   Bạn tên là ${currentAgent.soul.basic.persona.name}, ${currentAgent.soul.basic.persona.age} tuổi, giới tính ${currentAgent.soul.basic.persona.gender === 'male' ? 'Nam' : 'Nữ'}, quốc tịch ${currentAgent.soul.basic.persona.nationality} và đang sống tại ${currentAgent.soul.basic.persona.location}.\n`;
+    prompt += `    *   Chỉ số ham học hỏi của bạn là ${currentAgent.soul.basic.curiosityIndex}/100. Nền tảng tính cách của bạn được định hình bởi dòng nhật ký này: "${currentAgent.soul.basic.summaryDiary}".\n`;
+    prompt += `    *   Công việc của bạn là ${currentAgent.soul.advanced.socialPosition.job} với tình hình tài chính ${currentAgent.soul.advanced.socialPosition.financialStatus}. Chất lượng cuộc sống là ${currentAgent.soul.advanced.socialPosition.qualityOfLife}/100, và chỉ số hạnh phúc là ${currentAgent.soul.advanced.socialPosition.happinessIndex}/100. Về các mối quan hệ xã hội: ${currentAgent.soul.advanced.relationships}.\n\n`;
 
     // MATRIX
-    prompt += `VỀ TRẠNG THÁI HIỆN TẠI (MATRIX - Dữ liệu này thay đổi liên tục): \n`;
-    prompt += `*   **Cảm xúc nội tại (Emotion Index):**\n`;
-    prompt += `    *   Sức khỏe: ${currentAgent.matrix.emotionIndex.health}/100\n`;
-    prompt += `    *   Ngoại hình: ${currentAgent.matrix.emotionIndex.appearance}/100\n`;
-    prompt += `    *   IQ: ${currentAgent.matrix.emotionIndex.iq}, EQ: ${currentAgent.matrix.emotionIndex.eq}\n`;
-    prompt += `    *   Mức độ ác cảm với đối phương: ${currentAgent.matrix.emotionIndex.antipathy}/100.\n`;
-    prompt += `    *   Ý định ở lượt nói trước của bạn là: "${currentAgent.matrix.emotionIndex.nextIntention}".\n`;
+    prompt += `*   **TRẠNG THÁI HIỆN TẠI (MATRIX - ĐỘNG):**\n`;
+    prompt += `    *   **Cảm xúc nội tại (Emotion Index):** Sức khỏe ${currentAgent.matrix.emotionIndex.health}/100, Ngoại hình ${currentAgent.matrix.emotionIndex.appearance}/100, IQ ${currentAgent.matrix.emotionIndex.iq}, EQ ${currentAgent.matrix.emotionIndex.eq}. Mức độ ác cảm với đối phương: ${currentAgent.matrix.emotionIndex.antipathy}/100. Ý định ở lượt nói trước của bạn là: "${currentAgent.matrix.emotionIndex.nextIntention}".\n`;
+    prompt += `    *   **Cảm nhận về mối quan hệ (Matrix Connection):** Kết nối ${currentAgent.matrix.matrixConnection.connection}/100, Tin tưởng ${currentAgent.matrix.matrixConnection.trust}/100, Thân mật ${currentAgent.matrix.matrixConnection.intimacy}/100, Phụ thuộc ${currentAgent.matrix.matrixConnection.dependency}/100.\n`;
+    prompt += `    *   **Thiên hướng (Matrix Favor - Tĩnh):** Ngày sinh ${currentAgent.matrix.matrixFavor.dob}, Cung hoàng đạo ${currentAgent.matrix.matrixFavor.zodiac}, Nhóm tính cách ${currentAgent.matrix.matrixFavor.personalityType}. Lối tư duy: ${currentAgent.matrix.matrixFavor.thinkingStyle}. Điểm mạnh: ${currentAgent.matrix.matrixFavor.strengths}. Điểm yếu: ${currentAgent.matrix.matrixFavor.weaknesses}. Sở thích: ${currentAgent.matrix.matrixFavor.hobbies}. Sở ghét: ${currentAgent.matrix.matrixFavor.dislikes}. Ước mơ: ${currentAgent.matrix.matrixFavor.dreams}. Niềm tin cốt lõi: "${currentAgent.matrix.matrixFavor.coreBeliefs}". Tư tưởng sống: "${currentAgent.matrix.matrixFavor.lifePhilosophy}". Tổn thương quá khứ: "${currentAgent.matrix.matrixFavor.pastTrauma}".\n\n`;
     
-    prompt += `*   **Kết nối với đối phương (Matrix Connection):**\n`;
-    prompt += `    *   Kết nối: ${currentAgent.matrix.matrixConnection.connection}/100\n`;
-    prompt += `    *   Tin tưởng: ${currentAgent.matrix.matrixConnection.trust}/100\n`;
-    prompt += `    *   Thân mật: ${currentAgent.matrix.matrixConnection.intimacy}/100\n`;
-    prompt += `    *   Phụ thuộc: ${currentAgent.matrix.matrixConnection.dependency}/100\n`;
-
-    prompt += `*   **Thiên hướng (Matrix Favor - Dữ liệu này là tĩnh, không đổi):**\n`;
-    prompt += `    *   Ngày sinh: ${currentAgent.matrix.matrixFavor.dob}, Cung hoàng đạo: ${currentAgent.matrix.matrixFavor.zodiac}, Nhóm tính cách: ${currentAgent.matrix.matrixFavor.personalityType}\n`;
-    prompt += `    *   Lối tư duy: ${currentAgent.matrix.matrixFavor.thinkingStyle}\n`;
-    prompt += `    *   Điểm mạnh: ${currentAgent.matrix.matrixFavor.strengths}, Điểm yếu: ${currentAgent.matrix.matrixFavor.weaknesses}\n`;
-    prompt += `    *   Sở thích: ${currentAgent.matrix.matrixFavor.hobbies}, Sở ghét: ${currentAgent.matrix.matrixFavor.dislikes}\n`;
-    prompt += `    *   Ước mơ: ${currentAgent.matrix.matrixFavor.dreams}\n`;
-    prompt += `    *   Niềm tin cốt lõi: ${currentAgent.matrix.matrixFavor.coreBeliefs}\n`;
-    prompt += `    *   Tư tưởng sống: ${currentAgent.matrix.matrixFavor.lifePhilosophy}\n`;
-    prompt += `    *   Tổn thương quá khứ: ${currentAgent.matrix.matrixFavor.pastTrauma}\n\n`;
-
-    prompt += "--- Bối cảnh cuộc trò chuyện ---\n";
-    prompt += `Bạn đang nói chuyện với ${otherAgent.soul.basic.persona.name}. Mối quan hệ của hai bạn là: ${relationship}.\n\n`;
+    prompt += "**2. VỀ CUỘC TRÒ CHUYỆN:**\n";
+    prompt += `*   Bạn đang nói chuyện với ${otherAgent.soul.basic.persona.name}. Mối quan hệ của hai bạn là: ${relationship}.\n`;
+    prompt += `*   Hai bạn nên xưng hô là: ${pronouns}.\n`;
 
     if (history.length === 0) {
-        prompt += `Chủ đề là "${topic}", bạn hãy nói trước.\n`;
+        prompt += `*   Chủ đề là "${topic}", bạn hãy nói trước.\n`;
     } else {
         const lastMessage = history[history.length - 1];
-        prompt += `Tin nhắn cuối cùng của ${lastMessage.agent} là: "${lastMessage.text}". Hãy phát triển hội thoại bằng cách phản hồi tiếp.\n`;
+        prompt += `*   Tin nhắn cuối cùng của ${lastMessage.agent} là: "${lastMessage.text}". Hãy phát triển hội thoại bằng cách phản hồi tiếp.\n`;
         if (history.length > 1) {
             const historyText = history.slice(0, -1).map(msg => `${msg.agent}: ${msg.text}`).join('\n');
-            prompt += `Những gì cả hai đã trao đổi trước đó là:\n${historyText}\n`;
+            prompt += `*   Những gì cả hai đã trao đổi trước đó là:\n${historyText}\n`;
         }
     }
 
     if (!deepInteraction) {
-        prompt += `Hãy luôn bám sát chủ đề chính của cuộc trò chuyện là: "${topic}"\n`;
+        prompt += `*   Hãy luôn bám sát chủ đề chính của cuộc trò chuyện là: "${topic}"\n`;
     }
 
-    prompt += "\nĐẦU RA (BẮT BUỘC TUÂN THỦ)\n";
+    prompt += "\n--- ĐẦU RA (BẮT BUỘC TUÂN THỦ) ---\n";
     prompt += `Sau khi suy nghĩ, bạn PHẢI trả lời bằng một đối tượng JSON duy nhất (không có bất kỳ chữ nào khác bao quanh) có các trường sau:\n`;
     prompt += `1. "message": (string) Nội dung bạn nói. Ngôn ngữ: ${langInstruction}. Tối đa ${maxWords[0]} chữ.\n`;
     prompt += `2. "personality": (object) Chứa các chỉ số động ĐÃ ĐƯỢC CẬP NHẬT của BẠN dựa vào diễn biến cuộc hội thoại. Gồm 2 trường:\n`;
@@ -157,9 +142,9 @@ export default function Home() {
     if (typeof rawResponse === 'string') {
         // Attempt to find and parse a JSON object within the string if it's not a pure JSON string
         const jsonMatch = rawResponse.match(/```json\s*([\s\S]*?)\s*```|({[\s\S]*})/);
-        if (jsonMatch && jsonMatch[1]) {
+        if (jsonMatch && (jsonMatch[1] || jsonMatch[2])) {
             try {
-                const parsed = JSON.parse(jsonMatch[1]);
+                const parsed = JSON.parse(jsonMatch[1] || jsonMatch[2]);
                 rawResponse = parsed;
             } catch (e) {
                  console.error("Failed to parse JSON from string:", e);
@@ -292,10 +277,10 @@ export default function Home() {
           matrix: {
             ...prev.matrix,
             emotionIndex: {
-              ...(emotionIndex ? emotionIndex : prev.matrix.emotionIndex), // Keep old values if new ones are partial
+              ...(emotionIndex ? { ...prev.matrix.emotionIndex, ...emotionIndex } : prev.matrix.emotionIndex),
               nextIntention: nextIntention || prev.matrix.emotionIndex.nextIntention,
             },
-            matrixConnection: matrixConnection || prev.matrix.matrixConnection,
+            matrixConnection: matrixConnection ? { ...prev.matrix.matrixConnection, ...matrixConnection } : prev.matrix.matrixConnection,
           }
         }));
       }
@@ -338,6 +323,7 @@ export default function Home() {
     const sessionData = {
       topic,
       relationship,
+      pronouns,
       agent1Profile,
       agent2Profile,
       temperature,
@@ -402,6 +388,7 @@ export default function Home() {
         
         setTopic(loadedData.topic ?? t.defaultTopic);
         setRelationship(loadedData.relationship ?? t.defaultRelationship);
+        setPronouns(loadedData.pronouns ?? t.defaultPronouns);
         setAgent1Profile(loadedData.agent1Profile ?? initialAgent1Profile);
         setAgent2Profile(loadedData.agent2Profile ?? initialAgent2Profile);
         setTemperature(loadedData.temperature ?? [0.7]);
@@ -475,6 +462,8 @@ export default function Home() {
             setTopic={setTopic}
             relationship={relationship}
             setRelationship={setRelationship}
+            pronouns={pronouns}
+            setPronouns={setPronouns}
             agent1Profile={agent1Profile}
             setAgent1Profile={setAgent1Profile}
             agent2Profile={agent2Profile}
@@ -536,7 +525,4 @@ export default function Home() {
       />
     </main>
   );
-
-    
-
-    
+}
