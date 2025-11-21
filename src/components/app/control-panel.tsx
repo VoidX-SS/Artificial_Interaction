@@ -292,7 +292,7 @@ export function ControlPanel({
             </div>
             <div className="grid grid-cols-2 gap-2">
                  <LoadDialog t={t} onLoad={onLoad} onLoadProfiles={onLoadProfiles} disabled={isGenerating} />
-                 <SaveDialog t={t} onSave={onSave} onSaveProfiles={onSaveProfiles} disabled={isGenerating || !chatLog.length} />
+                 <SaveDialog t={t} onSave={onSave} onSaveProfiles={onSaveProfiles} isGenerating={isGenerating} chatLogEmpty={!chatLog.length} />
             </div>
         </div>
       </footer>
@@ -300,12 +300,12 @@ export function ControlPanel({
   );
 }
 
-function SaveDialog({ t, onSave, onSaveProfiles, disabled }: { t: I18n; onSave: () => void; onSaveProfiles: () => void; disabled: boolean; }) {
+function SaveDialog({ t, onSave, onSaveProfiles, isGenerating, chatLogEmpty }: { t: I18n; onSave: () => void; onSaveProfiles: () => void; isGenerating: boolean; chatLogEmpty: boolean; }) {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="w-full" disabled={disabled}>
+        <Button variant="secondary" className="w-full" disabled={isGenerating}>
             <Archive className="h-4 w-4" /> {t.save}
         </Button>
       </DialogTrigger>
@@ -317,7 +317,7 @@ function SaveDialog({ t, onSave, onSaveProfiles, disabled }: { t: I18n; onSave: 
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2">
-           <Button variant="outline" onClick={() => { onSave(); setOpen(false); }}>
+           <Button variant="outline" onClick={() => { onSave(); setOpen(false); }} disabled={chatLogEmpty}>
             <FileText className="h-4 w-4" />
             {t.saveSession}
            </Button>
@@ -626,5 +626,7 @@ function MatrixConnectionDialog({ initialValues, onSave, t }: {
     </Dialog>
   );
 }
+
+    
 
     
