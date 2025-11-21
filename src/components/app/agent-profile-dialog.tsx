@@ -6,15 +6,15 @@ import { AgentProfile, AgentSoul, AgentMatrix, Gender } from "@/lib/types";
 import { I18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-  SheetClose,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,7 +31,7 @@ import { ChevronsUpDown, Pencil, RefreshCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 
-interface AgentProfileSheetProps {
+interface AgentProfileDialogProps {
   agentNum: 1 | 2;
   profile: AgentProfile;
   setProfile: Dispatch<SetStateAction<AgentProfile>>;
@@ -39,13 +39,13 @@ interface AgentProfileSheetProps {
   t: I18n;
 }
 
-export function AgentProfileSheet({
+export function AgentProfileDialog({
   agentNum,
   profile,
   setProfile,
   isGenerating,
   t,
-}: AgentProfileSheetProps) {
+}: AgentProfileDialogProps) {
   const { toast } = useToast();
 
   const handleSoulChange = <T extends keyof AgentSoul, U extends keyof AgentSoul[T]>(
@@ -148,17 +148,17 @@ export function AgentProfileSheet({
 
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
+    <Dialog>
+      <DialogTrigger asChild>
         <Button variant="ghost" size="icon" disabled={isGenerating}>
           <Pencil className="h-4 w-4" />
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-2xl flex flex-col">
-        <SheetHeader>
-          <SheetTitle>{t.editAgent} {agentNum}: {profile.soul.basic.persona.name}</SheetTitle>
-          <SheetDescription>{t.editAgentDesc}</SheetDescription>
-        </SheetHeader>
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl h-[90vh] flex flex-col">
+        <DialogHeader>
+          <DialogTitle>{t.editAgent} {agentNum}: {profile.soul.basic.persona.name}</DialogTitle>
+          <DialogDescription>{t.editAgentDesc}</DialogDescription>
+        </DialogHeader>
         <div className="mt-2">
             <Button variant="outline" size="sm" onClick={handleSyncMatrixToSoul} disabled={isGenerating}>
                 <RefreshCcw className="mr-2 h-4 w-4" />
@@ -170,7 +170,7 @@ export function AgentProfileSheet({
             <TabsTrigger value="soul">{t.agentSoul}</TabsTrigger>
             <TabsTrigger value="matrix">{t.agentMatrix}</TabsTrigger>
           </TabsList>
-          <ScrollArea className="flex-1 mt-4 pr-4">
+          <ScrollArea className="flex-1 mt-4 pr-6">
             <TabsContent value="soul" className="py-4">
               <div className="space-y-6">
                 <Collapsible defaultOpen>
@@ -277,13 +277,13 @@ export function AgentProfileSheet({
           </ScrollArea>
         </Tabs>
 
-        <SheetFooter className="mt-auto border-t pt-6">
-          <SheetClose asChild>
+        <DialogFooter className="mt-auto border-t pt-6">
+          <DialogClose asChild>
             <Button>{t.done}</Button>
-          </SheetClose>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

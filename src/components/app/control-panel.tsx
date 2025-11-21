@@ -37,7 +37,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { i18n, Language, type I18n } from '@/lib/i18n';
 import { Switch } from '@/components/ui/switch';
-import { AgentProfileSheet } from './agent-profile-sheet';
+import { AgentProfileDialog } from './agent-profile-dialog';
 import { AgentProfile } from '@/lib/types';
 import { Loader } from 'lucide-react';
 
@@ -390,7 +390,7 @@ function AgentCard({
                   <CardDescription>{t.agentProfileDesc}</CardDescription>
               </div>
             </div>
-            <AgentProfileSheet
+            <AgentProfileDialog
               agentNum={agentNum}
               profile={profile}
               setProfile={setProfile}
