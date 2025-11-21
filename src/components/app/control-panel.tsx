@@ -189,25 +189,23 @@ export function ControlPanel({
                     disabled={isGenerating}
                   />
                 </div>
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="pronouns">{t.pronouns}</Label>
-                        <Input
-                            id="pronouns"
-                            placeholder={t.pronounsPlaceholder}
-                            value={pronouns}
-                            onChange={(e) => setPronouns(e.target.value)}
-                            disabled={isGenerating}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>{t.matrixConnection}</Label>
-                        <MatrixConnectionDialog 
-                            initialValues={agent1Profile.matrix.matrixConnection} 
-                            onSave={onMatrixConnectionChange}
-                            t={t}
-                        />
-                    </div>
+                <div className="space-y-2">
+                    <Label htmlFor="pronouns">{t.pronouns}</Label>
+                    <Input
+                        id="pronouns"
+                        placeholder={t.pronounsPlaceholder}
+                        value={pronouns}
+                        onChange={(e) => setPronouns(e.target.value)}
+                        disabled={isGenerating}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label>{t.matrixConnection}</Label>
+                    <MatrixConnectionDialog 
+                        initialValues={agent1Profile.matrix.matrixConnection} 
+                        onSave={onMatrixConnectionChange}
+                        t={t}
+                    />
                 </div>
               </CardContent>
             </Card>
