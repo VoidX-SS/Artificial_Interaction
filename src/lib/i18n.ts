@@ -126,12 +126,18 @@ export interface I18n {
   syncProfile: string;
   profileSynced: string;
   profileSyncedDesc: string;
+  editMatrixConnection: string;
+  editMatrixConnectionDesc: string;
+  connectionDesc: string;
+  trustDesc: string;
+  intimacyDesc: string;
+  dependencyDesc: string;
 }
 
 const en: I18n = {
-  defaultTopic: 'The future of space exploration and its impact on humanity.',
-  defaultRelationship: 'Two strangers meeting for the first time.',
-  defaultPronouns: 'I - You',
+  defaultTopic: '',
+  defaultRelationship: '',
+  defaultPronouns: '',
   error: 'Error',
   provideTopic: 'Please provide a conversation topic.',
   conversationStopped: 'Conversation Stopped',
@@ -164,7 +170,7 @@ const en: I18n = {
   relationship: 'Relationship between agents',
   relationshipPlaceholder: 'e.g., Old friends who haven\'t seen each other in years.',
   pronouns: 'Pronouns',
-  pronounsPlaceholder: 'e.g., anh-em, tôi-bạn, cậu-tớ,...',
+  pronounsPlaceholder: 'e.g., I-You, He-She,...',
   agent: 'Agent',
   agentProfileDesc: "View and edit this agent's profile.",
   editAgent: 'Edit Agent',
@@ -225,7 +231,7 @@ const en: I18n = {
   eq: "EQ",
   antipathy: "Antipathy towards other",
   nextIntention: "Next Intention",
-  matrixConnection: "Matrix Connection (Dynamic)",
+  matrixConnection: "Matrix Connection (Relationship)",
   connection: "Connection",
   trust: "Trust",
   intimacy: "Intimacy",
@@ -251,12 +257,18 @@ const en: I18n = {
   syncProfile: 'Sync current matrix to soul',
   profileSynced: 'Profile Synced',
   profileSyncedDesc: 'The dynamic matrix values have been updated to the soul.',
+  editMatrixConnection: 'Set Initial Connection',
+  editMatrixConnectionDesc: 'Define the initial relationship level between the two agents.',
+  connectionDesc: 'How well the agents know each other.',
+  trustDesc: 'How much the agents trust each other.',
+  intimacyDesc: 'How close and intimate the agents are.',
+  dependencyDesc: 'How much one agent relies on the other.',
 };
 
 const vi: I18n = {
-  defaultTopic: 'Tương lai của việc thám hiểm không gian và tác động của nó đối với nhân loại.',
-  defaultRelationship: 'Hai người lạ lần đầu gặp mặt.',
-  defaultPronouns: 'Tôi - bạn',
+  defaultTopic: '',
+  defaultRelationship: '',
+  defaultPronouns: '',
   error: 'Lỗi',
   provideTopic: 'Vui lòng cung cấp chủ đề cuộc trò chuyện.',
   conversationStopped: 'Cuộc trò chuyện đã dừng',
@@ -327,7 +339,7 @@ const vi: I18n = {
   agentMatrix: "Matrix Agent",
   basic: "Cơ bản",
   advanced: "Nâng cao",
-  persona: "Persona",
+  persona: "Thông tin cá nhân",
   age: "Tuổi",
   gender: "Giới tính",
   male: "Nam",
@@ -376,6 +388,12 @@ const vi: I18n = {
   syncProfile: 'Đồng bộ chỉ số hiện tại vào Soul',
   profileSynced: 'Đã đồng bộ hồ sơ',
   profileSyncedDesc: 'Các giá trị matrix động đã được cập nhật vào soul.',
+  editMatrixConnection: 'Thiết lập Kết nối Ban đầu',
+  editMatrixConnectionDesc: 'Xác định mức độ quan hệ ban đầu giữa hai agent.',
+  connectionDesc: 'Mức độ hai agent hiểu biết về nhau.',
+  trustDesc: 'Mức độ hai agent tin tưởng lẫn nhau.',
+  intimacyDesc: 'Mức độ thân thiết, gần gũi của hai agent.',
+  dependencyDesc: 'Mức độ một agent phụ thuộc vào agent kia.',
 };
 
 export const i18n = { en, vi };

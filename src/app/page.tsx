@@ -444,6 +444,17 @@ export default function Home() {
       profileInputRef.current.value = '';
     }
   };
+
+  const handleMatrixConnectionChange = (newValues: AgentProfile['matrix']['matrixConnection']) => {
+    setAgent1Profile(prev => ({
+      ...prev,
+      matrix: { ...prev.matrix, matrixConnection: newValues }
+    }));
+    setAgent2Profile(prev => ({
+      ...prev,
+      matrix: { ...prev.matrix, matrixConnection: newValues }
+    }));
+  };
   
   return (
     <main className="h-screen overflow-hidden bg-background font-sans">
@@ -468,6 +479,7 @@ export default function Home() {
             setAgent1Profile={setAgent1Profile}
             agent2Profile={agent2Profile}
             setAgent2Profile={setAgent2Profile}
+            onMatrixConnectionChange={handleMatrixConnectionChange}
             temperature={temperature}
             setTemperature={setTemperature}
             maxWords={maxWords}

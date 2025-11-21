@@ -126,7 +126,6 @@ export const initialAgent1Profile: AgentProfile = {
                 name: 'Agent 1',
                 gender: 'male',
             },
-            summaryDiary: 'A pragmatic and cautious scientist who weighs the risks and ethical implications of every decision.'
         },
     }
 };
@@ -142,7 +141,6 @@ export const initialAgent2Profile: AgentProfile = {
                 name: 'Agent 2',
                 gender: 'female',
             },
-            summaryDiary: 'A visionary artist and dreamer who sees boundless potential and beauty in the cosmos.'
         },
     }
 };

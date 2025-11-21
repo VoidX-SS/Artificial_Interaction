@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { Dispatch, SetStateAction, ChangeEvent } from 'react';
+import { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import {
   Bot,
   Play,
@@ -18,7 +18,7 @@ import {
   Download,
   KeyRound,
   WandSparkles,
-  MessageSquareQuote,
+  Heart,
 } from 'lucide-react';
 
 import type { Theme, Message } from '@/app/page';
@@ -51,6 +51,7 @@ interface ControlPanelProps {
   setAgent1Profile: Dispatch<SetStateAction<AgentProfile>>;
   agent2Profile: AgentProfile;
   setAgent2Profile: Dispatch<SetStateAction<AgentProfile>>;
+  onMatrixConnectionChange: (newValues: AgentProfile['matrix']['matrixConnection']) => void;
   temperature: number[];
   setTemperature: Dispatch<SetStateAction<number[]>>;
   maxWords: number[];
@@ -93,6 +94,7 @@ export function ControlPanel({
   setAgent1Profile,
   agent2Profile,
   setAgent2Profile,
+  onMatrixConnectionChange,
   temperature,
   setTemperature,
   maxWords,
@@ -185,15 +187,25 @@ export function ControlPanel({
                     disabled={isGenerating}
                   />
                 </div>
-                 <div className="space-y-2">
-                  <Label htmlFor="pronouns">{t.pronouns}</Label>
-                  <Input
-                    id="pronouns"
-                    placeholder={t.pronounsPlaceholder}
-                    value={pronouns}
-                    onChange={(e) => setPronouns(e.target.value)}
-                    disabled={isGenerating}
-                  />
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="pronouns">{t.pronouns}</Label>
+                        <Input
+                            id="pronouns"
+                            placeholder={t.pronounsPlaceholder}
+                            value={pronouns}
+                            onChange={(e) => setPronouns(e.target.value)}
+                            disabled={isGenerating}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>{t.matrixConnection}</Label>
+                        <MatrixConnectionDialog 
+                            initialValues={agent1Profile.matrix.matrixConnection} 
+                            onSave={onMatrixConnectionChange}
+                            t={t}
+                        />
+                    </div>
                 </div>
               </CardContent>
             </Card>
@@ -486,4 +498,79 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
             </DialogContent>
         </Dialog>
     );
+}
+
+
+function MatrixConnectionDialog({ initialValues, onSave, t }: {
+  initialValues: AgentProfile['matrix']['matrixConnection'];
+  onSave: (newValues: AgentProfile['matrix']['matrixConnection']) => void;
+  t: I18n;
+}) {
+  const [connection, setConnection] = useState(initialValues.connection);
+  const [trust, setTrust] = useState(initialValues.trust);
+  const [intimacy, setIntimacy] = useState(initialValues.intimacy);
+  const [dependency, setDependency] = useState(initialValues.dependency);
+
+  useEffect(() => {
+    setConnection(initialValues.connection);
+    setTrust(initialValues.trust);
+    setIntimacy(initialValues.intimacy);
+    setDependency(initialValues.dependency);
+  }, [initialValues]);
+
+  const handleSave = () => {
+    onSave({ connection, trust, intimacy, dependency });
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="w-full justify-start text-left font-normal">
+          <Heart className="mr-2 h-4 w-4" />
+          <span>{t.editMatrixConnection}</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t.editMatrixConnection}</DialogTitle>
+          <DialogDescription>{t.editMatrixConnectionDesc}</DialogDescription>
+        </DialogHeader>
+        <div className="py-4 space-y-6">
+          <ParameterSlider
+            label={t.connection}
+            value={[connection]}
+            onValueChange={(v) => setConnection(v[0])}
+            description={t.connectionDesc}
+            disabled={false}
+          />
+          <ParameterSlider
+            label={t.trust}
+            value={[trust]}
+            onValueChange={(v) => setTrust(v[0])}
+            description={t.trustDesc}
+            disabled={false}
+          />
+          <ParameterSlider
+            label={t.intimacy}
+            value={[intimacy]}
+            onValueChange={(v) => setIntimacy(v[0])}
+            description={t.intimacyDesc}
+            disabled={false}
+          />
+          <ParameterSlider
+            label={t.dependency}
+            value={[dependency]}
+            onValueChange={(v) => setDependency(v[0])}
+            description={t.dependencyDesc}
+            disabled={false}
+          />
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button onClick={handleSave}>{t.done}</Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }

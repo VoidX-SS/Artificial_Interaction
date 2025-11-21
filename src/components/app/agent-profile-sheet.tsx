@@ -175,11 +175,10 @@ export function AgentProfileSheet({
               <div className="space-y-6">
                 <Collapsible defaultOpen>
                   <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-accent px-3 py-2 font-semibold">
-                    {t.basic}
+                    {t.persona}
                     <ChevronsUpDown className="h-4 w-4" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 space-y-4 border border-t-0 rounded-b-md">
-                    <h4 className="font-semibold">{t.persona}</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <InputWithLabel label={t.agentName} value={profile.soul.basic.persona.name} onChange={e => handleSoulChange('basic', 'persona', 'name', e.target.value)} disabled={isGenerating} />
                       <InputWithLabel label={t.age} type="number" value={profile.soul.basic.persona.age} onChange={e => handleSoulChange('basic', 'persona', 'age', parseInt(e.target.value) || 0)} disabled={isGenerating} />
@@ -248,19 +247,6 @@ export function AgentProfileSheet({
                     <SliderWithLabel label={t.eq} max={200} value={[profile.matrix.emotionIndex.eq]} onValueChange={v => handleMatrixChange('emotionIndex', 'eq', v[0])} disabled={isGenerating} />
                     <SliderWithLabel label={t.antipathy} value={[profile.matrix.emotionIndex.antipathy]} onValueChange={v => handleMatrixChange('emotionIndex', 'antipathy', v[0])} disabled={isGenerating} />
                     <InputWithLabel label={t.nextIntention} value={profile.matrix.emotionIndex.nextIntention} onChange={e => handleMatrixChange('emotionIndex', 'nextIntention', e.target.value)} disabled={isGenerating} />
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <Collapsible defaultOpen>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md bg-accent px-3 py-2 font-semibold">
-                    {t.matrixConnection}
-                    <ChevronsUpDown className="h-4 w-4" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="p-4 space-y-4 border border-t-0 rounded-b-md">
-                    <SliderWithLabel label={t.connection} value={[profile.matrix.matrixConnection.connection]} onValueChange={v => handleMatrixChange('matrixConnection', 'connection', v[0])} disabled={isGenerating} />
-                    <SliderWithLabel label={t.trust} value={[profile.matrix.matrixConnection.trust]} onValueChange={v => handleMatrixChange('matrixConnection', 'trust', v[0])} disabled={isGenerating} />
-                    <SliderWithLabel label={t.intimacy} value={[profile.matrix.matrixConnection.intimacy]} onValueChange={v => handleMatrixChange('matrixConnection', 'intimacy', v[0])} disabled={isGenerating} />
-                    <SliderWithLabel label={t.dependency} value={[profile.matrix.matrixConnection.dependency]} onValueChange={v => handleMatrixChange('matrixConnection', 'dependency', v[0])} disabled={isGenerating} />
                   </CollapsibleContent>
                 </Collapsible>
 
