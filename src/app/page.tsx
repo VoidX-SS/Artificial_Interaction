@@ -2,13 +2,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import { ControlPanel } from '@/components/app/control-panel';
 import { ChatDisplay } from '@/components/app/chat-display';
 import { useToast } from '@/hooks/use-toast';
-import { generateChatResponseAction } from '@/app/actions';
+import { generateChatResponseAction, generateNarratorResponseAction } from '@/app/actions';
 import { i18n, Language } from '@/lib/i18n';
-import { AgentProfile, initialAgent1Profile, initialAgent2Profile } from '@/lib/types';
+import { AgentProfile, initialAgent1Profile, initialAgent2Profile, NarratorInput } from '@/lib/types';
 import { LiveDashboard } from '@/components/app/live-dashboard';
 
 export interface Message {
@@ -34,7 +34,7 @@ export default function Home() {
   const [relationship, setRelationship] = useState(t.defaultRelationship);
   const [pronouns, setPronouns] = useState(t.defaultPronouns);
   
-  const [temperature, setTemperature] = useState([0.7]);
+  const [temperature, setTemperature] = useState([1]);
   const [maxWords, setMaxWords] = useState([250]);
   const [exchanges, setExchanges] = useState([5]);
   const [chatLog, setChatLog] = useState<Message[]>([]);
@@ -47,6 +47,11 @@ export default function Home() {
   const [deepInteraction, setDeepInteraction] = useState(true);
   const [apiKey, setApiKey] = useState('');
   const [apiKey2, setApiKey2] = useState('');
+  const [apiKey3, setApiKey3] = useState('');
+
+  const [userInput, setUserInput] = useState('');
+  const [isNarrating, setIsNarrating] = useState(false);
+  const [narratorResponse, setNarratorResponse] = useState('');
 
 
   const isRunningRef = useRef(false);
@@ -337,6 +342,7 @@ export default function Home() {
       deepInteraction,
       apiKey,
       apiKey2,
+      apiKey3,
     };
     const blob = new Blob([JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -391,7 +397,7 @@ export default function Home() {
         setPronouns(loadedData.pronouns ?? t.defaultPronouns);
         setAgent1Profile(loadedData.agent1Profile ?? initialAgent1Profile);
         setAgent2Profile(loadedData.agent2Profile ?? initialAgent2Profile);
-        setTemperature(loadedData.temperature ?? [0.7]);
+        setTemperature(loadedData.temperature ?? [1]);
         setMaxWords(loadedData.maxWords ?? [250]);
         setExchanges(loadedData.exchanges ?? [5]);
         setChatLog(loadedData.chatLog ?? []);
@@ -402,6 +408,7 @@ export default function Home() {
         setDeepInteraction(loadedData.deepInteraction === undefined ? true : loadedData.deepInteraction);
         setApiKey(loadedData.apiKey ?? '');
         setApiKey2(loadedData.apiKey2 ?? '');
+        setApiKey3(loadedData.apiKey3 ?? '');
 
         toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
       } catch (error) {
@@ -455,6 +462,37 @@ export default function Home() {
       matrix: { ...prev.matrix, matrixConnection: newValues }
     }));
   };
+
+  const handleUserSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!userInput.trim()) return;
+
+    setIsNarrating(true);
+    setNarratorResponse('');
+
+    const narratorInput: NarratorInput = {
+      agent1: agent1Profile,
+      agent2: agent2Profile,
+      history: chatLog,
+      userQuery: userInput,
+      apiKey: apiKey3,
+    };
+
+    const response = await generateNarratorResponseAction(narratorInput);
+
+    if (typeof response === 'string' && response.startsWith('Error:')) {
+      toast({
+        variant: 'destructive',
+        title: t.errorFrom(t.narrator),
+        description: response,
+      });
+    } else if (typeof response === 'object') {
+       setNarratorResponse(response.response);
+    }
+    
+    setIsNarrating(false);
+    setUserInput('');
+  }
   
   return (
     <main className="h-screen overflow-hidden bg-background font-sans">
@@ -508,6 +546,8 @@ export default function Home() {
             setApiKey={setApiKey}
             apiKey2={apiKey2}
             setApiKey2={setApiKey2}
+            apiKey3={apiKey3}
+            setApiKey3={setApiKey3}
             t={t}
           />
         )}
@@ -519,6 +559,11 @@ export default function Home() {
           agent1Name={agent1Profile.soul.basic.persona.name}
           agent2Name={agent2Profile.soul.basic.persona.name}
           t={t}
+          userInput={userInput}
+          setUserInput={setUserInput}
+          onUserSubmit={handleUserSubmit}
+          isNarrating={isNarrating}
+          narratorResponse={narratorResponse}
         />
       </div>
       <input
@@ -538,3 +583,5 @@ export default function Home() {
     </main>
   );
 }
+
+    

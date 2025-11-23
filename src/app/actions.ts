@@ -3,7 +3,10 @@
 'use server';
 
 import { generateNextTurn } from '@/ai/flows/generate-conversation-starter';
+import { narrator } from '@/ai/flows/narrator-flow';
 import type { GenerateNextTurnOutput } from '@/ai/flows/generate-conversation-starter';
+import type { NarratorInput, NarratorOutput } from '@/lib/types';
+
 
 export async function generateChatResponseAction(prompt: string, apiKey?: string): Promise<GenerateNextTurnOutput | string> {
   try {
@@ -14,4 +17,19 @@ export async function generateChatResponseAction(prompt: string, apiKey?: string
     const errorMessage = error.cause?.message || error.message || 'An unknown error occurred.';
     return `Error: Could not get a response. ${errorMessage}`;
   }
+}
+
+export async function generateNarratorResponseAction(input: NarratorInput): Promise<NarratorOutput | string> {
+    try {
+        const result = await narrator({
+            ...input,
+            agent1: JSON.stringify(input.agent1),
+            agent2: JSON.stringify(input.agent2),
+        });
+        return result;
+    } catch (error: any) {
+        console.error('Error generating narrator response:', error);
+        const errorMessage = error.cause?.message || error.message || 'An unknown error occurred.';
+        return `Error: Could not get a response. ${errorMessage}`;
+    }
 }
