@@ -1,64 +1,90 @@
 
+import { z } from 'zod';
+
 export type Gender = 'male' | 'female';
 
-export interface AgentProfile {
-  soul: AgentSoul;
-  matrix: AgentMatrix;
-}
+// Basic Message Schema
+export const MessageSchema = z.object({
+  agent: z.string(),
+  text: z.string(),
+  emotionIndex: z.any().optional(),
+  matrixConnection: z.any().optional(),
+});
+export type Message = z.infer<typeof MessageSchema>;
 
-export interface AgentSoul {
-  basic: {
-    persona: {
-      name: string;
-      age: number;
-      gender: Gender;
-      nationality: string;
-      location: string;
-    };
-    curiosityIndex: number;
-    summaryDiary: string;
-  };
-  advanced: {
-    socialPosition: {
-      job: string;
-      financialStatus: string;
-      qualityOfLife: number;
-      happinessIndex: number;
-    };
-    relationships: string;
-  };
-}
 
-export interface AgentMatrix {
-  emotionIndex: {
-    health: number;
-    appearance: number;
-    iq: number;
-    eq: number;
-    antipathy: number;
-    nextIntention: string;
-  };
-  matrixConnection: {
-    connection: number;
-    trust: number;
-    intimacy: number;
-    dependency: number;
-  };
-  matrixFavor: {
-    dob: string;
-    zodiac: string;
-    personalityType: string;
-    thinkingStyle: string;
-    strengths: string;
-    weaknesses: string;
-    hobbies: string;
-    dislikes: string;
-    dreams: string;
-    coreBeliefs: string;
-    lifePhilosophy: string;
-    pastTrauma: string;
-  };
-}
+// Agent Profile Schema
+export const AgentProfileSchema = z.object({
+  soul: z.object({
+    basic: z.object({
+      persona: z.object({
+        name: z.string(),
+        age: z.number(),
+        gender: z.enum(['male', 'female']),
+        nationality: z.string(),
+        location: z.string(),
+      }),
+      curiosityIndex: z.number(),
+      summaryDiary: z.string(),
+    }),
+    advanced: z.object({
+      socialPosition: z.object({
+        job: z.string(),
+        financialStatus: z.string(),
+        qualityOfLife: z.number(),
+        happinessIndex: z.number(),
+      }),
+      relationships: z.string(),
+    }),
+  }),
+  matrix: z.object({
+    emotionIndex: z.object({
+      health: z.number(),
+      appearance: z.number(),
+      iq: z.number(),
+      eq: z.number(),
+      antipathy: z.number(),
+      nextIntention: z.string(),
+    }),
+    matrixConnection: z.object({
+      connection: z.number(),
+      trust: z.number(),
+      intimacy: z.number(),
+      dependency: z.number(),
+    }),
+    matrixFavor: z.object({
+      dob: z.string(),
+      zodiac: z.string(),
+      personalityType: z.string(),
+      thinkingStyle: z.string(),
+      strengths: z.string(),
+      weaknesses: z.string(),
+      hobbies: z.string(),
+      dislikes: z.string(),
+      dreams: z.string(),
+      coreBeliefs: z.string(),
+      lifePhilosophy: z.string(),
+      pastTrauma: z.string(),
+    }),
+  }),
+});
+export type AgentProfile = z.infer<typeof AgentProfileSchema>;
+
+// Narrator Schemas
+export const NarratorInputSchema = z.object({
+  agent1: z.string().describe("A JSON string representing Agent 1's profile."),
+  agent2: z.string().describe("A JSON string representing Agent 2's profile."),
+  history: z.array(MessageSchema).describe('The conversation history.'),
+  userQuery: z.string().describe("The user's query to the narrator."),
+  apiKey: z.string().optional().describe('Optional API key for Google AI.'),
+});
+export type NarratorInput = z.infer<typeof NarratorInputSchema>;
+
+export const NarratorOutputSchema = z.object({
+  response: z.string().describe("The narrator's response to the user's query."),
+});
+export type NarratorOutput = z.infer<typeof NarratorOutputSchema>;
+
 
 const emptyProfile: AgentProfile = {
   soul: {

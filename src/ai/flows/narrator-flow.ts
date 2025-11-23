@@ -6,12 +6,15 @@
  */
 import {ai, getAiWithApiKey} from '@/ai/genkit';
 import {z} from 'genkit';
-import type {
-  NarratorInput,
-  NarratorOutput,
+import {
   NarratorInputSchema,
   NarratorOutputSchema,
 } from '@/lib/types';
+import type {
+  NarratorInput,
+  NarratorOutput,
+} from '@/lib/types';
+
 
 export async function narrator(
   input: NarratorInput
