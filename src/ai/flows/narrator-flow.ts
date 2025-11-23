@@ -5,7 +5,6 @@
  * - narrator - A function that handles the narrator's response process.
  */
 import {ai, getAiWithApiKey} from '@/ai/genkit';
-import {z} from 'genkit';
 import {
   NarratorInputSchema,
   NarratorOutputSchema,
@@ -40,9 +39,9 @@ export async function narrator(
 {{#each history}}
     - {{agent}}: {{text}}
 {{/each}}
-{{#if (eq history.length 0)}}
+{{#unless history.length}}
     The conversation has not started yet.
-{{/if}}
+{{/unless}}
 
 --- USER'S REQUEST ---
 "{{{userQuery}}}"
