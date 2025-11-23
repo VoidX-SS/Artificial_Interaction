@@ -98,45 +98,47 @@ export default function Home() {
 
     let prompt = "Bạn là một con người, trả lời tự nhiên nhất có thể.\n\n";
     prompt += "--- BỐI CẢNH ---\n";
-    prompt += "**1. VỀ BẠN (SOUL & MATRIX):**\n";
+    prompt += "**1. VỀ BẠN (TÍNH CÁCH):**\n";
     
     // SOUL
-    prompt += `*   **CON NGƯỜI (SOUL - TÍNH CÁCH GỐC):**\n`;
+    prompt += `*   **CON NGƯỜI (PERSONALITY):**\n`;
     prompt += `    *   Bạn tên là ${currentAgent.soul.basic.persona.name}, ${currentAgent.soul.basic.persona.age} tuổi, giới tính ${currentAgent.soul.basic.persona.gender === 'male' ? 'Nam' : 'Nữ'}, quốc tịch ${currentAgent.soul.basic.persona.nationality} và đang sống tại ${currentAgent.soul.basic.persona.location}.\n`;
     prompt += `    *   Chỉ số ham học hỏi của bạn là ${currentAgent.soul.basic.curiosityIndex}/100. Nền tảng tính cách của bạn được định hình bởi dòng nhật ký này: "${currentAgent.soul.basic.summaryDiary}".\n`;
     prompt += `    *   Công việc của bạn là ${currentAgent.soul.advanced.socialPosition.job} với tình hình tài chính ${currentAgent.soul.advanced.socialPosition.financialStatus}. Chất lượng cuộc sống là ${currentAgent.soul.advanced.socialPosition.qualityOfLife}/100, và chỉ số hạnh phúc là ${currentAgent.soul.advanced.socialPosition.happinessIndex}/100. Về các mối quan hệ xã hội: ${currentAgent.soul.advanced.relationships}.\n\n`;
 
     // MATRIX
-    prompt += `*   **TRẠNG THÁI HIỆN TẠI (MATRIX - ĐỘNG):**\n`;
-    prompt += `    *   **Cảm xúc nội tại (Emotion Index):** Sức khỏe ${currentAgent.matrix.emotionIndex.health}/100, Ngoại hình ${currentAgent.matrix.emotionIndex.appearance}/100, IQ ${currentAgent.matrix.emotionIndex.iq}, EQ ${currentAgent.matrix.emotionIndex.eq}. Mức độ ác cảm với đối phương: ${currentAgent.matrix.emotionIndex.antipathy}/100. Ý định ở lượt nói trước của bạn là: "${currentAgent.matrix.emotionIndex.nextIntention}".\n`;
-    prompt += `    *   **Cảm nhận về mối quan hệ (Matrix Connection):** Kết nối ${currentAgent.matrix.matrixConnection.connection}/100, Tin tưởng ${currentAgent.matrix.matrixConnection.trust}/100, Thân mật ${currentAgent.matrix.matrixConnection.intimacy}/100, Phụ thuộc ${currentAgent.matrix.matrixConnection.dependency}/100.\n`;
-    prompt += `    *   **Thiên hướng (Matrix Favor - Tĩnh):** Ngày sinh ${currentAgent.matrix.matrixFavor.dob}, Cung hoàng đạo ${currentAgent.matrix.matrixFavor.zodiac}, Nhóm tính cách ${currentAgent.matrix.matrixFavor.personalityType}. Lối tư duy: ${currentAgent.matrix.matrixFavor.thinkingStyle}. Điểm mạnh: ${currentAgent.matrix.matrixFavor.strengths}. Điểm yếu: ${currentAgent.matrix.matrixFavor.weaknesses}. Sở thích: ${currentAgent.matrix.matrixFavor.hobbies}. Sở ghét: ${currentAgent.matrix.matrixFavor.dislikes}. Ước mơ: ${currentAgent.matrix.matrixFavor.dreams}. Niềm tin cốt lõi: "${currentAgent.matrix.matrixFavor.coreBeliefs}". Tư tưởng sống: "${currentAgent.matrix.matrixFavor.lifePhilosophy}". Tổn thương quá khứ: "${currentAgent.matrix.matrixFavor.pastTrauma}".\n\n`;
+    prompt += `*   **CẢM XÚC (MATRIX):**\n`;
+    prompt += `    *   **Tố chất (QUALITY):** Sức khỏe ${currentAgent.matrix.emotionIndex.health}/100, Ngoại hình ${currentAgent.matrix.emotionIndex.appearance}/100, IQ ${currentAgent.matrix.emotionIndex.iq}/200, EQ ${currentAgent.matrix.emotionIndex.eq}/200. Mức độ ác cảm với đối phương: ${currentAgent.matrix.emotionIndex.antipathy}/100. Ý định của bạn là: "${currentAgent.matrix.emotionIndex.nextIntention}".\n`;
+    prompt += `    *   **Cảm nhận về mối quan hệ (MATRIX_CONNECTION):** Kết nối ${currentAgent.matrix.matrixConnection.connection}/100, Tin tưởng ${currentAgent.matrix.matrixConnection.trust}/100, Thân mật ${currentAgent.matrix.matrixConnection.intimacy}/100, Phụ thuộc ${currentAgent.matrix.matrixConnection.dependency}/100.\n`;
+    prompt += `    *   **Bản sắc cốt lõi:** Ngày sinh ${currentAgent.matrix.matrixFavor.dob}, Cung hoàng đạo ${currentAgent.matrix.matrixFavor.zodiac}, Nhóm tính cách ${currentAgent.matrix.matrixFavor.personalityType}. Lối tư duy: ${currentAgent.matrix.matrixFavor.thinkingStyle}. Điểm mạnh: ${currentAgent.matrix.matrixFavor.strengths}. Điểm yếu: ${currentAgent.matrix.matrixFavor.weaknesses}. Sở thích: ${currentAgent.matrix.matrixFavor.hobbies}. Những điều không thích: ${currentAgent.matrix.matrixFavor.dislikes}. Hoài bão: ${currentAgent.matrix.matrixFavor.dreams}. Niềm tin cốt lõi: "${currentAgent.matrix.matrixFavor.coreBeliefs}". Tư tưởng sống: "${currentAgent.matrix.matrixFavor.lifePhilosophy}". Vết thương tâm lý trong quá khứ: "${currentAgent.matrix.matrixFavor.pastTrauma}".\n\n`;
     
     prompt += "**2. VỀ CUỘC TRÒ CHUYỆN:**\n";
-    prompt += `*   Bạn đang nói chuyện với ${otherAgent.soul.basic.persona.name}. Mối quan hệ của hai bạn là: ${relationship}.\n`;
+    prompt += `*   Bạn đang nói chuyện với ${otherAgent.soul.basic.persona.name}, giới tính ${otherAgent.soul.basic.persona.gender === 'male' ? 'Nam' : 'Nữ'} Mối quan hệ của hai bạn là: ${relationship}.\n`;
     prompt += `*   Hai bạn nên xưng hô là: ${pronouns}.\n`;
 
     if (history.length === 0) {
-        prompt += `*   Chủ đề là "${topic}", bạn hãy nói trước.\n`;
+        prompt += `*   Chủ đề là "${topic}", bạn hãy mở lời nhé.\n`;
     } else {
         const lastMessage = history[history.length - 1];
-        prompt += `*   Tin nhắn cuối cùng của ${lastMessage.agent} là: "${lastMessage.text}". Hãy phát triển hội thoại bằng cách phản hồi tiếp.\n`;
         if (history.length > 1) {
-            const historyText = history.slice(0, -1).map(msg => `${msg.agent}: ${msg.text}`).join('\n');
-            prompt += `*   Những gì cả hai đã trao đổi trước đó là:\n${historyText}\n`;
+          const historyText = history.slice(0, -1).map(msg => `${msg.agent}: ${msg.text}`).join('\n');
+          prompt += `*   Những gì cả hai đã nhắn:\n${historyText}\n`;
         }
+        prompt += `*   ${lastMessage.agent} nói là: "${lastMessage.text}". Hãy nhắn tiếp nhé.\n`;
+        prompt += `Không cần nói xin chào nữa.`
+        
     }
 
     if (!deepInteraction) {
-        prompt += `*   Hãy luôn bám sát chủ đề chính của cuộc trò chuyện là: "${topic}"\n`;
+        prompt += `*   Hãy luôn bám sát chủ đề chính của cuộc trò chuyện: "${topic}"\n`;
     }
 
     prompt += "\n--- ĐẦU RA (BẮT BUỘC TUÂN THỦ) ---\n";
     prompt += `Sau khi suy nghĩ, bạn PHẢI trả lời bằng một đối tượng JSON duy nhất (không có bất kỳ chữ nào khác bao quanh) có các trường sau:\n`;
     prompt += `1. "message": (string) Nội dung bạn nói. Ngôn ngữ: ${langInstruction}. Tối đa ${maxWords[0]} chữ.\n`;
-    prompt += `2. "personality": (object) Chứa các chỉ số động ĐÃ ĐƯỢC CẬP NHẬT của BẠN dựa vào diễn biến cuộc hội thoại. Gồm 2 trường:\n`;
-    prompt += `   - "emotionIndex": (object) Cập nhật lại health, appearance, iq, eq, antipathy.\n`;
-    prompt += `   - "matrixConnection": (object) Cập nhật lại connection, trust, intimacy, dependency.\n`;
+    prompt += `2. "personality": (object) Chứa các chỉ số động thể hiện cảm xúc hiện tại của bạn khi đang nhắn. Gồm 2 trường:\n`;
+    prompt += `   - "emotionIndex": (object) Cập nhật lại Sức khỏe, Ngoại hình, IQ, EQ, Mức độ ác cảm với đối phương.\n`;
+    prompt += `   - "matrixConnection": (object) Cập nhật lại Kết nối, Tin tưởng, Thân mật, Phụ thuộc.\n`;
     prompt += `3. "nextIntention": (string) Ý định tiếp theo của bạn là gì? (ví dụ: "Hỏi rõ hơn về kinh nghiệm của họ", "Thể hiện sự đồng cảm", "Chuyển chủ đề", "Kết thúc cuộc trò chuyện").\n`;
     
     return prompt;
@@ -145,7 +147,6 @@ export default function Home() {
 
   const parseResponse = (rawResponse: any) => {
     if (typeof rawResponse === 'string') {
-        // Attempt to find and parse a JSON object within the string if it's not a pure JSON string
         const jsonMatch = rawResponse.match(/```json\s*([\s\S]*?)\s*```|({[\s\S]*})/);
         if (jsonMatch && (jsonMatch[1] || jsonMatch[2])) {
             try {
@@ -157,11 +158,9 @@ export default function Home() {
             }
         } else {
              try {
-                // Sometimes the model returns a stringified JSON without backticks
                 const parsed = JSON.parse(rawResponse);
                 rawResponse = parsed;
             } catch(e) {
-                // This is an error string or a plain text response
                 console.error("Response is not a parsable JSON object:", rawResponse);
                 return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
             }
@@ -172,7 +171,6 @@ export default function Home() {
         const { message, personality, nextIntention } = rawResponse;
         const { emotionIndex, matrixConnection } = personality || {};
 
-        // Extract the text part, which might be outside the json block
         const text = message || '';
 
         return {
@@ -183,7 +181,6 @@ export default function Home() {
         };
     }
 
-    // Fallback for unexpected format
     console.error("Invalid response format, cannot parse:", rawResponse);
     return { text: 'Lỗi: Định dạng phản hồi không hợp lệ.', emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
   };
@@ -208,7 +205,6 @@ export default function Home() {
     let currentHistory: Message[] = [...chatLog];
     const initialChatLength = chatLog.length;
 
-    // Agent 1 always starts if history is empty, otherwise determine from last speaker
     let currentAgentTurn: 'agent1' | 'agent2' = 'agent1';
      if (currentHistory.length > 0) {
       const lastSpeakerName = currentHistory[currentHistory.length - 1].agent;
@@ -262,7 +258,6 @@ export default function Home() {
           title: t.errorFrom(currentProfile.soul.basic.persona.name),
           description: "AI did not return a message.",
         });
-        // continue to next agent maybe? or stop?
         currentAgentTurn = currentAgentTurn === 'agent1' ? 'agent2' : 'agent1';
         continue;
       }
@@ -275,7 +270,6 @@ export default function Home() {
       };
       
       const profileUpdater = currentAgentTurn === 'agent1' ? setAgent1Profile : setAgent2Profile;
-      // Only update if the new values are not undefined
       if (emotionIndex || matrixConnection || nextIntention) {
         profileUpdater(prev => ({
           ...prev,
@@ -290,7 +284,6 @@ export default function Home() {
         }));
       }
 
-      // This is a trick to force a re-render of the live dashboard immediately
       await new Promise(resolve => setTimeout(resolve, 0));
 
       currentHistory = [...currentHistory, newMessage];
@@ -465,14 +458,14 @@ export default function Home() {
 
   const handleUserSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!userInput.trim()) return;
+    if (!userInput.trim() || isNarrating) return;
 
     setIsNarrating(true);
     setNarratorResponse('');
 
     const narratorInput: NarratorInput = {
-      agent1: agent1Profile,
-      agent2: agent2Profile,
+      agent1: JSON.stringify(agent1Profile),
+      agent2: JSON.stringify(agent2Profile),
       history: chatLog,
       userQuery: userInput,
       apiKey: apiKey3,
@@ -486,8 +479,14 @@ export default function Home() {
         title: t.errorFrom(t.narrator),
         description: response,
       });
-    } else if (typeof response === 'object') {
+    } else if (typeof response === 'object' && response.response) {
        setNarratorResponse(response.response);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: t.errorFrom(t.narrator),
+        description: t.narratorError,
+      });
     }
     
     setIsNarrating(false);
@@ -583,5 +582,3 @@ export default function Home() {
     </main>
   );
 }
-
-    

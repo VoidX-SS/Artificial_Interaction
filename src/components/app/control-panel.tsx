@@ -83,6 +83,8 @@ interface ControlPanelProps {
   setApiKey: Dispatch<SetStateAction<string>>;
   apiKey2: string;
   setApiKey2: Dispatch<SetStateAction<string>>;
+  apiKey3: string;
+  setApiKey3: Dispatch<SetStateAction<string>>;
 }
 
 export function ControlPanel({
@@ -126,6 +128,8 @@ export function ControlPanel({
   setApiKey,
   apiKey2,
   setApiKey2,
+  apiKey3,
+  setApiKey3,
 }: ControlPanelProps) {
   return (
     <div className="flex h-screen flex-col border-r bg-card">
@@ -186,22 +190,23 @@ export function ControlPanel({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="pronouns">{t.pronouns}</Label>
-                  <Input
-                      id="pronouns"
-                      placeholder={t.pronounsPlaceholder}
-                      value={pronouns}
-                      onChange={(e) => setPronouns(e.target.value)}
-                      disabled={isGenerating}
-                  />
+                    <Label htmlFor="pronouns">{t.pronouns}</Label>
+                    <Input
+                        id="pronouns"
+                        placeholder={t.pronounsPlaceholder}
+                        value={pronouns}
+                        onChange={(e) => setPronouns(e.target.value)}
+                        disabled={isGenerating}
+                    />
                 </div>
                 <div className="space-y-2">
-                  <Label>{t.matrixConnection}</Label>
-                  <MatrixConnectionDialog 
-                      initialValues={agent1Profile.matrix.matrixConnection} 
-                      onSave={onMatrixConnectionChange}
-                      t={t}
-                  />
+                    <Label>{t.matrixConnection}</Label>
+                    <MatrixConnectionDialog 
+                        initialValues={agent1Profile.matrix.matrixConnection} 
+                        onSave={onMatrixConnectionChange}
+                        t={t}
+                        disabled={isGenerating}
+                    />
                 </div>
               </CardContent>
             </Card>
@@ -228,6 +233,8 @@ export function ControlPanel({
               setApiKey={setApiKey}
               apiKey2={apiKey2}
               setApiKey2={setApiKey2}
+              apiKey3={apiKey3}
+              setApiKey3={setApiKey3}
               t={t}
               disabled={isGenerating}
             />
@@ -531,11 +538,13 @@ function SettingsDialog({ language, setLanguage, theme, setTheme, leisurelyChat,
     );
 }
 
-function ApiKeyCard({ apiKey, setApiKey, apiKey2, setApiKey2, t, disabled }: {
+function ApiKeyCard({ apiKey, setApiKey, apiKey2, setApiKey2, apiKey3, setApiKey3, t, disabled }: {
     apiKey: string;
     setApiKey: Dispatch<SetStateAction<string>>;
     apiKey2: string;
     setApiKey2: Dispatch<SetStateAction<string>>;
+    apiKey3: string;
+    setApiKey3: Dispatch<SetStateAction<string>>;
     t: I18n;
     disabled: boolean;
 }) {
@@ -559,7 +568,7 @@ function ApiKeyCard({ apiKey, setApiKey, apiKey2, setApiKey2, t, disabled }: {
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                             <div className="space-y-2">
-                                <Label htmlFor="apiKey1">{t.apiKey} (Agent 1)</Label>
+                                <Label htmlFor="apiKey1">{t.agent} 1</Label>
                                 <Input 
                                     id="apiKey1"
                                     type="password"
@@ -569,13 +578,23 @@ function ApiKeyCard({ apiKey, setApiKey, apiKey2, setApiKey2, t, disabled }: {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="apiKey2">{t.apiKey} (Agent 2)</Label>
+                                <Label htmlFor="apiKey2">{t.agent} 2</Label>
                                 <Input 
                                     id="apiKey2"
                                     type="password"
                                     placeholder={t.apiKeyPlaceholder}
                                     value={apiKey2}
                                     onChange={(e) => setApiKey2(e.target.value)}
+                                />
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="apiKey3">{t.narrator}</Label>
+                                <Input 
+                                    id="apiKey3"
+                                    type="password"
+                                    placeholder={t.apiKeyPlaceholder}
+                                    value={apiKey3}
+                                    onChange={(e) => setApiKey3(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -592,10 +611,11 @@ function ApiKeyCard({ apiKey, setApiKey, apiKey2, setApiKey2, t, disabled }: {
 }
 
 
-function MatrixConnectionDialog({ initialValues, onSave, t }: {
+function MatrixConnectionDialog({ initialValues, onSave, t, disabled }: {
   initialValues: AgentProfile['matrix']['matrixConnection'];
   onSave: (newValues: AgentProfile['matrix']['matrixConnection']) => void;
   t: I18n;
+  disabled: boolean;
 }) {
   const [connection, setConnection] = useState(initialValues.connection);
   const [trust, setTrust] = useState(initialValues.trust);
@@ -616,7 +636,7 @@ function MatrixConnectionDialog({ initialValues, onSave, t }: {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full justify-start text-left font-normal">
+        <Button variant="outline" className="w-full justify-start text-left font-normal" disabled={disabled}>
           <Heart className="mr-2 h-4 w-4" />
           <span>{t.editMatrixConnection}</span>
         </Button>
@@ -665,7 +685,3 @@ function MatrixConnectionDialog({ initialValues, onSave, t }: {
     </Dialog>
   );
 }
-
-    
-
-    

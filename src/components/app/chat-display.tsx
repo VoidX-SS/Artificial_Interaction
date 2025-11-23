@@ -1,12 +1,17 @@
 
 "use client";
 
-import { MessageSquare, Loader2, Clock, Bot } from 'lucide-react';
+import { MessageSquare, Loader2, Clock, Bot, Send, BookUser } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/components/app/chat-message';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import type { Message } from '@/app/page';
 import type { I18n } from '@/lib/i18n';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, FormEvent } from 'react';
+import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
 
 interface ChatDisplayProps {
   chatLog: Message[];
@@ -16,6 +21,11 @@ interface ChatDisplayProps {
   agent1Name: string;
   agent2Name: string;
   t: I18n;
+  userInput: string;
+  setUserInput: (value: string) => void;
+  onUserSubmit: (e: FormEvent) => void;
+  isNarrating: boolean;
+  narratorResponse: string;
 }
 
 const formatTime = (seconds: number) => {
@@ -24,14 +34,27 @@ const formatTime = (seconds: number) => {
     return `${mins}:${secs}`;
 }
 
-export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, agent1Name, agent2Name, t }: ChatDisplayProps) {
+export function ChatDisplay({ 
+  chatLog, 
+  isGenerating, 
+  messageCount, 
+  elapsedTime, 
+  agent1Name, 
+  agent2Name, 
+  t,
+  userInput,
+  setUserInput,
+  onUserSubmit,
+  isNarrating,
+  narratorResponse
+}: ChatDisplayProps) {
   const scrollViewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (scrollViewportRef.current) {
         scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
     }
-  }, [chatLog, isGenerating]);
+  }, [chatLog, isGenerating, narratorResponse]);
   
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -51,8 +74,8 @@ export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, 
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full" viewportRef={scrollViewportRef}>
           <div className="p-4 md:p-6">
-            {chatLog.length === 0 ? (
-              <div className="flex h-[calc(100vh-10rem)] items-center justify-center">
+            {chatLog.length === 0 && !narratorResponse ? (
+              <div className="flex h-[calc(100vh-16rem)] items-center justify-center">
                 <div className="text-center text-muted-foreground">
                   <MessageSquare className="mx-auto h-12 w-12" />
                   <p className="mt-4 text-lg">{t.conversationAppearHere}</p>
@@ -79,10 +102,48 @@ export function ChatDisplay({ chatLog, isGenerating, messageCount, elapsedTime, 
                         <div className="w-full text-muted-foreground">{t.typing}...</div>
                     </div>
                  )}
+                 {narratorResponse && (
+                    <div className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                      <Avatar>
+                        <AvatarFallback className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
+                          <BookUser className="h-5 w-5" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-1">
+                        <p className="font-semibold">{t.narrator}</p>
+                        <div className="prose prose-sm max-w-none rounded-md border border-amber-200 bg-amber-50/50 p-3 text-foreground dark:border-amber-900 dark:bg-amber-950/50 dark:prose-invert font-chat">
+                          {narratorResponse.split('\n').map((line, index) => (
+                              <p key={index} className="mb-2 last:mb-0">{line}</p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                 )}
               </div>
             )}
           </div>
         </ScrollArea>
+      </div>
+      <div className="shrink-0 border-t bg-background p-4">
+        <form onSubmit={onUserSubmit} className="relative">
+          <Textarea
+            placeholder={t.narratorPlaceholder}
+            className="min-h-12 resize-none pr-16"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                onUserSubmit(e);
+              }
+            }}
+            disabled={isNarrating || isGenerating}
+          />
+          <Button type="submit" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2" disabled={isNarrating || isGenerating || !userInput.trim()}>
+            {isNarrating ? <Loader2 className="animate-spin" /> : <Send />}
+            <span className="sr-only">{t.send}</span>
+          </Button>
+        </form>
       </div>
     </div>
   );

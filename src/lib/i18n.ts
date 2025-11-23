@@ -1,3 +1,4 @@
+
 // src/lib/i18n.ts
 
 export type Language = 'en' | 'vi';
@@ -141,6 +142,11 @@ export interface I18n {
   apiKeys: string;
   apiKeysDesc: string;
   setApiKeys: string;
+  narrator: string;
+  narratorPlaceholder: string;
+  send: string;
+  narratorResponse: string;
+  narratorError: string;
 }
 
 const en: I18n = {
@@ -173,18 +179,18 @@ const en: I18n = {
   typing: 'Typing',
   controls: '10 Perspective',
   conversationSetup: 'Conversation Setup',
-  conversationSetupDesc: 'Define the starting point for the agents.',
+  conversationSetupDesc: 'Define the starting point for the characters.',
   topic: 'Topic',
   topicPlaceholder: 'e.g., A romantic love tragedy at a castle in the woods',
-  relationship: 'Relationship between agents',
+  relationship: 'Relationship between characters',
   relationshipPlaceholder: 'e.g., Lovers',
   pronouns: 'Pronouns',
   pronounsPlaceholder: 'e.g., He - She, You - I,...',
   agent: 'Agent',
-  agentProfileDesc: "View and edit the agent's profile.",
+  agentProfileDesc: "View and edit the character's profile.",
   editAgent: 'Edit',
-  editAgentDesc: "Customize the agent's information and personality.",
-  agentName: 'Agent Name',
+  editAgentDesc: "Customize the character's information and personality.",
+  agentName: 'Character Name',
   done: 'Done',
   modelParameters: 'Model Parameters',
   modelParametersDesc: 'Fine-tune the messaging system.',
@@ -203,18 +209,18 @@ const en: I18n = {
   loadProfiles: 'Load Profiles',
   saveProfiles: 'Save Profiles',
   settings: 'Settings',
-settingsDesc: 'Adjust application settings.',
+  settingsDesc: 'Adjust application settings.',
   language: 'Language',
   theme: 'Theme',
   light: 'Light',
   dark: 'Dark',
   system: 'System',
   leisurelyChat: 'Leisurely Chat',
-  leisurelyChatDesc: "Waits for the agent's message typing time.",
+  leisurelyChatDesc: "Waits for the character's message typing time.",
   deepInteraction: 'Deep Interaction',
   deepInteractionDesc: 'Message content evolves beyond the initial topic.',
-  agentSoul: "Agent's Soul",
-  agentMatrix: "Agent's Matrix",
+  agentSoul: "Character's Soul",
+  agentMatrix: "Character's Matrix",
   basic: "Basic",
   advanced: "Advanced",
   persona: "Personal Information",
@@ -280,8 +286,13 @@ settingsDesc: 'Adjust application settings.',
   saveTitle: 'Save File',
   saveDesc: 'What would you like to save? You can save the current session or just the agent profiles.',
   apiKeys: 'API Keys',
-  apiKeysDesc: 'Provide Google AI API keys for the agents.',
+  apiKeysDesc: 'Provide Google AI API keys for the characters.',
   setApiKeys: 'Set API Keys',
+  narrator: 'Narrator',
+  narratorPlaceholder: 'Message the Narrator...',
+  send: 'Send',
+  narratorResponse: 'Narrator\'s Response',
+  narratorError: 'The narrator did not return a valid response.',
 };
 
 const vi: I18n = {
@@ -423,6 +434,11 @@ strengths: "Những lĩnh vực vượt trội",
   apiKeys: 'API Keys',
   apiKeysDesc: 'Cung cấp khóa API Google AI cho các nhân vật.',
   setApiKeys: 'Thiết lập API Keys',
+  narrator: 'Người dẫn truyện',
+  narratorPlaceholder: 'Nhắn tin cho người dẫn truyện...',
+  send: 'Gửi',
+  narratorResponse: 'Phản hồi của người dẫn truyện',
+  narratorError: 'Người dẫn truyện đã không trả về một phản hồi hợp lệ.',
 };
 
 export const i18n = { en, vi };
