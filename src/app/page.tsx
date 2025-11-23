@@ -460,6 +460,7 @@ export default function Home() {
     e.preventDefault();
     if (!userInput.trim() || isNarrating) return;
 
+    setNarratorResponse('');
     setIsNarrating(true);
     
     const narratorInput: NarratorInput = {
