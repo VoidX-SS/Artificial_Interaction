@@ -461,8 +461,7 @@ export default function Home() {
     if (!userInput.trim() || isNarrating) return;
 
     setIsNarrating(true);
-    setNarratorResponse('');
-
+    
     const narratorInput: NarratorInput = {
       agent1: JSON.stringify(agent1Profile),
       agent2: JSON.stringify(agent2Profile),
