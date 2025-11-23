@@ -51,7 +51,6 @@ export default function Home() {
 
   const [userInput, setUserInput] = useState('');
   const [isNarrating, setIsNarrating] = useState(false);
-  const [narratorResponse, setNarratorResponse] = useState('');
 
 
   const isRunningRef = useRef(false);
@@ -460,7 +459,6 @@ export default function Home() {
     e.preventDefault();
     if (!userInput.trim() || isNarrating) return;
 
-    setNarratorResponse('');
     setIsNarrating(true);
     
     const narratorInput: NarratorInput = {
@@ -481,7 +479,11 @@ export default function Home() {
         description: response,
       });
     } else if (typeof response === 'object' && response.response) {
-       setNarratorResponse(response.response);
+       const newNarratorMessage: Message = {
+         agent: 'Narrator',
+         text: response.response,
+       };
+       setChatLog(prev => [...prev, newNarratorMessage]);
     } else {
       toast({
         variant: 'destructive',
@@ -554,6 +556,7 @@ export default function Home() {
         <ChatDisplay 
           chatLog={chatLog} 
           isGenerating={isGenerating} 
+          isNarrating={isNarrating}
           messageCount={chatLog.length} 
           elapsedTime={elapsedTime}
           agent1Name={agent1Profile.soul.basic.persona.name}
@@ -562,8 +565,6 @@ export default function Home() {
           userInput={userInput}
           setUserInput={setUserInput}
           onUserSubmit={handleUserSubmit}
-          isNarrating={isNarrating}
-          narratorResponse={narratorResponse}
         />
       </div>
       <input

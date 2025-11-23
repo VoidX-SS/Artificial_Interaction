@@ -1,18 +1,40 @@
 
-
 "use client";
 
-import { Bot } from 'lucide-react';
+import { Bot, BookUser } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { I18n } from '@/lib/i18n';
 
 interface ChatMessageProps {
   agent: string;
   text: string;
   isAgent1: boolean;
+  isNarrator: boolean;
+  t: I18n;
 }
 
-export function ChatMessage({ agent, text, isAgent1 }: ChatMessageProps) {
+export function ChatMessage({ agent, text, isAgent1, isNarrator, t }: ChatMessageProps) {
   
+  if (isNarrator) {
+    return (
+      <div className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <Avatar>
+          <AvatarFallback className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
+            <BookUser className="h-5 w-5" />
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 space-y-1">
+          <p className="font-semibold">{t.narrator}</p>
+          <div className="prose prose-sm max-w-none rounded-md border border-amber-200 bg-amber-50/50 p-3 text-foreground dark:border-amber-900 dark:bg-amber-950/50 dark:prose-invert font-chat">
+            {text.split('\n').map((line, index) => (
+                <p key={index} className="mb-2 last:mb-0">{line}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <Avatar>

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { MessageSquare, Loader2, Clock, Bot, Send, BookUser } from 'lucide-react';
+import { MessageSquare, Loader2, Clock, Bot, Send } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/components/app/chat-message';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,13 +9,11 @@ import { Button } from '@/components/ui/button';
 import type { Message } from '@/app/page';
 import type { I18n } from '@/lib/i18n';
 import { useEffect, useRef, FormEvent } from 'react';
-import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-
 
 interface ChatDisplayProps {
   chatLog: Message[];
   isGenerating: boolean;
+  isNarrating: boolean;
   messageCount: number;
   elapsedTime: number;
   agent1Name: string;
@@ -24,8 +22,6 @@ interface ChatDisplayProps {
   userInput: string;
   setUserInput: (value: string) => void;
   onUserSubmit: (e: FormEvent) => void;
-  isNarrating: boolean;
-  narratorResponse: string;
 }
 
 const formatTime = (seconds: number) => {
@@ -37,6 +33,7 @@ const formatTime = (seconds: number) => {
 export function ChatDisplay({ 
   chatLog, 
   isGenerating, 
+  isNarrating,
   messageCount, 
   elapsedTime, 
   agent1Name, 
@@ -44,9 +41,7 @@ export function ChatDisplay({
   t,
   userInput,
   setUserInput,
-  onUserSubmit,
-  isNarrating,
-  narratorResponse
+  onUserSubmit
 }: ChatDisplayProps) {
   const scrollViewportRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +49,7 @@ export function ChatDisplay({
     if (scrollViewportRef.current) {
         scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
     }
-  }, [chatLog, isGenerating, narratorResponse]);
+  }, [chatLog, isGenerating, isNarrating]);
   
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -74,7 +69,7 @@ export function ChatDisplay({
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full" viewportRef={scrollViewportRef}>
           <div className="p-4 md:p-6">
-            {chatLog.length === 0 && !narratorResponse ? (
+            {chatLog.length === 0 ? (
               <div className="flex h-[calc(100vh-16rem)] items-center justify-center">
                 <div className="text-center text-muted-foreground">
                   <MessageSquare className="mx-auto h-12 w-12" />
@@ -92,6 +87,8 @@ export function ChatDisplay({
                     agent={msg.agent} 
                     text={msg.text} 
                     isAgent1={msg.agent === agent1Name}
+                    isNarrator={msg.agent === 'Narrator'}
+                    t={t}
                   />
                 ))}
                  {isGenerating && (
@@ -100,23 +97,6 @@ export function ChatDisplay({
                             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                         </div>
                         <div className="w-full text-muted-foreground">{t.typing}...</div>
-                    </div>
-                 )}
-                 {narratorResponse && (
-                    <div className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <Avatar>
-                        <AvatarFallback className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
-                          <BookUser className="h-5 w-5" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-1">
-                        <p className="font-semibold">{t.narrator}</p>
-                        <div className="prose prose-sm max-w-none rounded-md border border-amber-200 bg-amber-50/50 p-3 text-foreground dark:border-amber-900 dark:bg-amber-950/50 dark:prose-invert font-chat">
-                          {narratorResponse.split('\n').map((line, index) => (
-                              <p key={index} className="mb-2 last:mb-0">{line}</p>
-                          ))}
-                        </div>
-                      </div>
                     </div>
                  )}
               </div>
