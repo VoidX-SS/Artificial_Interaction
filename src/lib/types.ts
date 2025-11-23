@@ -76,6 +76,7 @@ export const NarratorInputSchema = z.object({
   agent2: z.string().describe("A JSON string representing Agent 2's profile."),
   history: z.array(MessageSchema).describe('The conversation history.'),
   userQuery: z.string().describe("The user's query to the narrator."),
+  language: z.string().describe('The language for the response (e.g., "en" or "vi").'),
   apiKey: z.string().optional().describe('Optional API key for Google AI.'),
 });
 export type NarratorInput = z.infer<typeof NarratorInputSchema>;

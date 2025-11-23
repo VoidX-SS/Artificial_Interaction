@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A narrator AI agent that observes and comments on conversations.
@@ -25,6 +26,8 @@ export async function narrator(
     input: {schema: NarratorInputSchema},
     output: {schema: NarratorOutputSchema},
     prompt: `You are a narrator observing a conversation between two AI agents. Your role is to provide insightful commentary, analysis, or even steer the conversation based on the user's query.
+
+Your response MUST be in the language specified: {{language}}.
 
 --- CONVERSATION CONTEXT ---
 *   **Agent 1 Profile:**

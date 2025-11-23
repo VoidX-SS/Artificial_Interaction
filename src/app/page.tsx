@@ -468,6 +468,7 @@ export default function Home() {
       agent2: JSON.stringify(agent2Profile),
       history: chatLog,
       userQuery: userInput,
+      language: language,
       apiKey: apiKey3,
     };
 
