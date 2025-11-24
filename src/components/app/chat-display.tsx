@@ -104,27 +104,27 @@ export function ChatDisplay({
           </div>
         </ScrollArea>
       </div>
-      <div className="shrink-0 border-t bg-background p-4">
+       <div className="shrink-0 border-t bg-muted/50 p-4">
         <form onSubmit={onUserSubmit} className="relative">
-          <Textarea
-            placeholder={t.narratorPlaceholder}
-            className="min-h-12 resize-none pr-16"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                onUserSubmit(e);
-              }
-            }}
-            disabled={isNarrating || isGenerating}
-          />
-          <Button type="submit" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2" disabled={isNarrating || isGenerating || !userInput.trim()}>
-            {isNarrating ? <Loader2 className="animate-spin" /> : <Send />}
-            <span className="sr-only">{t.send}</span>
-          </Button>
+            <Textarea
+                placeholder={t.narratorPlaceholder}
+                className="min-h-12 resize-none rounded-2xl border-input bg-background pr-16 shadow-sm"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        onUserSubmit(e);
+                    }
+                }}
+                disabled={isNarrating || isGenerating}
+            />
+            <Button type="submit" size="icon" className="absolute right-3 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full" disabled={isNarrating || isGenerating || !userInput.trim()}>
+                {isNarrating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                <span className="sr-only">{t.send}</span>
+            </Button>
         </form>
-      </div>
+    </div>
     </div>
   );
 }
