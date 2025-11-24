@@ -72,7 +72,7 @@ export interface I18n {
   leisurelyChat: string;
   leisurelyChatDesc: string;
   deepInteraction: string;
-  deepInteractionDesc: string;
+deepInteractionDesc: string;
   agentSoul: string;
   agentMatrix: string;
   basic: string;
@@ -278,7 +278,7 @@ const en: I18n = {
   editMatrixConnection: 'Set Initial Connection',
   editMatrixConnectionDesc: 'Define the initial relationship level between the two agents.',
   connectionDesc: 'How well they know each other.',
-  trustDesc: 'How much they trust each other.',
+trustDesc: 'How much they trust each other.',
   intimacyDesc: 'How emotionally close they are.',
   dependencyDesc: 'How much one relies on the other.',
   load: 'Upload',
@@ -291,7 +291,7 @@ const en: I18n = {
   apiKeysDesc: 'Provide Google AI API keys for the characters.',
   setApiKeys: 'Set API Keys',
   narrator: 'Narrator',
-  narratorPlaceholder: 'Message the Narrator... (use /ask or /set)',
+  narratorPlaceholder: 'Message the Narrator... (use /random to generate a scenario)',
   send: 'Send',
   narratorResponse: "Narrator's Response",
   narratorError: 'The narrator did not return a valid response.',
@@ -439,7 +439,7 @@ const vi: I18n = {
   apiKeysDesc: 'Cung cấp khóa API Google AI cho các nhân vật.',
   setApiKeys: 'Thiết lập API Keys',
   narrator: 'Người dẫn truyện',
-  narratorPlaceholder: 'Nhắn tin cho Người dẫn truyện... (dùng /ask hoặc /set)',
+  narratorPlaceholder: 'Nhắn tin cho Người dẫn truyện... (dùng /random để tạo kịch bản)',
   send: 'Gửi',
   narratorResponse: 'Phản hồi của người dẫn truyện',
   narratorError: 'Người dẫn truyện đã không trả về một phản hồi hợp lệ.',

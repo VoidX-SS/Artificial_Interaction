@@ -52,7 +52,7 @@ Ngôn ngữ trả lời của bạn PHẢI là: {{language}}.
 {{#each history}}
     - {{agent}}: {{text}}
 {{/each}}
-{{#unless history.length}}
+{{#unless history}}
     Cuộc trò chuyện chưa bắt đầu.
 {{/unless}}
 
@@ -62,19 +62,17 @@ Ngôn ngữ trả lời của bạn PHẢI là: {{language}}.
 --- NHIỆM VỤ CỦA BẠN ---
 Dựa vào toàn bộ thông tin trên và yêu cầu của người dùng, hãy thực hiện một trong hai tác vụ sau và trả lời bằng MỘT đối tượng JSON duy nhất:
 
-1.  **Nếu người dùng dùng lệnh \`/ask\` (hoặc không dùng lệnh nào):**
-    *   Trả lời câu hỏi của người dùng một cách sâu sắc, cung cấp phân tích, bình luận, hoặc thông tin thú vị liên quan đến cuộc trò chuyện.
+1.  **Nếu người dùng dùng lệnh \`/random\`:**
+    *   Tự sáng tạo một kịch bản hoàn toàn mới và ngẫu nhiên.
+    *   Đầu ra của bạn PHẢI là một đối tượng JSON chứa trường "response" (lời thoại của bạn) VÀ các trường \`topic\`, \`relationship\`, \`pronouns\`, \`agent1Profile\`, \`agent2Profile\` với nội dung bạn đã sáng tạo.
+    *   Ví dụ: \`{ "response": "Tôi đã tạo ra một kịch bản mới...", "topic": "Cuộc phiêu lưu trên sao Hỏa", "relationship": "Đồng đội cũ", "pronouns": "Tôi - Cậu", "agent1Profile": { ... }, "agent2Profile": { ... } }\`
+    *   **QUAN TRỌNG:** Khi tạo profile, bạn phải điền đầy đủ TẤT CẢ các trường trong schema của AgentProfile.
+
+2.  **Nếu người dùng nhập bất cứ thứ gì khác (không có lệnh):**
+    *   Hiểu đó là một câu hỏi. Hãy trả lời câu hỏi đó một cách sâu sắc, cung cấp phân tích, bình luận, hoặc thông tin thú vị liên quan đến cuộc trò chuyện.
     *   Đầu ra của bạn CHỈ cần là một đối tượng JSON có trường "response".
     *   Ví dụ: \`{ "response": "Có vẻ như Agent 1 đang bắt đầu cảm thấy nghi ngờ..." }\`
 
-2.  **Nếu người dùng dùng lệnh \`/set\`:**
-    *   Phân tích yêu cầu của người dùng để thay đổi các thông số hệ thống hoặc hồ sơ của Agent.
-    *   Bạn có thể thay đổi một hoặc nhiều thông số. Nếu người dùng yêu cầu "ngẫu nhiên", hãy tự tạo ra giá trị hợp lý.
-    *   Đầu ra của bạn PHẢI là một đối tượng JSON chứa trường "response" (lời thoại của bạn) VÀ các trường tương ứng với những gì đã thay đổi.
-    *   Các trường có thể thay đổi: \`topic\`, \`relationship\`, \`pronouns\`, \`temperature\`, \`maxWords\`, \`exchanges\`, \`agent1Profile\`, \`agent2Profile\`.
-    *   Ví dụ 1: người dùng nhắn "/set hãy đổi chủ đề thành một cuộc truy tìm kho báu" -> \`{ "response": "Được thôi, chủ đề đã được đổi thành một cuộc truy tìm kho báu.", "topic": "Một cuộc truy tìm kho báu" }\`
-    *   Ví dụ 2: người dùng nhắn "/set thay đổi tính cách của Agent 1 thành một người hay ghen" -> \`{ "response": "Agent 1 giờ đây sẽ trở nên hay ghen hơn.", "agent1Profile": { "soul": { "basic": { "summaryDiary": "Một người đa nghi và hay ghen tuông trong tình yêu." } } } }\`
-    *   **QUAN TRỌNG:** Khi thay đổi profile, chỉ cần trả về các trường bạn muốn thay đổi, không cần trả về toàn bộ profile.
 
 Hãy đảm bảo đầu ra của bạn LUÔN LUÔN là một đối tượng JSON hợp lệ.`,
   });
