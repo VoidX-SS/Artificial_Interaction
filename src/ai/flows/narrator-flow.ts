@@ -100,13 +100,6 @@ Hãy đảm bảo đầu ra của bạn LUÔN LUÔN là một đối tượng JS
       };
       
       const result = await narratorPrompt(fullInput);
-      const usage = result.usage;
-      console.log(
-        `[narratorFlow] Usage at ${new Date().toISOString()}:`,
-        `Input Tokens: ${usage.inputTokens},`,
-        `Output Tokens: ${usage.outputTokens},`,
-        `Total Tokens: ${usage.totalTokens}`
-      );
       return result.output!;
     }
   );

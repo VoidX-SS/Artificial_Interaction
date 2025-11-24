@@ -61,13 +61,6 @@ export async function generateNextTurn(
     },
     async flowInput => {
       const result = await responseGenerationPrompt(flowInput);
-      const usage = result.usage;
-      console.log(
-        `[generateNextTurnFlow] Usage at ${new Date().toISOString()}:`,
-        `Input Tokens: ${usage.inputTokens},`,
-        `Output Tokens: ${usage.outputTokens},`,
-        `Total Tokens: ${usage.totalTokens}`
-      );
       return result.output!;
     }
   );
