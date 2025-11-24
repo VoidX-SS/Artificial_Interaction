@@ -113,11 +113,11 @@ export function ChatDisplay({
         </ScrollArea>
       </div>
        <div className="shrink-0 border-t bg-muted/50 p-4">
-        <form onSubmit={onUserSubmit} className="relative">
+        <form onSubmit={onUserSubmit} className="flex items-start gap-4">
             <Textarea
                 ref={textareaRef}
                 placeholder={t.narratorPlaceholder}
-                className="min-h-12 max-h-40 resize-none rounded-2xl border-input bg-background pr-16 shadow-sm"
+                className="min-h-12 max-h-40 flex-1 resize-none rounded-2xl border-input bg-background shadow-sm"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 onInput={handleInput}
@@ -133,8 +133,8 @@ export function ChatDisplay({
                 }}
                 disabled={isNarrating || isGenerating}
             />
-            <Button type="submit" size="icon" className="absolute right-3 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full" disabled={isNarrating || isGenerating || !userInput.trim()}>
-                {isNarrating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            <Button type="submit" size="icon" className="h-12 w-12 shrink-0 rounded-full" disabled={isNarrating || isGenerating || !userInput.trim()}>
+                {isNarrating ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                 <span className="sr-only">{t.send}</span>
             </Button>
         </form>
