@@ -44,6 +44,8 @@ export function ChatDisplay({
   onUserSubmit
 }: ChatDisplayProps) {
   const scrollViewportRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
 
   useEffect(() => {
     if (scrollViewportRef.current) {
@@ -51,6 +53,12 @@ export function ChatDisplay({
     }
   }, [chatLog, isGenerating, isNarrating]);
   
+  const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const textarea = e.currentTarget;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
   return (
     <div className="flex h-screen flex-col bg-background">
        <header className="flex h-14 shrink-0 items-center justify-between border-b bg-background px-4">
@@ -107,14 +115,20 @@ export function ChatDisplay({
        <div className="shrink-0 border-t bg-muted/50 p-4">
         <form onSubmit={onUserSubmit} className="relative">
             <Textarea
+                ref={textareaRef}
                 placeholder={t.narratorPlaceholder}
-                className="min-h-12 resize-none rounded-2xl border-input bg-background pr-16 shadow-sm"
+                className="min-h-12 max-h-40 resize-none rounded-2xl border-input bg-background pr-16 shadow-sm"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
+                onInput={handleInput}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
                         onUserSubmit(e);
+                        // Reset height after submit
+                        if(textareaRef.current) {
+                            textareaRef.current.style.height = 'auto';
+                        }
                     }
                 }}
                 disabled={isNarrating || isGenerating}
