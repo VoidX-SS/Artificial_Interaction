@@ -39,7 +39,7 @@ export function ChatMessage({ agent, text, isAgent1, isNarrator, isUser, t }: Ch
   if (isUser) {
     return (
       <div className="flex items-start gap-4 justify-end animate-in fade-in slide-in-from-bottom-2 duration-500">
-         <div className="flex-1 space-y-1 max-w-[80%]">
+         <div className="space-y-1 max-w-[80%]">
           <p className="font-semibold text-right">You</p>
           <div className="prose prose-sm max-w-none rounded-md bg-primary p-3 text-primary-foreground dark:prose-invert font-chat">
             {text.split('\n').map((line, index) => (
