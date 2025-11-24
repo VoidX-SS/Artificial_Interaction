@@ -60,7 +60,7 @@ Ngôn ngữ trả lời của bạn PHẢI là: {{language}}.
 "{{{userQuery}}}"
 
 --- NHIỆM VỤ CỦA BẠN ---
-Dựa vào toàn bộ thông tin trên và yêu cầu của người dùng, hãy thực hiện một trong hai tác vụ sau:
+Dựa vào toàn bộ thông tin trên và yêu cầu của người dùng, hãy thực hiện một trong hai tác vụ sau và trả lời bằng MỘT đối tượng JSON duy nhất:
 
 1.  **Nếu người dùng dùng lệnh \`/ask\` (hoặc không dùng lệnh nào):**
     *   Trả lời câu hỏi của người dùng một cách sâu sắc, cung cấp phân tích, bình luận, hoặc thông tin thú vị liên quan đến cuộc trò chuyện.

@@ -8,7 +8,7 @@ import { ChatDisplay } from '@/components/app/chat-display';
 import { useToast } from '@/hooks/use-toast';
 import { generateChatResponseAction, generateNarratorResponseAction } from '@/app/actions';
 import { i18n, Language } from '@/lib/i18n';
-import { AgentProfile, initialAgent1Profile, initialAgent2Profile, NarratorInput, AgentMatrix, Message, isNarratorResponseSet, NarratorResponseSet } from '@/lib/types';
+import { AgentProfile, initialAgent1Profile, initialAgent2Profile, NarratorInput, AgentMatrix, Message, isNarratorResponseSet, NarratorOutput } from '@/lib/types';
 
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -446,7 +446,7 @@ export default function Home() {
     }));
   };
 
-  const applyNarratorSetChanges = (changes: NarratorResponseSet) => {
+  const applyNarratorSetChanges = (changes: NarratorOutput) => {
       if (changes.topic) setTopic(changes.topic);
       if (changes.relationship) setRelationship(changes.relationship);
       if (changes.pronouns) setPronouns(changes.pronouns);
@@ -493,21 +493,14 @@ export default function Home() {
         title: t.errorFrom(t.narrator),
         description: rawResponse,
       });
-    } else if (typeof rawResponse === 'object') {
-       let responseJson;
-       try {
-           responseJson = JSON.parse(rawResponse.response);
-       } catch {
-           responseJson = { response: rawResponse.response };
-       }
-
-       if (isNarratorResponseSet(responseJson)) {
-            applyNarratorSetChanges(responseJson);
+    } else if (typeof rawResponse === 'object' && rawResponse.response) {
+       if (isNarratorResponseSet(rawResponse)) {
+            applyNarratorSetChanges(rawResponse);
        }
        
        const newNarratorMessage: Message = {
          agent: 'Narrator',
-         text: responseJson.response,
+         text: rawResponse.response,
        };
        setChatLog(prev => [...prev, newNarratorMessage]);
 

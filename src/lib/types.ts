@@ -148,8 +148,8 @@ export const NarratorInputSchema = z.object({
 });
 export type NarratorInput = z.infer<typeof NarratorInputSchema>;
 
-// This schema defines the JSON object the AI must return for /set commands
-export const NarratorResponseSetSchema = z.object({
+// This schema defines the flat JSON object the AI must return.
+export const NarratorOutputSchema = z.object({
   response: z.string().describe("The narrator's confirmation message to the user."),
   topic: z.string().optional(),
   relationship: z.string().optional(),
@@ -160,16 +160,11 @@ export const NarratorResponseSetSchema = z.object({
   agent1Profile: z.object({ soul: AgentSoulSchema.optional(), matrix: AgentMatrixSchema.optional() }).optional(),
   agent2Profile: z.object({ soul: AgentSoulSchema.optional(), matrix: AgentMatrixSchema.optional() }).optional(),
 });
-export type NarratorResponseSet = z.infer<typeof NarratorResponseSetSchema>;
-
-// The final output schema is a string, which can be a simple response or a JSON string for /set
-export const NarratorOutputSchema = z.object({
-  response: z.string().describe("For /ask, this is the narrator's text response. For /set, this is a JSON string matching NarratorResponseSetSchema."),
-});
 export type NarratorOutput = z.infer<typeof NarratorOutputSchema>;
 
+
 // Type guard to check if a response is a NarratorResponseSet
-export function isNarratorResponseSet(obj: any): obj is NarratorResponseSet {
+export function isNarratorResponseSet(obj: any): obj is NarratorOutput {
   return obj && typeof obj === 'object' && 'response' in obj && (
     'topic' in obj ||
     'relationship' in obj ||
