@@ -117,7 +117,7 @@ export function ChatDisplay({
             <Textarea
                 ref={textareaRef}
                 placeholder={t.narratorPlaceholder}
-                className="min-h-12 max-h-40 flex-1 resize-none rounded-sm border-input bg-background shadow-sm"
+                className="min-h-[48px] max-h-40 flex-1 resize-none rounded-sm border-input bg-background shadow-sm"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 onInput={handleInput}
