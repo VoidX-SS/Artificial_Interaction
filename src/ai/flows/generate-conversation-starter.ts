@@ -60,8 +60,15 @@ export async function generateNextTurn(
       outputSchema: GenerateNextTurnOutputSchema,
     },
     async flowInput => {
-      const {output} = await responseGenerationPrompt(flowInput);
-      return output!;
+      const result = await responseGenerationPrompt(flowInput);
+      const usage = result.usage;
+      console.log(
+        `[generateNextTurnFlow] Usage at ${new Date().toISOString()}:`,
+        `Input Tokens: ${usage.inputTokens},`,
+        `Output Tokens: ${usage.outputTokens},`,
+        `Total Tokens: ${usage.totalTokens}`
+      );
+      return result.output!;
     }
   );
   
