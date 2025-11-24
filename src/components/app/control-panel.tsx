@@ -185,17 +185,11 @@ export function ControlPanel({
                     </div>
                      <div className="space-y-2">
                       <Label htmlFor="relationship">{t.relationship}</Label>
-                      <Textarea
+                      <Input
                         id="relationship"
                         placeholder={t.relationshipPlaceholder}
                         value={relationship}
-                        onChange={(e) => {
-                            setRelationship(e.target.value);
-                            e.target.style.height = 'auto';
-                            e.target.style.height = `${e.target.scrollHeight}px`;
-                        }}
-                        rows={1}
-                        className="resize-none overflow-hidden"
+                        onChange={(e) => setRelationship(e.target.value)}
                         disabled={isGenerating}
                       />
                     </div>

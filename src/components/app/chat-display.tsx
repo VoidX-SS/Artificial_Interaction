@@ -79,7 +79,7 @@ export function ChatDisplay({
             {chatLog.length === 0 ? (
               <div className="flex h-[calc(100vh-16rem)] items-center justify-center">
                 <div className="text-center text-muted-foreground">
-                  <MessageSquare className="mx-auto h-12 w-12" />
+                  <MessageSquare className="mx-auto h-14 w-12" />
                   <p className="mt-4 text-lg">{t.conversationAppearHere}</p>
                   <p className="mt-1 text-sm">
                     {t.pressStart}
@@ -133,7 +133,7 @@ export function ChatDisplay({
                 }}
                 disabled={isNarrating || isGenerating}
             />
-            <Button type="submit" size="icon" className="h-12 w-12 shrink-0 rounded-sm" disabled={isNarrating || isGenerating || !userInput.trim()}>
+            <Button type="submit" size="icon" className="h-14 w-14 shrink-0 rounded-sm" disabled={isNarrating || isGenerating || !userInput.trim()}>
                 {isNarrating ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                 <span className="sr-only">{t.send}</span>
             </Button>
