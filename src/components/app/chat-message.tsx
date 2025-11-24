@@ -27,7 +27,7 @@ export function ChatMessage({ agent, text, isAgent1, isNarrator, t }: ChatMessag
           <p className="font-semibold">{t.narrator}</p>
           <div className="prose prose-sm max-w-none rounded-md border border-amber-200 bg-amber-50/50 p-3 text-foreground dark:border-amber-900 dark:bg-amber-950/50 dark:prose-invert font-chat">
             {text.split('\n').map((line, index) => (
-                <p key={index} className="mb-2 last:mb-0">{line}</p>
+                <p key={index} className="mb-2 last:mb-0 text-justify">{line}</p>
             ))}
           </div>
         </div>
