@@ -21,11 +21,7 @@ export async function generateChatResponseAction(prompt: string, apiKey?: string
 
 export async function generateNarratorResponseAction(input: NarratorInput): Promise<NarratorOutput | string> {
     try {
-        const result = await narrator({
-            ...input,
-            agent1: JSON.stringify(input.agent1),
-            agent2: JSON.stringify(input.agent2),
-        });
+        const result = await narrator(input);
         return result;
     } catch (error: any) {
         console.error('Error generating narrator response:', error);

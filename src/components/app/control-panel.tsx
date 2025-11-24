@@ -19,11 +19,12 @@ import {
   KeyRound,
   WandSparkles,
   Heart,
-  Archive,
-  FileUp,
+  Loader,
+  SlidersHorizontal,
+  Activity,
 } from 'lucide-react';
 
-import type { Theme, Message } from '@/app/page';
+import type { Theme } from '@/app/page';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -38,8 +39,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { i18n, Language, type I18n } from '@/lib/i18n';
 import { Switch } from '@/components/ui/switch';
 import { AgentProfileDialog } from './agent-profile-dialog';
-import { AgentProfile } from '@/lib/types';
-import { Loader } from 'lucide-react';
+import { AgentProfile, Message } from '@/lib/types';
+import { LiveDashboard } from './live-dashboard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
 interface ControlPanelProps {
@@ -133,179 +135,197 @@ export function ControlPanel({
 }: ControlPanelProps) {
   return (
     <div className="flex h-screen flex-col border-r bg-card">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
-        <h1 className="text-lg font-semibold">{t.controls}</h1>
-        <SettingsDialog 
-            language={language}
-            setLanguage={setLanguage}
-            theme={theme}
-            setTheme={setTheme}
-            leisurelyChat={leisurelyChat}
-            setLeisurelyChat={setLeisurelyChat}
-            deepInteraction={deepInteraction}
-            setDeepInteraction={setDeepInteraction}
-            t={t}
-        />
-      </header>
-      <ScrollArea className="flex-1">
-          <div className="flex flex-col gap-6 p-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" /> {t.conversationSetup}
-                </CardTitle>
-                <CardDescription>{t.conversationSetupDesc}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="topic">{t.topic}</Label>
-                  <Textarea
-                    id="topic"
-                    placeholder={t.topicPlaceholder}
-                    value={topic}
-                    onChange={(e) => {
-                        setTopic(e.target.value);
-                        e.target.style.height = 'auto';
-                        e.target.style.height = `${e.target.scrollHeight}px`;
-                    }}
-                    rows={1}
-                    className="resize-none overflow-hidden"
-                    disabled={isGenerating}
-                  />
-                </div>
-                 <div className="space-y-2">
-                  <Label htmlFor="relationship">{t.relationship}</Label>
-                  <Textarea
-                    id="relationship"
-                    placeholder={t.relationshipPlaceholder}
-                    value={relationship}
-                    onChange={(e) => {
-                        setRelationship(e.target.value);
-                        e.target.style.height = 'auto';
-                        e.target.style.height = `${e.target.scrollHeight}px`;
-                    }}
-                    rows={1}
-                    className="resize-none overflow-hidden"
-                    disabled={isGenerating}
-                  />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="pronouns">{t.pronouns}</Label>
-                    <Input
-                        id="pronouns"
-                        placeholder={t.pronounsPlaceholder}
-                        value={pronouns}
-                        onChange={(e) => setPronouns(e.target.value)}
-                        disabled={isGenerating}
-                    />
-                </div>
-                <div className="space-y-2">
-                    <Label>{t.matrixConnection}</Label>
-                    <MatrixConnectionDialog 
-                        initialValues={agent1Profile.matrix.matrixConnection} 
-                        onSave={onMatrixConnectionChange}
-                        t={t}
-                        disabled={isGenerating}
-                    />
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="grid gap-6">
-              <AgentCard
-                agentNum={1}
-                profile={agent1Profile}
-                setProfile={setAgent1Profile}
-                isGenerating={isGenerating}
-                t={t}
-              />
-              <AgentCard
-                agentNum={2}
-                profile={agent2Profile}
-                setProfile={setAgent2Profile}
-                isGenerating={isGenerating}
-                t={t}
-              />
+       <Tabs defaultValue="setup" className="flex flex-col h-full">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="setup"><SlidersHorizontal className="h-4 w-4 mr-2"/>{t.controls}</TabsTrigger>
+                <TabsTrigger value="live"><Activity className="h-4 w-4 mr-2"/>{t.liveDashboard}</TabsTrigger>
+            </TabsList>
+             <div className="ml-4">
+                <SettingsDialog 
+                    language={language}
+                    setLanguage={setLanguage}
+                    theme={theme}
+                    setTheme={setTheme}
+                    leisurelyChat={leisurelyChat}
+                    setLeisurelyChat={setLeisurelyChat}
+                    deepInteraction={deepInteraction}
+                    setDeepInteraction={setDeepInteraction}
+                    t={t}
+                />
             </div>
-            
-            <ApiKeyCard 
-              apiKey={apiKey}
-              setApiKey={setApiKey}
-              apiKey2={apiKey2}
-              setApiKey2={setApiKey2}
-              apiKey3={apiKey3}
-              setApiKey3={setApiKey3}
-              t={t}
-              disabled={isGenerating}
+        </header>
+       
+        <TabsContent value="setup" className="flex-1 overflow-hidden mt-0">
+            <ScrollArea className="h-full">
+              <div className="flex flex-col gap-6 p-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" /> {t.conversationSetup}
+                    </CardTitle>
+                    <CardDescription>{t.conversationSetupDesc}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="topic">{t.topic}</Label>
+                      <Textarea
+                        id="topic"
+                        placeholder={t.topicPlaceholder}
+                        value={topic}
+                        onChange={(e) => {
+                            setTopic(e.target.value);
+                            e.target.style.height = 'auto';
+                            e.target.style.height = `${e.target.scrollHeight}px`;
+                        }}
+                        rows={1}
+                        className="resize-none overflow-hidden"
+                        disabled={isGenerating}
+                      />
+                    </div>
+                     <div className="space-y-2">
+                      <Label htmlFor="relationship">{t.relationship}</Label>
+                      <Textarea
+                        id="relationship"
+                        placeholder={t.relationshipPlaceholder}
+                        value={relationship}
+                        onChange={(e) => {
+                            setRelationship(e.target.value);
+                            e.target.style.height = 'auto';
+                            e.target.style.height = `${e.target.scrollHeight}px`;
+                        }}
+                        rows={1}
+                        className="resize-none overflow-hidden"
+                        disabled={isGenerating}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="pronouns">{t.pronouns}</Label>
+                        <Input
+                            id="pronouns"
+                            placeholder={t.pronounsPlaceholder}
+                            value={pronouns}
+                            onChange={(e) => setPronouns(e.target.value)}
+                            disabled={isGenerating}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>{t.matrixConnection}</Label>
+                        <MatrixConnectionDialog 
+                            initialValues={agent1Profile.matrix.matrixConnection} 
+                            onSave={onMatrixConnectionChange}
+                            t={t}
+                            disabled={isGenerating}
+                        />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="grid gap-6">
+                  <AgentCard
+                    agentNum={1}
+                    profile={agent1Profile}
+                    setProfile={setAgent1Profile}
+                    isGenerating={isGenerating}
+                    t={t}
+                  />
+                  <AgentCard
+                    agentNum={2}
+                    profile={agent2Profile}
+                    setProfile={setAgent2Profile}
+                    isGenerating={isGenerating}
+                    t={t}
+                  />
+                </div>
+                
+                <ApiKeyCard 
+                  apiKey={apiKey}
+                  setApiKey={setApiKey}
+                  apiKey2={apiKey2}
+                  setApiKey2={setApiKey2}
+                  apiKey3={apiKey3}
+                  setApiKey3={setApiKey3}
+                  t={t}
+                  disabled={isGenerating}
+                />
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="h-5 w-5" /> {t.modelParameters}
+                    </CardTitle>
+                    <CardDescription>{t.modelParametersDesc}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <ParameterSlider
+                      label={t.temperature}
+                      value={temperature}
+                      onValueChange={setTemperature}
+                      min={0}
+                      max={2}
+                      step={0.1}
+                      description={t.temperatureDesc}
+                      disabled={isGenerating}
+                    />
+                    <ParameterSlider
+                      label={t.maxWords}
+                      value={maxWords}
+                      onValueChange={setMaxWords}
+                      min={10}
+                      max={2000}
+                      step={10}
+                      description={t.maxWordsDesc}
+                      disabled={isGenerating}
+                    />
+                    <ParameterSlider
+                      label={t.exchanges}
+                      value={exchanges}
+                      onValueChange={setExchanges}
+                      min={1}
+                      max={50}
+                      step={1}
+                      description={t.exchangesDesc}
+                      disabled={isGenerating}
+                    />
+                  </CardContent>
+                </Card>
+                
+              </div>
+            </ScrollArea>
+        </TabsContent>
+         <TabsContent value="live" className="flex-1 overflow-hidden mt-0">
+            <LiveDashboard 
+              agent1={agent1Profile} 
+              agent2={agent2Profile} 
+              t={t} 
             />
+        </TabsContent>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" /> {t.modelParameters}
-                </CardTitle>
-                <CardDescription>{t.modelParametersDesc}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <ParameterSlider
-                  label={t.temperature}
-                  value={temperature}
-                  onValueChange={setTemperature}
-                  min={0}
-                  max={2}
-                  step={0.1}
-                  description={t.temperatureDesc}
-                  disabled={isGenerating}
-                />
-                <ParameterSlider
-                  label={t.maxWords}
-                  value={maxWords}
-                  onValueChange={setMaxWords}
-                  min={10}
-                  max={2000}
-                  step={10}
-                  description={t.maxWordsDesc}
-                  disabled={isGenerating}
-                />
-                <ParameterSlider
-                  label={t.exchanges}
-                  value={exchanges}
-                  onValueChange={setExchanges}
-                  min={1}
-                  max={50}
-                  step={1}
-                  description={t.exchangesDesc}
-                  disabled={isGenerating}
-                />
-              </CardContent>
-            </Card>
-            
+        <footer className="shrink-0 border-t p-4">
+          <div className="flex w-full flex-col gap-2">
+              <div className="flex w-full gap-2">
+              {isGenerating ? (
+                  <Button variant="destructive" className="w-full" onClick={onStop} disabled={isStopping}>
+                  {isStopping ? <Loader className="animate-spin" /> : <StopCircle />}
+                  {t.stop}
+                  </Button>
+              ) : (
+                  <Button className="w-full" onClick={onStart}>
+                  <Play />
+                  {chatLog.length > 0 ? t.continueConversation : t.startConversation}
+                  </Button>
+              )}
+              <Button variant="outline" onClick={onReset} disabled={isGenerating}>
+                  <RefreshCw />
+              </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                   <LoadDialog t={t} onLoad={onLoad} onLoadProfiles={onLoadProfiles} disabled={isGenerating} />
+                   <SaveDialog t={t} onSave={onSave} onSaveProfiles={onSaveProfiles} isGenerating={isGenerating} chatLogEmpty={!chatLog.length} />
+              </div>
           </div>
-      </ScrollArea>
-      <footer className="shrink-0 border-t p-4">
-        <div className="flex w-full flex-col gap-2">
-            <div className="flex w-full gap-2">
-            {isGenerating ? (
-                <Button variant="destructive" className="w-full" onClick={onStop} disabled={isStopping}>
-                {isStopping ? <Loader className="animate-spin" /> : <StopCircle />}
-                {t.stop}
-                </Button>
-            ) : (
-                <Button className="w-full" onClick={onStart}>
-                <Play />
-                {chatLog.length > 0 ? t.continueConversation : t.startConversation}
-                </Button>
-            )}
-            <Button variant="outline" onClick={onReset} disabled={isGenerating}>
-                <RefreshCw />
-            </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-                 <LoadDialog t={t} onLoad={onLoad} onLoadProfiles={onLoadProfiles} disabled={isGenerating} />
-                 <SaveDialog t={t} onSave={onSave} onSaveProfiles={onSaveProfiles} isGenerating={isGenerating} chatLogEmpty={!chatLog.length} />
-            </div>
-        </div>
-      </footer>
+        </footer>
+      </Tabs>
     </div>
   );
 }

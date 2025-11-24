@@ -1,12 +1,12 @@
 
 "use client";
 
-import { MessageSquare, Loader2, Clock, Bot, Send } from 'lucide-react';
+import { MessageSquare, Loader2, Clock, Bot, Send, User } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/components/app/chat-message';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import type { Message } from '@/app/page';
+import type { Message } from '@/lib/types';
 import type { I18n } from '@/lib/i18n';
 import { useEffect, useRef, FormEvent } from 'react';
 
@@ -14,7 +14,6 @@ interface ChatDisplayProps {
   chatLog: Message[];
   isGenerating: boolean;
   isNarrating: boolean;
-  messageCount: number;
   elapsedTime: number;
   agent1Name: string;
   agent2Name: string;
@@ -34,7 +33,6 @@ export function ChatDisplay({
   chatLog, 
   isGenerating, 
   isNarrating,
-  messageCount, 
   elapsedTime, 
   agent1Name, 
   agent2Name, 
@@ -46,6 +44,7 @@ export function ChatDisplay({
   const scrollViewportRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const messageCount = chatLog.filter(m => m.agent !== 'User' && m.agent !== 'Narrator').length;
 
   useEffect(() => {
     if (scrollViewportRef.current) {
@@ -96,6 +95,7 @@ export function ChatDisplay({
                     text={msg.text} 
                     isAgent1={msg.agent === agent1Name}
                     isNarrator={msg.agent === 'Narrator'}
+                    isUser={msg.agent === 'User'}
                     t={t}
                   />
                 ))}

@@ -6,34 +6,24 @@ import { AgentProfile } from "@/lib/types";
 import { I18n } from "@/lib/i18n";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bot, Heart, Loader, StopCircle, Zap, BrainCircuit, Smile, Angry } from "lucide-react";
+import { Bot, Heart } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface LiveDashboardProps {
   agent1: AgentProfile;
   agent2: AgentProfile;
   t: I18n;
-  onStop: () => void;
-  isStopping: boolean;
 }
 
-export function LiveDashboard({ agent1, agent2, t, onStop, isStopping }: LiveDashboardProps) {
+export function LiveDashboard({ agent1, agent2, t }: LiveDashboardProps) {
   const avgConnection = (agent1.matrix.matrixConnection.connection + agent2.matrix.matrixConnection.connection) / 2;
   const avgTrust = (agent1.matrix.matrixConnection.trust + agent2.matrix.matrixConnection.trust) / 2;
   const avgIntimacy = (agent1.matrix.matrixConnection.intimacy + agent2.matrix.matrixConnection.intimacy) / 2;
   const avgDependency = (agent1.matrix.matrixConnection.dependency + agent2.matrix.matrixConnection.dependency) / 2;
 
   return (
-    <div className="flex h-screen flex-col border-r bg-card">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
-        <h1 className="text-lg font-semibold flex items-center gap-2">
-          <Zap className="h-5 w-5 animate-pulse text-yellow-500"/>
-          {t.liveDashboard}
-        </h1>
-      </header>
-      <ScrollArea className="flex-1">
+    <ScrollArea className="h-full">
         <div className="p-4 space-y-6">
             <AgentMatrixDisplay agentNum={1} profile={agent1} t={t} />
             <AgentMatrixDisplay agentNum={2} profile={agent2} t={t} />
@@ -54,14 +44,7 @@ export function LiveDashboard({ agent1, agent2, t, onStop, isStopping }: LiveDas
               </CardContent>
             </Card>
         </div>
-      </ScrollArea>
-       <footer className="shrink-0 border-t p-4">
-            <Button variant="destructive" className="w-full" onClick={onStop} disabled={isStopping}>
-              {isStopping ? <Loader className="animate-spin" /> : <StopCircle />}
-              {t.stopConversation}
-            </Button>
-      </footer>
-    </div>
+    </ScrollArea>
   );
 }
 
@@ -80,7 +63,7 @@ function AgentMatrixDisplay({ agentNum, profile, t }: AgentMatrixDisplayProps) {
         setIsUpdating(true);
         const timer = setTimeout(() => setIsUpdating(false), 750); // Duration of the blink animation
         return () => clearTimeout(timer);
-    }, [profile.matrix]);
+    }, [profile.matrix, profile.soul]);
 
     return (
         <Card>
@@ -135,5 +118,3 @@ function ProgressWithLabel({ label, value, max = 100 }: ProgressWithLabelProps) 
         </div>
     )
 }
-
-    

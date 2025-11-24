@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 export type Gender = 'male' | 'female';
 
-// Basic Message Schema
 export const MessageSchema = z.object({
   agent: z.string(),
   text: z.string(),
@@ -12,8 +11,69 @@ export const MessageSchema = z.object({
 });
 export type Message = z.infer<typeof MessageSchema>;
 
+// Agent Profile Schema (Partial for updates)
+const AgentSoulBasicPersonaSchema = z.object({
+  name: z.string().optional(),
+  age: z.number().optional(),
+  gender: z.enum(['male', 'female']).optional(),
+  nationality: z.string().optional(),
+  location: z.string().optional(),
+});
+const AgentSoulBasicSchema = z.object({
+  persona: AgentSoulBasicPersonaSchema.optional(),
+  curiosityIndex: z.number().optional(),
+  summaryDiary: z.string().optional(),
+});
+const AgentSoulAdvancedSocialPositionSchema = z.object({
+  job: z.string().optional(),
+  financialStatus: z.string().optional(),
+  qualityOfLife: z.number().optional(),
+  happinessIndex: z.number().optional(),
+});
+const AgentSoulAdvancedSchema = z.object({
+  socialPosition: AgentSoulAdvancedSocialPositionSchema.optional(),
+  relationships: z.string().optional(),
+});
+const AgentSoulSchema = z.object({
+  basic: AgentSoulBasicSchema.optional(),
+  advanced: AgentSoulAdvancedSchema.optional(),
+});
 
-// Agent Profile Schema
+const AgentMatrixEmotionIndexSchema = z.object({
+  health: z.number().optional(),
+  appearance: z.number().optional(),
+  iq: z.number().optional(),
+  eq: z.number().optional(),
+  antipathy: z.number().optional(),
+  nextIntention: z.string().optional(),
+});
+const AgentMatrixConnectionSchema = z.object({
+  connection: z.number().optional(),
+  trust: z.number().optional(),
+  intimacy: z.number().optional(),
+  dependency: z.number().optional(),
+});
+const AgentMatrixFavorSchema = z.object({
+  dob: z.string().optional(),
+  zodiac: z.string().optional(),
+  personalityType: z.string().optional(),
+  thinkingStyle: z.string().optional(),
+  strengths: z.string().optional(),
+  weaknesses: z.string().optional(),
+  hobbies: z.string().optional(),
+  dislikes: z.string().optional(),
+  dreams: z.string().optional(),
+  coreBeliefs: z.string().optional(),
+  lifePhilosophy: z.string().optional(),
+  pastTrauma: z.string().optional(),
+});
+const AgentMatrixSchema = z.object({
+  emotionIndex: AgentMatrixEmotionIndexSchema.optional(),
+  matrixConnection: AgentMatrixConnectionSchema.optional(),
+  matrixFavor: AgentMatrixFavorSchema.optional(),
+});
+
+// Full Agent Profile Schema for initial state and loading
 export const AgentProfileSchema = z.object({
   soul: z.object({
     basic: z.object({
@@ -69,22 +129,58 @@ export const AgentProfileSchema = z.object({
   }),
 });
 export type AgentProfile = z.infer<typeof AgentProfileSchema>;
+export type AgentMatrix = AgentProfile['matrix'];
 
 // Narrator Schemas
 export const NarratorInputSchema = z.object({
-  agent1: z.string().describe("A JSON string representing Agent 1's profile."),
-  agent2: z.string().describe("A JSON string representing Agent 2's profile."),
+  agent1: AgentProfileSchema.describe("The full profile of Agent 1."),
+  agent2: AgentProfileSchema.describe("The full profile of Agent 2."),
   history: z.array(MessageSchema).describe('The conversation history.'),
   userQuery: z.string().describe("The user's query to the narrator."),
   language: z.string().describe('The language for the response (e.g., "en" or "vi").'),
   apiKey: z.string().optional().describe('Optional API key for Google AI.'),
+  topic: z.string().describe('Current conversation topic.'),
+  relationship: z.string().describe('Current relationship between agents.'),
+  pronouns: z.string().describe('Current pronouns used.'),
+  temperature: z.number().describe('Current model temperature.'),
+  maxWords: z.number().describe('Current max words per message.'),
+  exchanges: z.number().describe('Current number of exchanges left.'),
 });
 export type NarratorInput = z.infer<typeof NarratorInputSchema>;
 
+// This schema defines the JSON object the AI must return for /set commands
+export const NarratorResponseSetSchema = z.object({
+  response: z.string().describe("The narrator's confirmation message to the user."),
+  topic: z.string().optional(),
+  relationship: z.string().optional(),
+  pronouns: z.string().optional(),
+  temperature: z.number().min(0).max(2).optional(),
+  maxWords: z.number().min(10).max(2000).optional(),
+  exchanges: z.number().min(1).max(50).optional(),
+  agent1Profile: z.object({ soul: AgentSoulSchema.optional(), matrix: AgentMatrixSchema.optional() }).optional(),
+  agent2Profile: z.object({ soul: AgentSoulSchema.optional(), matrix: AgentMatrixSchema.optional() }).optional(),
+});
+export type NarratorResponseSet = z.infer<typeof NarratorResponseSetSchema>;
+
+// The final output schema is a string, which can be a simple response or a JSON string for /set
 export const NarratorOutputSchema = z.object({
-  response: z.string().describe("The narrator's response to the user's query."),
+  response: z.string().describe("For /ask, this is the narrator's text response. For /set, this is a JSON string matching NarratorResponseSetSchema."),
 });
 export type NarratorOutput = z.infer<typeof NarratorOutputSchema>;
+
+// Type guard to check if a response is a NarratorResponseSet
+export function isNarratorResponseSet(obj: any): obj is NarratorResponseSet {
+  return obj && typeof obj === 'object' && 'response' in obj && (
+    'topic' in obj ||
+    'relationship' in obj ||
+    'pronouns' in obj ||
+    'temperature' in obj ||
+    'maxWords' in obj ||
+    'exchanges' in obj ||
+    'agent1Profile' in obj ||
+    'agent2Profile' in obj
+  );
+}
 
 
 const emptyProfile: AgentProfile = {

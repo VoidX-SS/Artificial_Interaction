@@ -147,6 +147,8 @@ export interface I18n {
   send: string;
   narratorResponse: string;
   narratorError: string;
+  narratorSetSuccess: string;
+  narratorSetSuccessDesc: string;
 }
 
 const en: I18n = {
@@ -177,7 +179,7 @@ const en: I18n = {
   conversationAppearHere: 'The conversation will appear here.',
   pressStart: 'Configure the settings and press "Start".',
   typing: 'Typing',
-  controls: '10 Perspective',
+  controls: 'Setup',
   conversationSetup: 'Conversation Setup',
   conversationSetupDesc: 'Define the starting point for the characters.',
   topic: 'Topic',
@@ -265,7 +267,7 @@ const en: I18n = {
   coreBeliefs: "Core Beliefs",
   lifePhilosophy: "Life Philosophy",
   pastTrauma: "Past Psychological Trauma",
-  liveDashboard: 'Live Dashboard',
+  liveDashboard: 'Live',
   liveDashboardDesc: 'Track changes in personality during the conversation.',
   apiKey: 'Google AI API Key',
   apiKeyPlaceholder: 'Enter your API Key',
@@ -289,10 +291,12 @@ const en: I18n = {
   apiKeysDesc: 'Provide Google AI API keys for the characters.',
   setApiKeys: 'Set API Keys',
   narrator: 'Narrator',
-  narratorPlaceholder: 'Message the Narrator...',
+  narratorPlaceholder: 'Message the Narrator... (use /ask or /set)',
   send: 'Send',
-  narratorResponse: 'Narrator\'s Response',
+  narratorResponse: "Narrator's Response",
   narratorError: 'The narrator did not return a valid response.',
+  narratorSetSuccess: 'Narrator Updated Settings',
+  narratorSetSuccessDesc: 'The settings have been successfully updated by the Narrator.',
 };
 
 const vi: I18n = {
@@ -323,7 +327,7 @@ const vi: I18n = {
   conversationAppearHere: 'Cuộc trò chuyện sẽ xuất hiện ở đây.',
   pressStart: 'Định cấu hình cài đặt và nhấn "Bắt đầu".',
   typing: 'Đang nhập',
-  controls: '10 Perspective',
+  controls: 'Thiết lập',
   conversationSetup: 'Thiết lập cuộc trò chuyện',
   conversationSetupDesc: 'Xác định điểm bắt đầu cho nhân vật',
   topic: 'Chủ đề',
@@ -403,7 +407,7 @@ const vi: I18n = {
   zodiac: "Cung hoàng đạo",
   personalityType: "Nhóm tính cách (ví dụ: MBTI)",
   thinkingStyle: "Lối tư duy",
-strengths: "Những lĩnh vực vượt trội",
+  strengths: "Những lĩnh vực vượt trội",
   weaknesses: "Những lĩnh vực không vượt trội",
   hobbies: "Sở thích cá nhân",
   dislikes: "Những điều không thích",
@@ -411,7 +415,7 @@ strengths: "Những lĩnh vực vượt trội",
   coreBeliefs: "Niềm tin cốt lõi",
   lifePhilosophy: "Tư tưởng sống",
   pastTrauma: "Vết thương tâm lý trong quá khứ",
-  liveDashboard: 'Theo dõi trực tiếp',
+  liveDashboard: 'Theo dõi',
   liveDashboardDesc: 'Theo dõi sự thay đổi của tính cách trong quá trình nhắn tin.',
   apiKey: 'Google AI API Key',
   apiKeyPlaceholder: 'Nhập API Key',
@@ -435,10 +439,12 @@ strengths: "Những lĩnh vực vượt trội",
   apiKeysDesc: 'Cung cấp khóa API Google AI cho các nhân vật.',
   setApiKeys: 'Thiết lập API Keys',
   narrator: 'Người dẫn truyện',
-  narratorPlaceholder: 'Nhắn tin cho người dẫn truyện...',
+  narratorPlaceholder: 'Nhắn tin cho Người dẫn truyện... (dùng /ask hoặc /set)',
   send: 'Gửi',
   narratorResponse: 'Phản hồi của người dẫn truyện',
   narratorError: 'Người dẫn truyện đã không trả về một phản hồi hợp lệ.',
+  narratorSetSuccess: 'Người Dẫn Truyện Đã Cập Nhật',
+  narratorSetSuccessDesc: 'Các thiết lập đã được cập nhật thành công bởi Người dẫn truyện.',
 };
 
 export const i18n = { en, vi };

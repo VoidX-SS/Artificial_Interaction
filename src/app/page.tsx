@@ -1,22 +1,14 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
+import { useState, useRef, useEffect, FormEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import { ControlPanel } from '@/components/app/control-panel';
 import { ChatDisplay } from '@/components/app/chat-display';
 import { useToast } from '@/hooks/use-toast';
 import { generateChatResponseAction, generateNarratorResponseAction } from '@/app/actions';
 import { i18n, Language } from '@/lib/i18n';
-import { AgentProfile, initialAgent1Profile, initialAgent2Profile, NarratorInput } from '@/lib/types';
-import { LiveDashboard } from '@/components/app/live-dashboard';
-
-export interface Message {
-  agent: string;
-  text: string;
-  emotionIndex?: AgentProfile['matrix']['emotionIndex'];
-  matrixConnection?: AgentProfile['matrix']['matrixConnection'];
-}
+import { AgentProfile, initialAgent1Profile, initialAgent2Profile, NarratorInput, AgentMatrix, Message, isNarratorResponseSet, NarratorResponseSet } from '@/lib/types';
 
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -51,7 +43,6 @@ export default function Home() {
 
   const [userInput, setUserInput] = useState('');
   const [isNarrating, setIsNarrating] = useState(false);
-
 
   const isRunningRef = useRef(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -444,7 +435,7 @@ export default function Home() {
     }
   };
 
-  const handleMatrixConnectionChange = (newValues: AgentProfile['matrix']['matrixConnection']) => {
+  const handleMatrixConnectionChange = (newValues: AgentMatrix['matrixConnection']) => {
     setAgent1Profile(prev => ({
       ...prev,
       matrix: { ...prev.matrix, matrixConnection: newValues }
@@ -455,35 +446,71 @@ export default function Home() {
     }));
   };
 
+  const applyNarratorSetChanges = (changes: NarratorResponseSet) => {
+      if (changes.topic) setTopic(changes.topic);
+      if (changes.relationship) setRelationship(changes.relationship);
+      if (changes.pronouns) setPronouns(changes.pronouns);
+      if (changes.temperature) setTemperature([changes.temperature]);
+      if (changes.maxWords) setMaxWords([changes.maxWords]);
+      if (changes.exchanges) setExchanges([changes.exchanges]);
+      if (changes.agent1Profile) setAgent1Profile(prev => ({ ...prev, ...changes.agent1Profile }));
+      if (changes.agent2Profile) setAgent2Profile(prev => ({ ...prev, ...changes.agent2Profile }));
+      toast({
+          title: t.narratorSetSuccess,
+          description: t.narratorSetSuccessDesc,
+      });
+  };
+
   const handleUserSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!userInput.trim() || isNarrating) return;
 
+    const newUserMessage: Message = { agent: 'User', text: userInput };
+    setChatLog(prev => [...prev, newUserMessage]);
+    setUserInput('');
     setIsNarrating(true);
     
     const narratorInput: NarratorInput = {
-      agent1: JSON.stringify(agent1Profile),
-      agent2: JSON.stringify(agent2Profile),
+      agent1: agent1Profile,
+      agent2: agent2Profile,
       history: chatLog,
       userQuery: userInput,
       language: language,
       apiKey: apiKey3,
+      topic,
+      relationship,
+      pronouns,
+      temperature: temperature[0],
+      maxWords: maxWords[0],
+      exchanges: exchanges[0],
     };
 
-    const response = await generateNarratorResponseAction(narratorInput);
+    const rawResponse = await generateNarratorResponseAction(narratorInput);
 
-    if (typeof response === 'string' && response.startsWith('Error:')) {
+    if (typeof rawResponse === 'string' && rawResponse.startsWith('Error:')) {
       toast({
         variant: 'destructive',
         title: t.errorFrom(t.narrator),
-        description: response,
+        description: rawResponse,
       });
-    } else if (typeof response === 'object' && response.response) {
+    } else if (typeof rawResponse === 'object') {
+       let responseJson;
+       try {
+           responseJson = JSON.parse(rawResponse.response);
+       } catch {
+           responseJson = { response: rawResponse.response };
+       }
+
+       if (isNarratorResponseSet(responseJson)) {
+            applyNarratorSetChanges(responseJson);
+       }
+       
        const newNarratorMessage: Message = {
          agent: 'Narrator',
-         text: response.response,
+         text: responseJson.response,
        };
        setChatLog(prev => [...prev, newNarratorMessage]);
+
     } else {
       toast({
         variant: 'destructive',
@@ -493,22 +520,12 @@ export default function Home() {
     }
     
     setIsNarrating(false);
-    setUserInput('');
   }
   
   return (
     <main className="h-screen overflow-hidden bg-background font-sans">
       <div className="grid h-full md:grid-cols-[400px_1fr] lg:grid-cols-[450px_1fr]">
-        {isGenerating ? (
-          <LiveDashboard
-            agent1={agent1Profile}
-            agent2={agent2Profile}
-            t={t}
-            onStop={handleStop}
-            isStopping={isStopping}
-          />
-        ) : (
-          <ControlPanel
+        <ControlPanel
             topic={topic}
             setTopic={setTopic}
             relationship={relationship}
@@ -552,12 +569,10 @@ export default function Home() {
             setApiKey3={setApiKey3}
             t={t}
           />
-        )}
         <ChatDisplay 
           chatLog={chatLog} 
           isGenerating={isGenerating} 
           isNarrating={isNarrating}
-          messageCount={chatLog.length} 
           elapsedTime={elapsedTime}
           agent1Name={agent1Profile.soul.basic.persona.name}
           agent2Name={agent2Profile.soul.basic.persona.name}
