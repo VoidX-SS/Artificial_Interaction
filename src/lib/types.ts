@@ -157,8 +157,8 @@ export const NarratorOutputSchema = z.object({
   temperature: z.number().min(0).max(2).optional(),
   maxWords: z.number().min(10).max(2000).optional(),
   exchanges: z.number().min(1).max(50).optional(),
-  agent1Profile: z.object({ soul: AgentSoulSchema.optional(), matrix: AgentMatrixSchema.optional() }).optional(),
-  agent2Profile: z.object({ soul: AgentSoulSchema.optional(), matrix: AgentMatrixSchema.optional() }).optional(),
+  agent1Profile: AgentProfileSchema.optional(),
+  agent2Profile: AgentProfileSchema.optional(),
 });
 export type NarratorOutput = z.infer<typeof NarratorOutputSchema>;
 
