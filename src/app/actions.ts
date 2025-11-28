@@ -20,12 +20,12 @@ export async function generateChatResponseAction(prompt: string, apiKey?: string
 }
 
 export async function generateNarratorResponseAction(input: NarratorInput): Promise<NarratorOutput | string> {
-    try {
-        const result = await narrator(input);
-        return result;
-    } catch (error: any) {
-        console.error('Error generating narrator response:', error);
-        const errorMessage = error.cause?.message || error.message || 'An unknown error occurred.';
-        return `Error: Could not get a response. ${errorMessage}`;
-    }
+  try {
+    const result = await narrator(input);
+    return result;
+  } catch (error: any) {
+    console.error('Error generating narrator response:', error);
+    const errorMessage = error.cause?.message || error.message || 'An unknown error occurred.';
+    return `Error: Could not get a response. ${errorMessage}`;
+  }
 }
