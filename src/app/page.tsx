@@ -18,14 +18,14 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>('vi');
   const t = i18n[language];
   const { toast } = useToast();
-  
+
   const [agent1Profile, setAgent1Profile] = useState<AgentProfile>(initialAgent1Profile);
   const [agent2Profile, setAgent2Profile] = useState<AgentProfile>(initialAgent2Profile);
 
   const [topic, setTopic] = useState(t.defaultTopic);
   const [relationship, setRelationship] = useState(t.defaultRelationship);
   const [pronouns, setPronouns] = useState(t.defaultPronouns);
-  
+
   const [temperature, setTemperature] = useState([1]);
   const [maxWords, setMaxWords] = useState([250]);
   const [exchanges, setExchanges] = useState([5]);
@@ -43,6 +43,7 @@ export default function Home() {
 
   const [userInput, setUserInput] = useState('');
   const [isNarrating, setIsNarrating] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const isRunningRef = useRef(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -89,7 +90,7 @@ export default function Home() {
     let prompt = "Bạn là một con người, trả lời tự nhiên nhất có thể.\n\n";
     prompt += "--- BỐI CẢNH ---\n";
     prompt += "**1. VỀ BẠN (TÍNH CÁCH):**\n";
-    
+
     // SOUL
     prompt += `*   **CON NGƯỜI (PERSONALITY):**\n`;
     prompt += `    *   Bạn tên là ${currentAgent.soul.basic.persona.name}, ${currentAgent.soul.basic.persona.age} tuổi, giới tính ${currentAgent.soul.basic.persona.gender === 'male' ? 'Nam' : 'Nữ'}, quốc tịch ${currentAgent.soul.basic.persona.nationality} và đang sống tại ${currentAgent.soul.basic.persona.location}.\n`;
@@ -101,26 +102,26 @@ export default function Home() {
     prompt += `    *   **Tố chất (QUALITY):** Sức khỏe ${currentAgent.matrix.emotionIndex.health}/100, Ngoại hình ${currentAgent.matrix.emotionIndex.appearance}/100, IQ ${currentAgent.matrix.emotionIndex.iq}/200, EQ ${currentAgent.matrix.emotionIndex.eq}/200. Mức độ ác cảm với đối phương: ${currentAgent.matrix.emotionIndex.antipathy}/100. Ý định của bạn là: "${currentAgent.matrix.emotionIndex.nextIntention}".\n`;
     prompt += `    *   **Cảm nhận về mối quan hệ (MATRIX_CONNECTION):** Kết nối ${currentAgent.matrix.matrixConnection.connection}/100, Tin tưởng ${currentAgent.matrix.matrixConnection.trust}/100, Thân mật ${currentAgent.matrix.matrixConnection.intimacy}/100, Phụ thuộc ${currentAgent.matrix.matrixConnection.dependency}/100.\n`;
     prompt += `    *   **Bản sắc cốt lõi:** Ngày sinh ${currentAgent.matrix.matrixFavor.dob}, Cung hoàng đạo ${currentAgent.matrix.matrixFavor.zodiac}, Nhóm tính cách ${currentAgent.matrix.matrixFavor.personalityType}. Lối tư duy: ${currentAgent.matrix.matrixFavor.thinkingStyle}. Điểm mạnh: ${currentAgent.matrix.matrixFavor.strengths}. Điểm yếu: ${currentAgent.matrix.matrixFavor.weaknesses}. Sở thích: ${currentAgent.matrix.matrixFavor.hobbies}. Những điều không thích: ${currentAgent.matrix.matrixFavor.dislikes}. Hoài bão: ${currentAgent.matrix.matrixFavor.dreams}. Niềm tin cốt lõi: "${currentAgent.matrix.matrixFavor.coreBeliefs}". Tư tưởng sống: "${currentAgent.matrix.matrixFavor.lifePhilosophy}". Vết thương tâm lý trong quá khứ: "${currentAgent.matrix.matrixFavor.pastTrauma}".\n\n`;
-    
+
     prompt += "**2. VỀ CUỘC TRÒ CHUYỆN:**\n";
     prompt += `*   Bạn đang nói chuyện với ${otherAgent.soul.basic.persona.name}, giới tính ${otherAgent.soul.basic.persona.gender === 'male' ? 'Nam' : 'Nữ'} Mối quan hệ của hai bạn là: ${relationship}.\n`;
     prompt += `*   Hai bạn nên xưng hô là: ${pronouns}.\n`;
 
     if (history.length === 0) {
-        prompt += `*   Chủ đề là "${topic}", bạn hãy mở lời nhé.\n`;
+      prompt += `*   Chủ đề là "${topic}", bạn hãy mở lời nhé.\n`;
     } else {
-        const lastMessage = history[history.length - 1];
-        if (history.length > 1) {
-          const historyText = history.slice(0, -1).map(msg => `${msg.agent}: ${msg.text}`).join('\n');
-          prompt += `*   Những gì cả hai đã nhắn:\n${historyText}\n`;
-        }
-        prompt += `*   ${lastMessage.agent} nói là: "${lastMessage.text}". Hãy nhắn tiếp nhé.\n`;
-        prompt += `Không cần nói xin chào nữa.`
-        
+      const lastMessage = history[history.length - 1];
+      if (history.length > 1) {
+        const historyText = history.slice(0, -1).map(msg => `${msg.agent}: ${msg.text}`).join('\n');
+        prompt += `*   Những gì cả hai đã nhắn:\n${historyText}\n`;
+      }
+      prompt += `*   ${lastMessage.agent} nói là: "${lastMessage.text}". Hãy nhắn tiếp nhé.\n`;
+      prompt += `Không cần nói xin chào nữa.`
+
     }
 
     if (!deepInteraction) {
-        prompt += `*   Hãy luôn bám sát chủ đề chính của cuộc trò chuyện: "${topic}"\n`;
+      prompt += `*   Hãy luôn bám sát chủ đề chính của cuộc trò chuyện: "${topic}"\n`;
     }
 
     prompt += "\n--- ĐẦU RA (BẮT BUỘC TUÂN THỦ) ---\n";
@@ -130,45 +131,45 @@ export default function Home() {
     prompt += `   - "emotionIndex": (object) Cập nhật lại Sức khỏe, Ngoại hình, IQ, EQ, Mức độ ác cảm với đối phương.\n`;
     prompt += `   - "matrixConnection": (object) Cập nhật lại Kết nối, Tin tưởng, Thân mật, Phụ thuộc.\n`;
     prompt += `3. "nextIntention": (string) Ý định tiếp theo của bạn là gì? (ví dụ: "Hỏi rõ hơn về kinh nghiệm của họ", "Thể hiện sự đồng cảm", "Chuyển chủ đề", "Kết thúc cuộc trò chuyện").\n`;
-    
+
     return prompt;
   }
 
 
   const parseResponse = (rawResponse: any) => {
     if (typeof rawResponse === 'string') {
-        const jsonMatch = rawResponse.match(/```json\s*([\s\S]*?)\s*```|({[\s\S]*})/);
-        if (jsonMatch && (jsonMatch[1] || jsonMatch[2])) {
-            try {
-                const parsed = JSON.parse(jsonMatch[1] || jsonMatch[2]);
-                rawResponse = parsed;
-            } catch (e) {
-                 console.error("Failed to parse JSON from string:", e);
-                 return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
-            }
-        } else {
-             try {
-                const parsed = JSON.parse(rawResponse);
-                rawResponse = parsed;
-            } catch(e) {
-                console.error("Response is not a parsable JSON object:", rawResponse);
-                return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
-            }
+      const jsonMatch = rawResponse.match(/```json\s*([\s\S]*?)\s*```|({[\s\S]*})/);
+      if (jsonMatch && (jsonMatch[1] || jsonMatch[2])) {
+        try {
+          const parsed = JSON.parse(jsonMatch[1] || jsonMatch[2]);
+          rawResponse = parsed;
+        } catch (e) {
+          console.error("Failed to parse JSON from string:", e);
+          return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
         }
+      } else {
+        try {
+          const parsed = JSON.parse(rawResponse);
+          rawResponse = parsed;
+        } catch (e) {
+          console.error("Response is not a parsable JSON object:", rawResponse);
+          return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
+        }
+      }
     }
 
     if (typeof rawResponse === 'object' && rawResponse !== null) {
-        const { message, personality, nextIntention } = rawResponse;
-        const { emotionIndex, matrixConnection } = personality || {};
+      const { message, personality, nextIntention } = rawResponse;
+      const { emotionIndex, matrixConnection } = personality || {};
 
-        const text = message || '';
+      const text = message || '';
 
-        return {
-            text: text,
-            emotionIndex,
-            matrixConnection,
-            nextIntention,
-        };
+      return {
+        text: text,
+        emotionIndex,
+        matrixConnection,
+        nextIntention,
+      };
     }
 
     console.error("Invalid response format, cannot parse:", rawResponse);
@@ -185,9 +186,9 @@ export default function Home() {
       });
       return;
     }
-    
+
     if (!isGenerating && chatLog.length === 0) {
-        setElapsedTime(0);
+      setElapsedTime(0);
     }
     setIsGenerating(true);
     isRunningRef.current = true;
@@ -196,7 +197,7 @@ export default function Home() {
     const initialChatLength = chatLog.length;
 
     let currentAgentTurn: 'agent1' | 'agent2' = 'agent1';
-     if (currentHistory.length > 0) {
+    if (currentHistory.length > 0) {
       const lastSpeakerName = currentHistory[currentHistory.length - 1].agent;
       currentAgentTurn = lastSpeakerName === agent1Profile.soul.basic.persona.name ? 'agent2' : 'agent1';
     }
@@ -206,7 +207,7 @@ export default function Home() {
         toast({ title: t.conversationStopped, description: t.conversationStoppedManually });
         break;
       }
-      
+
       if (chatLog.length + i >= initialChatLength + exchanges[0]) {
         break;
       }
@@ -237,13 +238,13 @@ export default function Home() {
         });
         setIsGenerating(false);
         isRunningRef.current = false;
-        return; 
+        return;
       }
-      
+
       const { text, emotionIndex, matrixConnection, nextIntention } = parseResponse(rawResponse);
-      
+
       if (!text) {
-         toast({
+        toast({
           variant: 'destructive',
           title: t.errorFrom(currentProfile.soul.basic.persona.name),
           description: "AI did not return a message.",
@@ -252,13 +253,13 @@ export default function Home() {
         continue;
       }
 
-      const newMessage: Message = { 
-        agent: currentProfile.soul.basic.persona.name, 
+      const newMessage: Message = {
+        agent: currentProfile.soul.basic.persona.name,
         text: text,
         emotionIndex: emotionIndex,
         matrixConnection: matrixConnection
       };
-      
+
       const profileUpdater = currentAgentTurn === 'agent1' ? setAgent1Profile : setAgent2Profile;
       if (emotionIndex || matrixConnection || nextIntention) {
         profileUpdater(prev => ({
@@ -338,7 +339,7 @@ export default function Home() {
     URL.revokeObjectURL(url);
     toast({ title: t.sessionSaved, description: t.sessionSavedDesc });
   };
-  
+
   const handleSaveProfiles = () => {
     const profiles = { agent1Profile, agent2Profile };
     const blob = new Blob([JSON.stringify(profiles, null, 2)], { type: 'application/json' });
@@ -374,7 +375,7 @@ export default function Home() {
           throw new Error('File could not be read');
         }
         const loadedData = JSON.parse(result);
-        
+
         setTopic(loadedData.topic ?? t.defaultTopic);
         setRelationship(loadedData.relationship ?? t.defaultRelationship);
         setPronouns(loadedData.pronouns ?? t.defaultPronouns);
@@ -395,12 +396,12 @@ export default function Home() {
 
         toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
       } catch (error) {
-        toast({ variant: 'destructive', title: t.loadFailed, description: t.loadFailedDesc});
+        toast({ variant: 'destructive', title: t.loadFailed, description: t.loadFailedDesc });
       }
     };
     reader.readAsText(file);
-    if(fileInputRef.current) {
-        fileInputRef.current.value = '';
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -416,7 +417,7 @@ export default function Home() {
           throw new Error('File could not be read');
         }
         const loadedProfiles = JSON.parse(result);
-        
+
         if (loadedProfiles.agent1Profile && loadedProfiles.agent2Profile) {
           setAgent1Profile(loadedProfiles.agent1Profile);
           setAgent2Profile(loadedProfiles.agent2Profile);
@@ -430,7 +431,7 @@ export default function Home() {
       }
     };
     reader.readAsText(file);
-    if(profileInputRef.current) {
+    if (profileInputRef.current) {
       profileInputRef.current.value = '';
     }
   };
@@ -447,18 +448,18 @@ export default function Home() {
   };
 
   const applyNarratorSetChanges = (changes: NarratorOutput) => {
-      if (changes.topic) setTopic(changes.topic);
-      if (changes.relationship) setRelationship(changes.relationship);
-      if (changes.pronouns) setPronouns(changes.pronouns);
-      if (changes.temperature) setTemperature([changes.temperature]);
-      if (changes.maxWords) setMaxWords([changes.maxWords]);
-      if (changes.exchanges) setExchanges([changes.exchanges]);
-      if (changes.agent1Profile) setAgent1Profile(prev => ({ ...prev, ...changes.agent1Profile }));
-      if (changes.agent2Profile) setAgent2Profile(prev => ({ ...prev, ...changes.agent2Profile }));
-      toast({
-          title: t.narratorSetSuccess,
-          description: t.narratorSetSuccessDesc,
-      });
+    if (changes.topic) setTopic(changes.topic);
+    if (changes.relationship) setRelationship(changes.relationship);
+    if (changes.pronouns) setPronouns(changes.pronouns);
+    if (changes.temperature) setTemperature([changes.temperature]);
+    if (changes.maxWords) setMaxWords([changes.maxWords]);
+    if (changes.exchanges) setExchanges([changes.exchanges]);
+    if (changes.agent1Profile) setAgent1Profile(prev => ({ ...prev, ...changes.agent1Profile }));
+    if (changes.agent2Profile) setAgent2Profile(prev => ({ ...prev, ...changes.agent2Profile }));
+    toast({
+      title: t.narratorSetSuccess,
+      description: t.narratorSetSuccessDesc,
+    });
   };
 
   const handleUserSubmit = async (e: FormEvent) => {
@@ -469,7 +470,7 @@ export default function Home() {
     setChatLog(prev => [...prev, newUserMessage]);
     setUserInput('');
     setIsNarrating(true);
-    
+
     const narratorInput: NarratorInput = {
       agent1: agent1Profile,
       agent2: agent2Profile,
@@ -494,15 +495,15 @@ export default function Home() {
         description: rawResponse,
       });
     } else if (typeof rawResponse === 'object' && rawResponse.response) {
-       if (isNarratorResponseSet(rawResponse)) {
-            applyNarratorSetChanges(rawResponse);
-       }
-       
-       const newNarratorMessage: Message = {
-         agent: 'Narrator',
-         text: rawResponse.response,
-       };
-       setChatLog(prev => [...prev, newNarratorMessage]);
+      if (isNarratorResponseSet(rawResponse)) {
+        applyNarratorSetChanges(rawResponse);
+      }
+
+      const newNarratorMessage: Message = {
+        agent: 'Narrator',
+        text: rawResponse.response,
+      };
+      setChatLog(prev => [...prev, newNarratorMessage]);
 
     } else {
       toast({
@@ -511,14 +512,19 @@ export default function Home() {
         description: t.narratorError,
       });
     }
-    
+
     setIsNarrating(false);
   }
-  
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev);
+  };
+
   return (
     <main className="h-screen overflow-hidden bg-background font-sans">
-      <div className="grid h-full md:grid-cols-[400px_1fr] lg:grid-cols-[450px_1fr]">
-        <ControlPanel
+      <div className={`grid h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? 'md:grid-cols-[300px_1fr] lg:grid-cols-[350px_1fr]' : 'grid-cols-1'}`}>
+        <div className={`${isSidebarOpen ? 'block' : 'hidden'} h-full overflow-hidden border-r`}>
+          <ControlPanel
             topic={topic}
             setTopic={setTopic}
             relationship={relationship}
@@ -562,9 +568,10 @@ export default function Home() {
             setApiKey3={setApiKey3}
             t={t}
           />
-        <ChatDisplay 
-          chatLog={chatLog} 
-          isGenerating={isGenerating} 
+        </div>
+        <ChatDisplay
+          chatLog={chatLog}
+          isGenerating={isGenerating}
           isNarrating={isNarrating}
           elapsedTime={elapsedTime}
           agent1Name={agent1Profile.soul.basic.persona.name}
@@ -573,6 +580,8 @@ export default function Home() {
           userInput={userInput}
           setUserInput={setUserInput}
           onUserSubmit={handleUserSubmit}
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={toggleSidebar}
         />
       </div>
       <input
