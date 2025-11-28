@@ -1,21 +1,23 @@
 
 "use client";
 
-import { Bot, BookUser, User } from 'lucide-react';
+import { Bot, BookUser, User, Brain } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { I18n } from '@/lib/i18n';
 
 interface ChatMessageProps {
   agent: string;
+  agent: string;
   text: string;
+  thought?: string;
   isAgent1: boolean;
   isNarrator: boolean;
   isUser: boolean;
   t: I18n;
 }
 
-export function ChatMessage({ agent, text, isAgent1, isNarrator, isUser, t }: ChatMessageProps) {
-  
+export function ChatMessage({ agent, text, thought, isAgent1, isNarrator, isUser, t }: ChatMessageProps) {
+
   if (isNarrator) {
     return (
       <div className="flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -28,7 +30,7 @@ export function ChatMessage({ agent, text, isAgent1, isNarrator, isUser, t }: Ch
           <p className="font-semibold">{t.narrator}</p>
           <div className="prose prose-sm max-w-none rounded-md border border-amber-200 bg-amber-50/50 p-3 text-foreground dark:border-amber-900 dark:bg-amber-950/50 dark:prose-invert font-chat">
             {text.split('\n').map((line, index) => (
-                <p key={index} className="mb-2 last:mb-0 text-justify">{line}</p>
+              <p key={index} className="mb-2 last:mb-0 text-justify">{line}</p>
             ))}
           </div>
         </div>
@@ -39,11 +41,11 @@ export function ChatMessage({ agent, text, isAgent1, isNarrator, isUser, t }: Ch
   if (isUser) {
     return (
       <div className="flex items-start gap-4 justify-end animate-in fade-in slide-in-from-bottom-2 duration-500">
-         <div className="space-y-1 max-w-[80%]">
+        <div className="space-y-1 max-w-[80%]">
           <p className="font-semibold text-right">You</p>
           <div className="prose prose-sm max-w-none rounded-md bg-primary p-3 text-primary-foreground dark:prose-invert font-chat">
             {text.split('\n').map((line, index) => (
-                <p key={index} className="mb-2 last:mb-0">{line}</p>
+              <p key={index} className="mb-2 last:mb-0">{line}</p>
             ))}
           </div>
         </div>
@@ -65,10 +67,19 @@ export function ChatMessage({ agent, text, isAgent1, isNarrator, isUser, t }: Ch
       </Avatar>
       <div className="flex-1 space-y-1">
         <p className="font-semibold">{agent}</p>
+        {thought && (
+          <div className="mb-2 rounded-md border border-muted bg-muted/50 p-2 text-xs text-muted-foreground italic">
+            <div className="flex items-center gap-1 mb-1 not-italic font-semibold">
+              <Brain className="h-3 w-3" />
+              <span>{t.thought || "Thought"}</span>
+            </div>
+            {thought}
+          </div>
+        )}
         <div className="prose prose-sm max-w-none text-foreground dark:prose-invert font-chat">
-            {text.split('\n').map((line, index) => (
-                <p key={index} className="mb-2 last:mb-0">{line}</p>
-            ))}
+          {text.split('\n').map((line, index) => (
+            <p key={index} className="mb-2 last:mb-0">{line}</p>
+          ))}
         </div>
       </div>
     </div>

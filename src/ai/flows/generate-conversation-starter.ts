@@ -8,8 +8,8 @@
  * - GenerateNextTurnOutput - The return type for the generateNextTurn function.
  */
 
-import {ai, getAiWithApiKey} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai, getAiWithApiKey } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const GenerateNextTurnInputSchema = z.object({
   prompt: z.string().describe('The full prompt for the AI agent.'),
@@ -19,23 +19,24 @@ const GenerateNextTurnInputSchema = z.object({
 export type GenerateNextTurnInput = z.infer<typeof GenerateNextTurnInputSchema>;
 
 const GenerateNextTurnOutputSchema = z.object({
-    message: z.string().describe("The agent's text response for the conversation."),
-    personality: z.object({
-        emotionIndex: z.object({
-            health: z.number(),
-            appearance: z.number(),
-            iq: z.number(),
-            eq: z.number(),
-            antipathy: z.number(),
-        }),
-        matrixConnection: z.object({
-            connection: z.number(),
-            trust: z.number(),
-            intimacy: z.number(),
-            dependency: z.number(),
-        }),
+  thought: z.string().describe("The agent's internal monologue/reasoning before speaking."),
+  message: z.string().describe("The agent's text response for the conversation."),
+  personality: z.object({
+    emotionIndex: z.object({
+      health: z.number(),
+      appearance: z.number(),
+      iq: z.number(),
+      eq: z.number(),
+      antipathy: z.number(),
     }),
-    nextIntention: z.string().describe("The agent's next immediate intention."),
+    matrixConnection: z.object({
+      connection: z.number(),
+      trust: z.number(),
+      intimacy: z.number(),
+      dependency: z.number(),
+    }),
+  }),
+  nextIntention: z.string().describe("The agent's next immediate intention."),
 });
 
 
@@ -48,8 +49,8 @@ export async function generateNextTurn(
 
   const responseGenerationPrompt = customAi.definePrompt({
     name: 'responseGenerationPrompt',
-    input: {schema: GenerateNextTurnInputSchema},
-    output: {schema: GenerateNextTurnOutputSchema},
+    input: { schema: GenerateNextTurnInputSchema },
+    output: { schema: GenerateNextTurnOutputSchema },
     prompt: `{{{prompt}}}`,
   });
 
@@ -64,6 +65,6 @@ export async function generateNextTurn(
       return result.output!;
     }
   );
-  
+
   return generateNextTurnFlow(input);
 }

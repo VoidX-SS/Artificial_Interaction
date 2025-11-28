@@ -126,478 +126,370 @@ export default function Home() {
 
     prompt += "\n--- ĐẦU RA (BẮT BUỘC TUÂN THỦ) ---\n";
     prompt += `Sau khi suy nghĩ, bạn PHẢI trả lời bằng một đối tượng JSON duy nhất (không có bất kỳ chữ nào khác bao quanh) có các trường sau:\n`;
-    prompt += `1. "message": (string) Nội dung bạn nói. Ngôn ngữ: ${langInstruction}. Tối đa ${maxWords[0]} chữ.\n`;
-    prompt += `2. "personality": (object) Chứa các chỉ số động thể hiện cảm xúc hiện tại của bạn khi đang nhắn. Gồm 2 trường:\n`;
+    prompt += `1. "thought": (string) Suy nghĩ nội tâm của bạn trước khi nói. Hãy phân tích tình huống dựa trên tính cách, cảm xúc hiện tại và vết thương tâm lý (nếu có). Đây là dòng suy nghĩ riêng tư, người kia không nghe thấy.\n`;
+    prompt += `2. "message": (string) Nội dung bạn nói ra. Ngôn ngữ: ${langInstruction}. Tối đa ${maxWords[0]} chữ.\n`;
+    prompt += `3. "personality": (object) Chứa các chỉ số động thể hiện cảm xúc hiện tại của bạn khi đang nhắn. Gồm 2 trường:\n`;
     prompt += `   - "emotionIndex": (object) Cập nhật lại Sức khỏe, Ngoại hình, IQ, EQ, Mức độ ác cảm với đối phương.\n`;
     prompt += `   - "matrixConnection": (object) Cập nhật lại Kết nối, Tin tưởng, Thân mật, Phụ thuộc.\n`;
-    prompt += `3. "nextIntention": (string) Ý định tiếp theo của bạn là gì? (ví dụ: "Hỏi rõ hơn về kinh nghiệm của họ", "Thể hiện sự đồng cảm", "Chuyển chủ đề", "Kết thúc cuộc trò chuyện").\n`;
+    prompt += `4. "nextIntention": (string) Ý định tiếp theo của bạn là gì? (ví dụ: "Hỏi rõ hơn về kinh nghiệm của họ", "Thể hiện sự đồng cảm", "Chuyển chủ đề", "Kết thúc cuộc trò chuyện").\n`;
 
     return prompt;
   }
 
 
   const parseResponse = (rawResponse: any) => {
-    if (typeof rawResponse === 'string') {
-      const jsonMatch = rawResponse.match(/```json\s*([\s\S]*?)\s*```|({[\s\S]*})/);
-      if (jsonMatch && (jsonMatch[1] || jsonMatch[2])) {
-        try {
-          const parsed = JSON.parse(jsonMatch[1] || jsonMatch[2]);
-          rawResponse = parsed;
-        } catch (e) {
-          console.error("Failed to parse JSON from string:", e);
-          return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
-        }
-      } else {
-        try {
-          const parsed = JSON.parse(rawResponse);
-          rawResponse = parsed;
-        } catch (e) {
-          console.error("Response is not a parsable JSON object:", rawResponse);
-          return { text: rawResponse, emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
-        }
-      }
+  });
+  currentAgentTurn = currentAgentTurn === 'agent1' ? 'agent2' : 'agent1';
+  continue;
+}
+
+const newMessage: Message = {
+  agent: currentProfile.soul.basic.persona.name,
+  agent: currentProfile.soul.basic.persona.name,
+  text: text,
+  thought: thought,
+  emotionIndex: emotionIndex,
+  matrixConnection: matrixConnection
+};
+
+const profileUpdater = currentAgentTurn === 'agent1' ? setAgent1Profile : setAgent2Profile;
+if (emotionIndex || matrixConnection || nextIntention) {
+  profileUpdater(prev => ({
+    ...prev,
+    matrix: {
+      ...prev.matrix,
+      emotionIndex: {
+        ...(emotionIndex ? { ...prev.matrix.emotionIndex, ...emotionIndex } : prev.matrix.emotionIndex),
+        nextIntention: nextIntention || prev.matrix.emotionIndex.nextIntention,
+      },
+      matrixConnection: matrixConnection ? { ...prev.matrix.matrixConnection, ...matrixConnection } : prev.matrix.matrixConnection,
+    }
+  }));
+}
+
+await new Promise(resolve => setTimeout(resolve, 0));
+
+currentHistory = [...currentHistory, newMessage];
+setChatLog(prev => [...prev, newMessage]);
+
+
+currentAgentTurn = currentAgentTurn === 'agent1' ? 'agent2' : 'agent1';
     }
 
-    if (typeof rawResponse === 'object' && rawResponse !== null) {
-      const { message, personality, nextIntention } = rawResponse;
-      const { emotionIndex, matrixConnection } = personality || {};
-
-      const text = message || '';
-
-      return {
-        text: text,
-        emotionIndex,
-        matrixConnection,
-        nextIntention,
-      };
-    }
-
-    console.error("Invalid response format, cannot parse:", rawResponse);
-    return { text: 'Lỗi: Định dạng phản hồi không hợp lệ.', emotionIndex: undefined, matrixConnection: undefined, nextIntention: undefined };
+setIsGenerating(false);
+isRunningRef.current = false;
   };
 
-
-  const handleStart = async () => {
-    if (!topic.trim()) {
-      toast({
-        variant: 'destructive',
-        title: t.error,
-        description: t.provideTopic,
-      });
-      return;
-    }
-
-    if (!isGenerating && chatLog.length === 0) {
-      setElapsedTime(0);
-    }
-    setIsGenerating(true);
-    isRunningRef.current = true;
-
-    let currentHistory: Message[] = [...chatLog];
-    const initialChatLength = chatLog.length;
-
-    let currentAgentTurn: 'agent1' | 'agent2' = 'agent1';
-    if (currentHistory.length > 0) {
-      const lastSpeakerName = currentHistory[currentHistory.length - 1].agent;
-      currentAgentTurn = lastSpeakerName === agent1Profile.soul.basic.persona.name ? 'agent2' : 'agent1';
-    }
-
-    for (let i = 0; i < exchanges[0]; i++) {
-      if (!isRunningRef.current) {
-        toast({ title: t.conversationStopped, description: t.conversationStoppedManually });
-        break;
-      }
-
-      if (chatLog.length + i >= initialChatLength + exchanges[0]) {
-        break;
-      }
-
-      if (leisurelyChat && currentHistory.length > 0) {
-        const lastMessage = currentHistory[currentHistory.length - 1];
-        const wordCount = lastMessage.text.split(/\s+/).length;
-        const delay = wordCount * AVG_READING_SPEED_SECONDS_PER_WORD * 1000;
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-
-      if (!isRunningRef.current) {
-        break;
-      }
-
-      const currentProfile = currentAgentTurn === 'agent1' ? agent1Profile : agent2Profile;
-      const otherProfile = currentAgentTurn === 'agent1' ? agent2Profile : agent1Profile;
-      const currentApiKey = currentAgentTurn === 'agent1' ? apiKey : apiKey2;
-
-      const prompt = constructPrompt(currentProfile, otherProfile, currentHistory);
-      const rawResponse = await generateChatResponseAction(prompt, currentApiKey);
-
-      if (typeof rawResponse === 'string' && rawResponse.startsWith('Error:')) {
-        toast({
-          variant: 'destructive',
-          title: t.errorFrom(currentProfile.soul.basic.persona.name),
-          description: rawResponse,
-        });
-        setIsGenerating(false);
-        isRunningRef.current = false;
-        return;
-      }
-
-      const { text, emotionIndex, matrixConnection, nextIntention } = parseResponse(rawResponse);
-
-      if (!text) {
-        toast({
-          variant: 'destructive',
-          title: t.errorFrom(currentProfile.soul.basic.persona.name),
-          description: "AI did not return a message.",
-        });
-        currentAgentTurn = currentAgentTurn === 'agent1' ? 'agent2' : 'agent1';
-        continue;
-      }
-
-      const newMessage: Message = {
-        agent: currentProfile.soul.basic.persona.name,
-        text: text,
-        emotionIndex: emotionIndex,
-        matrixConnection: matrixConnection
-      };
-
-      const profileUpdater = currentAgentTurn === 'agent1' ? setAgent1Profile : setAgent2Profile;
-      if (emotionIndex || matrixConnection || nextIntention) {
-        profileUpdater(prev => ({
-          ...prev,
-          matrix: {
-            ...prev.matrix,
-            emotionIndex: {
-              ...(emotionIndex ? { ...prev.matrix.emotionIndex, ...emotionIndex } : prev.matrix.emotionIndex),
-              nextIntention: nextIntention || prev.matrix.emotionIndex.nextIntention,
-            },
-            matrixConnection: matrixConnection ? { ...prev.matrix.matrixConnection, ...matrixConnection } : prev.matrix.matrixConnection,
-          }
-        }));
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 0));
-
-      currentHistory = [...currentHistory, newMessage];
-      setChatLog(prev => [...prev, newMessage]);
-
-
-      currentAgentTurn = currentAgentTurn === 'agent1' ? 'agent2' : 'agent1';
-    }
-
-    setIsGenerating(false);
+const handleStop = () => {
+  if (isGenerating) {
     isRunningRef.current = false;
+    setIsStopping(true);
+    setTimeout(() => {
+      setIsGenerating(false);
+      setIsStopping(false);
+    }, 500);
+  }
+};
+
+const handleReset = () => {
+  handleStop();
+  setChatLog([]);
+  setElapsedTime(0);
+  setAgent1Profile(initialAgent1Profile);
+  setAgent2Profile(initialAgent2Profile);
+  toast({ title: t.conversationReset, description: t.chatCleared });
+};
+
+const handleSave = () => {
+  const sessionData = {
+    topic,
+    relationship,
+    pronouns,
+    agent1Profile,
+    agent2Profile,
+    temperature,
+    maxWords,
+    exchanges,
+    chatLog,
+    language,
+    elapsedTime,
+    theme,
+    leisurelyChat,
+    deepInteraction,
+    apiKey,
+    apiKey2,
+    apiKey3,
   };
+  const blob = new Blob([JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `dualogue-session-${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast({ title: t.sessionSaved, description: t.sessionSavedDesc });
+};
 
-  const handleStop = () => {
-    if (isGenerating) {
-      isRunningRef.current = false;
-      setIsStopping(true);
-      setTimeout(() => {
-        setIsGenerating(false);
-        setIsStopping(false);
-      }, 500);
-    }
-  };
-
-  const handleReset = () => {
-    handleStop();
-    setChatLog([]);
-    setElapsedTime(0);
-    setAgent1Profile(initialAgent1Profile);
-    setAgent2Profile(initialAgent2Profile);
-    toast({ title: t.conversationReset, description: t.chatCleared });
-  };
-
-  const handleSave = () => {
-    const sessionData = {
-      topic,
-      relationship,
-      pronouns,
-      agent1Profile,
-      agent2Profile,
-      temperature,
-      maxWords,
-      exchanges,
-      chatLog,
-      language,
-      elapsedTime,
-      theme,
-      leisurelyChat,
-      deepInteraction,
-      apiKey,
-      apiKey2,
-      apiKey3,
-    };
-    const blob = new Blob([JSON.stringify(sessionData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `dualogue-session-${Date.now()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast({ title: t.sessionSaved, description: t.sessionSavedDesc });
-  };
-
-  const handleSaveProfiles = () => {
-    const profiles = { agent1Profile, agent2Profile };
-    const blob = new Blob([JSON.stringify(profiles, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `dualogue-profiles-${Date.now()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast({ title: t.profilesSaved, description: t.profilesSavedDesc });
-  };
+const handleSaveProfiles = () => {
+  const profiles = { agent1Profile, agent2Profile };
+  const blob = new Blob([JSON.stringify(profiles, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `dualogue-profiles-${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast({ title: t.profilesSaved, description: t.profilesSavedDesc });
+};
 
 
-  const handleLoadClick = () => {
-    fileInputRef.current?.click();
-  };
+const handleLoadClick = () => {
+  fileInputRef.current?.click();
+};
 
-  const handleLoadProfilesClick = () => {
-    profileInputRef.current?.click();
-  };
+const handleLoadProfilesClick = () => {
+  profileInputRef.current?.click();
+};
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const result = event.target?.result;
-        if (typeof result !== 'string') {
-          throw new Error('File could not be read');
-        }
-        const loadedData = JSON.parse(result);
-
-        setTopic(loadedData.topic ?? t.defaultTopic);
-        setRelationship(loadedData.relationship ?? t.defaultRelationship);
-        setPronouns(loadedData.pronouns ?? t.defaultPronouns);
-        setAgent1Profile(loadedData.agent1Profile ?? initialAgent1Profile);
-        setAgent2Profile(loadedData.agent2Profile ?? initialAgent2Profile);
-        setTemperature(loadedData.temperature ?? [1]);
-        setMaxWords(loadedData.maxWords ?? [250]);
-        setExchanges(loadedData.exchanges ?? [5]);
-        setChatLog(loadedData.chatLog ?? []);
-        setLanguage(loadedData.language ?? 'vi');
-        setElapsedTime(loadedData.elapsedTime ?? 0);
-        setTheme(loadedData.theme ?? 'light');
-        setLeisurelyChat(loadedData.leisurelyChat === undefined ? true : loadedData.leisurelyChat);
-        setDeepInteraction(loadedData.deepInteraction === undefined ? true : loadedData.deepInteraction);
-        setApiKey(loadedData.apiKey ?? '');
-        setApiKey2(loadedData.apiKey2 ?? '');
-        setApiKey3(loadedData.apiKey3 ?? '');
-
-        toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
-      } catch (error) {
-        toast({ variant: 'destructive', title: t.loadFailed, description: t.loadFailedDesc });
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const result = event.target?.result;
+      if (typeof result !== 'string') {
+        throw new Error('File could not be read');
       }
-    };
-    reader.readAsText(file);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      const loadedData = JSON.parse(result);
+
+      setTopic(loadedData.topic ?? t.defaultTopic);
+      setRelationship(loadedData.relationship ?? t.defaultRelationship);
+      setPronouns(loadedData.pronouns ?? t.defaultPronouns);
+      setAgent1Profile(loadedData.agent1Profile ?? initialAgent1Profile);
+      setAgent2Profile(loadedData.agent2Profile ?? initialAgent2Profile);
+      setTemperature(loadedData.temperature ?? [1]);
+      setMaxWords(loadedData.maxWords ?? [250]);
+      setExchanges(loadedData.exchanges ?? [5]);
+      setChatLog(loadedData.chatLog ?? []);
+      setLanguage(loadedData.language ?? 'vi');
+      setElapsedTime(loadedData.elapsedTime ?? 0);
+      setTheme(loadedData.theme ?? 'light');
+      setLeisurelyChat(loadedData.leisurelyChat === undefined ? true : loadedData.leisurelyChat);
+      setDeepInteraction(loadedData.deepInteraction === undefined ? true : loadedData.deepInteraction);
+      setApiKey(loadedData.apiKey ?? '');
+      setApiKey2(loadedData.apiKey2 ?? '');
+      setApiKey3(loadedData.apiKey3 ?? '');
+
+      toast({ title: t.sessionLoaded, description: t.sessionLoadedDesc });
+    } catch (error) {
+      toast({ variant: 'destructive', title: t.loadFailed, description: t.loadFailedDesc });
     }
   };
+  reader.readAsText(file);
+  if (fileInputRef.current) {
+    fileInputRef.current.value = '';
+  }
+};
 
-  const handleProfileFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+const handleProfileFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const result = event.target?.result;
-        if (typeof result !== 'string') {
-          throw new Error('File could not be read');
-        }
-        const loadedProfiles = JSON.parse(result);
-
-        if (loadedProfiles.agent1Profile && loadedProfiles.agent2Profile) {
-          setAgent1Profile(loadedProfiles.agent1Profile);
-          setAgent2Profile(loadedProfiles.agent2Profile);
-          toast({ title: t.profilesLoaded, description: t.profilesLoadedDesc });
-        } else {
-          throw new Error('Invalid profile file format');
-        }
-
-      } catch (error) {
-        toast({ variant: 'destructive', title: t.profileLoadFailed, description: t.profileLoadFailedDesc });
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const result = event.target?.result;
+      if (typeof result !== 'string') {
+        throw new Error('File could not be read');
       }
-    };
-    reader.readAsText(file);
-    if (profileInputRef.current) {
-      profileInputRef.current.value = '';
+      const loadedProfiles = JSON.parse(result);
+
+      if (loadedProfiles.agent1Profile && loadedProfiles.agent2Profile) {
+        setAgent1Profile(loadedProfiles.agent1Profile);
+        setAgent2Profile(loadedProfiles.agent2Profile);
+        toast({ title: t.profilesLoaded, description: t.profilesLoadedDesc });
+      } else {
+        throw new Error('Invalid profile file format');
+      }
+
+    } catch (error) {
+      toast({ variant: 'destructive', title: t.profileLoadFailed, description: t.profileLoadFailedDesc });
     }
   };
+  reader.readAsText(file);
+  if (profileInputRef.current) {
+    profileInputRef.current.value = '';
+  }
+};
 
-  const handleMatrixConnectionChange = (newValues: AgentMatrix['matrixConnection']) => {
-    setAgent1Profile(prev => ({
-      ...prev,
-      matrix: { ...prev.matrix, matrixConnection: newValues }
-    }));
-    setAgent2Profile(prev => ({
-      ...prev,
-      matrix: { ...prev.matrix, matrixConnection: newValues }
-    }));
+const handleMatrixConnectionChange = (newValues: AgentMatrix['matrixConnection']) => {
+  setAgent1Profile(prev => ({
+    ...prev,
+    matrix: { ...prev.matrix, matrixConnection: newValues }
+  }));
+  setAgent2Profile(prev => ({
+    ...prev,
+    matrix: { ...prev.matrix, matrixConnection: newValues }
+  }));
+};
+
+const applyNarratorSetChanges = (changes: NarratorOutput) => {
+  if (changes.topic) setTopic(changes.topic);
+  if (changes.relationship) setRelationship(changes.relationship);
+  if (changes.pronouns) setPronouns(changes.pronouns);
+  if (changes.temperature) setTemperature([changes.temperature]);
+  if (changes.maxWords) setMaxWords([changes.maxWords]);
+  if (changes.exchanges) setExchanges([changes.exchanges]);
+  if (changes.agent1Profile) setAgent1Profile(prev => ({ ...prev, ...changes.agent1Profile }));
+  if (changes.agent2Profile) setAgent2Profile(prev => ({ ...prev, ...changes.agent2Profile }));
+  toast({
+    title: t.narratorSetSuccess,
+    description: t.narratorSetSuccessDesc,
+  });
+};
+
+const handleUserSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  if (!userInput.trim() || isNarrating) return;
+
+  const newUserMessage: Message = { agent: 'User', text: userInput };
+  setChatLog(prev => [...prev, newUserMessage]);
+  setUserInput('');
+  setIsNarrating(true);
+
+  const narratorInput: NarratorInput = {
+    agent1: agent1Profile,
+    agent2: agent2Profile,
+    history: chatLog,
+    userQuery: userInput,
+    language: language,
+    apiKey: apiKey3,
+    topic,
+    relationship,
+    pronouns,
+    temperature: temperature[0],
+    maxWords: maxWords[0],
+    exchanges: exchanges[0],
   };
 
-  const applyNarratorSetChanges = (changes: NarratorOutput) => {
-    if (changes.topic) setTopic(changes.topic);
-    if (changes.relationship) setRelationship(changes.relationship);
-    if (changes.pronouns) setPronouns(changes.pronouns);
-    if (changes.temperature) setTemperature([changes.temperature]);
-    if (changes.maxWords) setMaxWords([changes.maxWords]);
-    if (changes.exchanges) setExchanges([changes.exchanges]);
-    if (changes.agent1Profile) setAgent1Profile(prev => ({ ...prev, ...changes.agent1Profile }));
-    if (changes.agent2Profile) setAgent2Profile(prev => ({ ...prev, ...changes.agent2Profile }));
+  const rawResponse = await generateNarratorResponseAction(narratorInput);
+
+  if (typeof rawResponse === 'string' && rawResponse.startsWith('Error:')) {
     toast({
-      title: t.narratorSetSuccess,
-      description: t.narratorSetSuccessDesc,
+      variant: 'destructive',
+      title: t.errorFrom(t.narrator),
+      description: rawResponse,
     });
-  };
-
-  const handleUserSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!userInput.trim() || isNarrating) return;
-
-    const newUserMessage: Message = { agent: 'User', text: userInput };
-    setChatLog(prev => [...prev, newUserMessage]);
-    setUserInput('');
-    setIsNarrating(true);
-
-    const narratorInput: NarratorInput = {
-      agent1: agent1Profile,
-      agent2: agent2Profile,
-      history: chatLog,
-      userQuery: userInput,
-      language: language,
-      apiKey: apiKey3,
-      topic,
-      relationship,
-      pronouns,
-      temperature: temperature[0],
-      maxWords: maxWords[0],
-      exchanges: exchanges[0],
-    };
-
-    const rawResponse = await generateNarratorResponseAction(narratorInput);
-
-    if (typeof rawResponse === 'string' && rawResponse.startsWith('Error:')) {
-      toast({
-        variant: 'destructive',
-        title: t.errorFrom(t.narrator),
-        description: rawResponse,
-      });
-    } else if (typeof rawResponse === 'object' && rawResponse.response) {
-      if (isNarratorResponseSet(rawResponse)) {
-        applyNarratorSetChanges(rawResponse);
-      }
-
-      const newNarratorMessage: Message = {
-        agent: 'Narrator',
-        text: rawResponse.response,
-      };
-      setChatLog(prev => [...prev, newNarratorMessage]);
-
-    } else {
-      toast({
-        variant: 'destructive',
-        title: t.errorFrom(t.narrator),
-        description: t.narratorError,
-      });
+  } else if (typeof rawResponse === 'object' && rawResponse.response) {
+    if (isNarratorResponseSet(rawResponse)) {
+      applyNarratorSetChanges(rawResponse);
     }
 
-    setIsNarrating(false);
+    const newNarratorMessage: Message = {
+      agent: 'Narrator',
+      text: rawResponse.response,
+    };
+    setChatLog(prev => [...prev, newNarratorMessage]);
+
+  } else {
+    toast({
+      variant: 'destructive',
+      title: t.errorFrom(t.narrator),
+      description: t.narratorError,
+    });
   }
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev);
-  };
+  setIsNarrating(false);
+}
 
-  return (
-    <main className="h-screen overflow-hidden bg-background font-sans">
-      <div className={`grid h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? 'md:grid-cols-[300px_1fr] lg:grid-cols-[350px_1fr]' : 'grid-cols-1'}`}>
-        <div className={`${isSidebarOpen ? 'block' : 'hidden'} h-full overflow-hidden border-r`}>
-          <ControlPanel
-            topic={topic}
-            setTopic={setTopic}
-            relationship={relationship}
-            setRelationship={setRelationship}
-            pronouns={pronouns}
-            setPronouns={setPronouns}
-            agent1Profile={agent1Profile}
-            setAgent1Profile={setAgent1Profile}
-            agent2Profile={agent2Profile}
-            setAgent2Profile={setAgent2Profile}
-            onMatrixConnectionChange={handleMatrixConnectionChange}
-            temperature={temperature}
-            setTemperature={setTemperature}
-            maxWords={maxWords}
-            setMaxWords={setMaxWords}
-            exchanges={exchanges}
-            setExchanges={setExchanges}
-            isGenerating={isGenerating}
-            isStopping={isStopping}
-            onStart={handleStart}
-            onStop={handleStop}
-            onReset={handleReset}
-            onSave={handleSave}
-            onLoad={handleLoadClick}
-            onSaveProfiles={handleSaveProfiles}
-            onLoadProfiles={handleLoadProfilesClick}
-            language={language}
-            setLanguage={setLanguage}
-            theme={theme}
-            setTheme={setTheme}
-            chatLog={chatLog}
-            leisurelyChat={leisurelyChat}
-            setLeisurelyChat={setLeisurelyChat}
-            deepInteraction={deepInteraction}
-            setDeepInteraction={setDeepInteraction}
-            apiKey={apiKey}
-            setApiKey={setApiKey}
-            apiKey2={apiKey2}
-            setApiKey2={setApiKey2}
-            apiKey3={apiKey3}
-            setApiKey3={setApiKey3}
-            t={t}
-          />
-        </div>
-        <ChatDisplay
-          chatLog={chatLog}
+const toggleSidebar = () => {
+  setIsSidebarOpen(prev => !prev);
+};
+
+return (
+  <main className="h-screen overflow-hidden bg-background font-sans">
+    <div className={`grid h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? 'md:grid-cols-[300px_1fr] lg:grid-cols-[350px_1fr]' : 'grid-cols-1'}`}>
+      <div className={`${isSidebarOpen ? 'block' : 'hidden'} h-full overflow-hidden border-r`}>
+        <ControlPanel
+          topic={topic}
+          setTopic={setTopic}
+          relationship={relationship}
+          setRelationship={setRelationship}
+          pronouns={pronouns}
+          setPronouns={setPronouns}
+          agent1Profile={agent1Profile}
+          setAgent1Profile={setAgent1Profile}
+          agent2Profile={agent2Profile}
+          setAgent2Profile={setAgent2Profile}
+          onMatrixConnectionChange={handleMatrixConnectionChange}
+          temperature={temperature}
+          setTemperature={setTemperature}
+          maxWords={maxWords}
+          setMaxWords={setMaxWords}
+          exchanges={exchanges}
+          setExchanges={setExchanges}
           isGenerating={isGenerating}
-          isNarrating={isNarrating}
-          elapsedTime={elapsedTime}
-          agent1Name={agent1Profile.soul.basic.persona.name}
-          agent2Name={agent2Profile.soul.basic.persona.name}
+          isStopping={isStopping}
+          onStart={handleStart}
+          onStop={handleStop}
+          onReset={handleReset}
+          onSave={handleSave}
+          onLoad={handleLoadClick}
+          onSaveProfiles={handleSaveProfiles}
+          onLoadProfiles={handleLoadProfilesClick}
+          language={language}
+          setLanguage={setLanguage}
+          theme={theme}
+          setTheme={setTheme}
+          chatLog={chatLog}
+          leisurelyChat={leisurelyChat}
+          setLeisurelyChat={setLeisurelyChat}
+          deepInteraction={deepInteraction}
+          setDeepInteraction={setDeepInteraction}
+          apiKey={apiKey}
+          setApiKey={setApiKey}
+          apiKey2={apiKey2}
+          setApiKey2={setApiKey2}
+          apiKey3={apiKey3}
+          setApiKey3={setApiKey3}
           t={t}
-          userInput={userInput}
-          setUserInput={setUserInput}
-          onUserSubmit={handleUserSubmit}
-          isSidebarOpen={isSidebarOpen}
-          onToggleSidebar={toggleSidebar}
         />
       </div>
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="application/json"
-        className="hidden"
+      <ChatDisplay
+        chatLog={chatLog}
+        isGenerating={isGenerating}
+        isNarrating={isNarrating}
+        elapsedTime={elapsedTime}
+        agent1Name={agent1Profile.soul.basic.persona.name}
+        agent2Name={agent2Profile.soul.basic.persona.name}
+        t={t}
+        userInput={userInput}
+        setUserInput={setUserInput}
+        onUserSubmit={handleUserSubmit}
+        isSidebarOpen={isSidebarOpen}
+        onToggleSidebar={toggleSidebar}
       />
-      <input
-        type="file"
-        ref={profileInputRef}
-        onChange={handleProfileFileChange}
-        accept="application/json"
-        className="hidden"
-      />
-    </main>
-  );
+    </div>
+    <input
+      type="file"
+      ref={fileInputRef}
+      onChange={handleFileChange}
+      accept="application/json"
+      className="hidden"
+    />
+    <input
+      type="file"
+      ref={profileInputRef}
+      onChange={handleProfileFileChange}
+      accept="application/json"
+      className="hidden"
+    />
+  </main>
+);
 }

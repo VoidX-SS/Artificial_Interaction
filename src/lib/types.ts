@@ -6,6 +6,7 @@ export type Gender = 'male' | 'female';
 export const MessageSchema = z.object({
   agent: z.string(),
   text: z.string(),
+  thought: z.string().optional(),
   emotionIndex: z.any().optional(),
   matrixConnection: z.any().optional(),
 });
@@ -234,31 +235,31 @@ const emptyProfile: AgentProfile = {
 };
 
 export const initialAgent1Profile: AgentProfile = {
-    ...JSON.parse(JSON.stringify(emptyProfile)),
-    soul: {
-        ...JSON.parse(JSON.stringify(emptyProfile.soul)),
-        basic: {
-            ...JSON.parse(JSON.stringify(emptyProfile.soul.basic)),
-            persona: {
-                ...JSON.parse(JSON.stringify(emptyProfile.soul.basic.persona)),
-                name: 'Agent 1',
-                gender: 'male',
-            },
-        },
-    }
+  ...JSON.parse(JSON.stringify(emptyProfile)),
+  soul: {
+    ...JSON.parse(JSON.stringify(emptyProfile.soul)),
+    basic: {
+      ...JSON.parse(JSON.stringify(emptyProfile.soul.basic)),
+      persona: {
+        ...JSON.parse(JSON.stringify(emptyProfile.soul.basic.persona)),
+        name: 'Agent 1',
+        gender: 'male',
+      },
+    },
+  }
 };
 
 export const initialAgent2Profile: AgentProfile = {
-    ...JSON.parse(JSON.stringify(emptyProfile)),
-    soul: {
-        ...JSON.parse(JSON.stringify(emptyProfile.soul)),
-        basic: {
-            ...JSON.parse(JSON.stringify(emptyProfile.soul.basic)),
-            persona: {
-                ...JSON.parse(JSON.stringify(emptyProfile.soul.basic.persona)),
-                name: 'Agent 2',
-                gender: 'female',
-            },
-        },
-    }
+  ...JSON.parse(JSON.stringify(emptyProfile)),
+  soul: {
+    ...JSON.parse(JSON.stringify(emptyProfile.soul)),
+    basic: {
+      ...JSON.parse(JSON.stringify(emptyProfile.soul.basic)),
+      persona: {
+        ...JSON.parse(JSON.stringify(emptyProfile.soul.basic.persona)),
+        name: 'Agent 2',
+        gender: 'female',
+      },
+    },
+  }
 };
